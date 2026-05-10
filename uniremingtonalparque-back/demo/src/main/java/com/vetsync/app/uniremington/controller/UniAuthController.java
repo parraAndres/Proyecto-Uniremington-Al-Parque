@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  *   POST /api/auth/login     → Login por documento + contraseña → JWT
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/uni/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth - Uniremington", description = "Registro y login para la PWA Uniremington al Parque")
 public class UniAuthController {

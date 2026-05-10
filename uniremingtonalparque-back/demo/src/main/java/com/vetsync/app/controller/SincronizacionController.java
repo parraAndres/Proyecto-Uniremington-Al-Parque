@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/sincronizacion")
+@RestController("vetsyncSincronizacionController") // ← nombre de bean único
+@RequestMapping("/api/vetsync/sincronizacion")     // ← ruta diferente para evitar conflicto
 @RequiredArgsConstructor
-@Tag(name = "Sincronización Batch", description = "Motor de ingesta masiva offline-first con idempotencia")
+@Tag(name = "Sincronización VetSync", description = "Motor de ingesta masiva offline-first con idempotencia")
 @SecurityRequirement(name = "bearerAuth")
 public class SincronizacionController {
 

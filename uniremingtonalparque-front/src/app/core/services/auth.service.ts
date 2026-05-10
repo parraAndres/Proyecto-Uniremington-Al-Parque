@@ -1,18 +1,30 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap, catchError, from, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { db, UserRecord } from '../database/app-database';
+
+export interface AuthResponse {
+  token: string;
+  tipo: string;
+  email: string;
+  nombre: string;
+  rol: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<UserRecord | null>(null);
+  private apiUrl = environment.apiUrl;
+  private currentUserSubject = new BehaviorSubject<any | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     if (isPlatformBrowser(this.platformId)) {
-      this.checkAndCreateAdmin().then(() => {
-        this.loadSession();
-      });
+      this.loadSession();
     }
   }
 
@@ -20,60 +32,45 @@ export class AuthService {
     return !!this.currentUserSubject.value;
   }
 
-  private async checkAndCreateAdmin() {
-    const adminEmail = '1120957560';
-    const admin = await db.users.get(adminEmail);
-    if (!admin) {
-      await db.users.put({
-        email: adminEmail,
-        nombreCompleto: 'Administrador del Sistema',
-        passwordHash: btoa('1120957560'),
-        role: 'admin'
-      });
+  private loadSession() {
+    const userJson = localStorage.getItem('currentUser');
+    if (userJson) {
+      this.currentUserSubject.next(JSON.parse(userJson));
     }
   }
 
-  private loadSession() {
-    const sessionEmail = localStorage.getItem('activeUserEmail');
-    if (sessionEmail) {
-      db.users.get(sessionEmail).then(user => {
-        if (user) {
-          this.currentUserSubject.next(user);
+  login(email: string, passwordHash: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, { 
+      email, 
+      password: passwordHash 
+    }).pipe(
+      tap(res => {
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('currentUser', JSON.stringify(res));
+          localStorage.setItem('activeUserEmail', res.email);
         }
-      });
-    }
+        this.currentUserSubject.next(res);
+      })
+    );
   }
 
   async registerUser(user: UserRecord): Promise<void> {
+    // Para registro, se mantiene la lógica offline pero se recomienda 
+    // crear un endpoint POST /usuarios/register en el backend.
     const existing = await db.users.get(user.email);
     if (existing) {
-      throw new Error('El usuario ya está registrado con este correo');
+      throw new Error('El usuario ya está registrado');
     }
-    // Simulate simple password hash for offline mode
-    user.passwordHash = btoa(user.passwordHash); 
     await db.users.put(user);
-  }
-
-  async login(email: string, passwordHash: string): Promise<UserRecord> {
-    const user = await db.users.get(email);
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
-    
-    // Check simulated hash
-    if (user.passwordHash !== btoa(passwordHash)) {
-      throw new Error('Credenciales incorrectas');
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('activeUserEmail', user.email);
-    }
-    this.currentUserSubject.next(user);
-    return user;
+    // Opcional: Llamada al backend
+    // return this.http.post(`${this.apiUrl}/usuarios/register`, user).toPromise();
   }
 
   logout() {
     if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
       localStorage.removeItem('activeUserEmail');
     }
     this.currentUserSubject.next(null);

@@ -31,18 +31,23 @@ public class GlobalExceptionHandler {
             errores.put(campo, e.getDefaultMessage());
         });
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("errores", errores);
+        body.put("success", false);
+        body.put("code", HttpStatus.BAD_REQUEST.value());
+        body.put("message", "Error de validación en los campos");
+        body.put("errors", errores);
         return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error inesperado: " + ex.getMessage());
     }
 
     private ResponseEntity<Map<String, Object>> buildError(HttpStatus status, String mensaje) {
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", status.value());
-        body.put("error", status.getReasonPhrase());
-        body.put("mensaje", mensaje);
+        body.put("success", false);
+        body.put("code", status.value());
+        body.put("message", mensaje);
         return ResponseEntity.status(status).body(body);
     }
 }

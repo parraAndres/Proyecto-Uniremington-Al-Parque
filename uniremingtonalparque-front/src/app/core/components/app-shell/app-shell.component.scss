@@ -1,0 +1,23 @@
+/* Los estilos generales de layout se manejarán en src/styles/layout/_shell.scss */
+/* Aquí pueden ir estilos muy específicos del componente si es necesario */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.auth-buttons a {
+  padding: 0.5rem 0.8rem;
+  background: var(--primary-color, #004d99);
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-buttons a.btn-login {
+  margin-right: 0.5rem;
+}
+
+.auth-buttons a.btn-register {
+  background: var(--secondary-color, #0066cc);
+}

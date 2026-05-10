@@ -1,0 +1,3 @@
+/
+/diagnostico-territorial
+/panel-control

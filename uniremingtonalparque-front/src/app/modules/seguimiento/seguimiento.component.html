@@ -1,0 +1,38 @@
+<div class="form-container">
+  <h2>Módulo de Seguimiento</h2>
+  <div *ngIf="!isOnline" class="offline-warning">Modo Offline: Guardado local.</div>
+  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-alert" style="background-color: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">{{ successMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 600px; margin: 0 auto;">
+    <div class="form-group">
+      <label for="beneficiarioId">Beneficiario</label>
+      <select id="beneficiarioId" formControlName="beneficiarioId">
+        <option value="">Seleccione...</option>
+        <option *ngFor="let b of beneficiarios" [value]="b.id">{{ b.nombres }} {{ b.apellidos }} ({{ b.documento }})</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="estado">Estado del Caso</label>
+      <select id="estado" formControlName="estado">
+        <option value="">Seleccione...</option>
+        <option value="abierto">Abierto</option>
+        <option value="proceso">En Proceso</option>
+        <option value="cerrado">Cerrado</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="fechaProgramada">Fecha de Próximo Seguimiento</label>
+      <input id="fechaProgramada" type="date" formControlName="fechaProgramada" />
+    </div>
+
+    <div class="form-group">
+      <label for="avances">Registro de Avances</label>
+      <textarea id="avances" formControlName="avances" rows="4" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 0.75rem; font-family: inherit;"></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">Guardar Seguimiento</button>
+  </form>
+</div>

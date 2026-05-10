@@ -1,0 +1,72 @@
+<div class="form-container">
+  <h2>Registro de Servicios Prestados</h2>
+  
+  <div *ngIf="!isOnline" class="offline-warning">
+    Modo Offline: El registro se guardará localmente.
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-alert" style="background-color: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+    {{ successMessage }}
+  </div>
+
+  <form [formGroup]="serviciosForm" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 800px; margin: 0 auto;">
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group" style="grid-column: span 2;">
+        <label for="beneficiarioId">Beneficiario Atendido</label>
+        <select id="beneficiarioId" formControlName="beneficiarioId">
+          <option value="">Seleccione un beneficiario registrado...</option>
+          <option *ngFor="let b of beneficiarios" [value]="b.id">
+            {{ b.nombres }} {{ b.apellidos }} ({{ b.documento }})
+          </option>
+        </select>
+        <small *ngIf="beneficiarios.length === 0" style="color: red;">
+          No hay beneficiarios en la base local. Debe registrar uno primero.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="facultadResponsable">Facultad Responsable (Asignada automáticamente)</label>
+        <select id="facultadResponsable" formControlName="facultadResponsable" style="background-color: #f0f0f0; cursor: not-allowed;">
+          <!-- Opción genérica, ya que se llena automáticamente con el valor del perfil de usuario -->
+          <option [value]="serviciosForm.get('facultadResponsable')?.value">
+            {{ serviciosForm.get('facultadResponsable')?.value || 'Cargando facultad...' }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tipoServicio">Tipo de Servicio</label>
+        <input id="tipoServicio" type="text" formControlName="tipoServicio" placeholder="Ej. Vacunación, Asesoría Legal" />
+      </div>
+
+      <div class="form-group">
+        <label for="tiempoAtencion">Tiempo de Atención (minutos)</label>
+        <input id="tiempoAtencion" type="number" formControlName="tiempoAtencion" />
+      </div>
+
+      <div class="form-group">
+        <label for="resultado">Resultado</label>
+        <select id="resultado" formControlName="resultado">
+          <option value="">Seleccione...</option>
+          <option value="Orientacion">Orientación / Asesoría</option>
+          <option value="Intervencion">Intervención Directa</option>
+          <option value="Remision">Remisión a otra entidad</option>
+        </select>
+      </div>
+      
+      <div class="form-group" style="grid-column: span 2;">
+        <label for="descripcion">Descripción de la Atención</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="3" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 0.75rem; font-family: inherit;"></textarea>
+      </div>
+
+      <div class="form-group" style="grid-column: span 2;">
+        <label for="observaciones">Observaciones adicionales (Opcional)</label>
+        <textarea id="observaciones" formControlName="observaciones" rows="2" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 0.75rem; font-family: inherit;"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="serviciosForm.invalid || beneficiarios.length === 0">Registrar Servicio</button>
+  </form>
+</div>

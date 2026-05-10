@@ -1,0 +1,54 @@
+<div class="form-container" style="max-width: 600px;">
+  <h2>Estado de Sincronización</h2>
+  
+  <div style="margin-bottom: 1.5rem;">
+    Estado actual de la red: 
+    <span [style.color]="isOnline ? 'green' : 'red'" style="font-weight: bold;">
+      {{ isOnline ? '🟢 En Línea' : '🔴 Sin Conexión' }}
+    </span>
+  </div>
+
+  <div class="sync-card">
+    <h3>Datos en Cola Local</h3>
+    <p style="color: #666; font-size: 0.9rem;">Estos registros se han guardado en el dispositivo y están pendientes de envío al servidor institucional.</p>
+    
+    <div class="status-item">
+      <span>Beneficiarios</span>
+      <span class="count-badge">{{ queues.beneficiarios }}</span>
+    </div>
+    <div class="status-item">
+      <span>Servicios Prestados</span>
+      <span class="count-badge">{{ queues.servicios }}</span>
+    </div>
+    <div class="status-item">
+      <span>Diagnósticos Territoriales</span>
+      <span class="count-badge">{{ queues.diagnosticos }}</span>
+    </div>
+    <div class="status-item">
+      <span>Seguimiento de Casos</span>
+      <span class="count-badge">{{ queues.seguimientos }}</span>
+    </div>
+    <div class="status-item">
+      <span>Participación Académica</span>
+      <span class="count-badge">{{ queues.academico }}</span>
+    </div>
+    <div class="status-item">
+      <span>Aportes y Recursos</span>
+      <span class="count-badge">{{ queues.recursos }}</span>
+    </div>
+
+    <div class="status-item" style="border-top: 2px solid #eee; margin-top: 0.5rem; padding-top: 1rem;">
+      <strong>Total Pendiente</strong>
+      <strong class="count-badge" style="background: var(--primary-color, #004d99); color: white;">{{ totalPending }}</strong>
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+      <button class="btn-primary" style="width: 100%;" (click)="forceSync()" [disabled]="!isOnline || isSyncing || totalPending === 0">
+        {{ isSyncing ? 'Sincronizando...' : 'Sincronizar Ahora' }}
+      </button>
+      <small *ngIf="!isOnline" style="display: block; text-align: center; color: red; margin-top: 0.5rem;">
+        Se requiere conexión a internet para sincronizar.
+      </small>
+    </div>
+  </div>
+</div>

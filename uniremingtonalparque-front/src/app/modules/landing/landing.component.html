@@ -1,0 +1,65 @@
+<div class="landing-page">
+
+
+  <header class="hero-section">
+    <div class="hero-carousel">
+      <img *ngFor="let img of images; let i = index" 
+           [src]="img" 
+           [class.active]="i === currentSlide"
+           class="carousel-image"
+           alt="Vida Universitaria Uniremington">
+      <div class="carousel-overlay"></div>
+    </div>
+    
+    <div class="hero-content container">
+      <div class="hero-text">
+        <h2 class="hero-title">EXPLORA NUESTRAS 7 FACULTADES Y UNIREMINGTON AL PARQUE</h2>
+        <p class="hero-subtitle">Únete a nuestra comunidad y descubre cómo transformamos la educación en impacto social directo.</p>
+        
+        <div class="carousel-indicators">
+          <span *ngFor="let img of images; let i = index"
+                class="dot"
+                [class.active]="i === currentSlide"
+                (click)="goToSlide(i)"></span>
+        </div>
+      </div>
+
+
+    </div>
+  </header>
+
+  <section id="facultades" class="facultades-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>7 Facultades a tu Servicio</h2>
+        <p>Descubre las áreas de conocimiento que impulsan nuestra proyección social. Haz clic para más detalles.</p>
+      </div>
+      <div class="facultades-grid">
+        <div class="facultad-card" *ngFor="let f of facultades" [style.--card-color]="f.color" (click)="toggleFacultad(f)" [class.expanded]="f.expanded">
+          <div class="icon" [style.color]="f.color">{{ f.icon }}</div>
+          <h3>{{ f.nombre }}</h3>
+          <div class="desc-wrapper" [class.show]="f.expanded">
+            <p>{{ f.desc }}</p>
+          </div>
+          <div class="click-hint" *ngIf="!f.expanded">Haz clic para ver más</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nosotros" class="info-section">
+    <div class="container info-container">
+      <div class="info-image">
+        <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=1000&auto=format&fit=crop" alt="Evento en el parque">
+        <div class="image-accent"></div>
+      </div>
+      <div class="info-text">
+        <h2>Uniremington al Parque</h2>
+        <p class="lead">
+          Nuestro programa de proyección social lleva los conocimientos académicos directamente a las comunidades. A través de eventos en espacios públicos y parques, brindamos asesoría, intervención y apoyo gratuito en múltiples áreas, acercando la universidad a la sociedad de forma activa y transformadora.
+        </p>
+        <a href="https://blog.uniremington.edu.co/uniremington-al-parque/" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-decoration:none; display:inline-block; text-align:center;">Conoce Más</a>
+      </div>
+    </div>
+  </section>
+</div>

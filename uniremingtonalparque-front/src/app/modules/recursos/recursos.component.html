@@ -1,0 +1,30 @@
+<div class="form-container">
+  <h2>Módulo de Recursos</h2>
+  <div *ngIf="!isOnline" class="offline-warning">Modo Offline: Guardado local.</div>
+  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-alert" style="background-color: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">{{ successMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 600px; margin: 0 auto;">
+    
+    <div class="form-group">
+      <label for="aporte">Descripción del Aporte (Ej. Universidad, Empresa, Estado)</label>
+      <input id="aporte" type="text" formControlName="aporte" />
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Tipo de Aporte</label>
+      <select id="tipo" formControlName="tipo">
+        <option value="">Seleccione...</option>
+        <option value="dinero">Dinero (Efectivo/Transferencia)</option>
+        <option value="especie">Especie (Materiales, Insumos, Tiempo)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="valorEstimado">Valor Estimado ($ COP) - Opcional</label>
+      <input id="valorEstimado" type="number" formControlName="valorEstimado" />
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">Guardar Recurso</button>
+  </form>
+</div>

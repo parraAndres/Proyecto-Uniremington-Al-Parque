@@ -1,0 +1,43 @@
+<div class="dashboard-layout" *ngIf="userRole === 'estudiante'">
+  <aside class="dashboard-sidebar">
+    <h3>Facultad Asignada</h3>
+    <ul class="faculties-list">
+      <li *ngFor="let f of facultades" 
+          [class.active]="f === selectedFacultad"
+          (click)="selectFacultad(f)">
+        <span class="icon">{{ f.icon }}</span>
+        <div class="text">
+          <strong>{{ f.nombre }}</strong>
+          <small>{{ f.especialidad }}</small>
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  <section class="dashboard-main">
+    <header class="main-header">
+      <h2>Módulos Activos</h2>
+      <p *ngIf="selectedFacultad">Mostrando herramientas para: <strong>{{ selectedFacultad.nombre }}</strong></p>
+    </header>
+
+    <div class="dashboard-grid">
+      <div class="module-card" *ngFor="let m of modulos">
+        <div class="card-icon">{{ m.icon }}</div>
+        <h4>{{ m.nombre }}</h4>
+        <button class="btn-secondary" [routerLink]="m.ruta">Ingresar</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="dashboard-layout" *ngIf="userRole === 'cliente'" style="display: flex; justify-content: center; align-items: center; min-height: 80vh; background-color: #f9f9f9;">
+  <div style="background: white; padding: 3rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; max-width: 600px;">
+    <h2 style="color: var(--primary-color, #004d99); margin-bottom: 1rem;">Bienvenido, {{ userName }}</h2>
+    <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">Gracias por registrarte en <strong>Uniremington al Parque</strong>. Tu cuenta está activa y lista para solicitar servicios de nuestras facultades.</p>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <button class="btn-primary" routerLink="/">Volver al Inicio</button>
+      <button class="btn-secondary" style="background: white; color: var(--primary-color, #004d99); border: 2px solid var(--primary-color, #004d99);" routerLink="/parque/servicios">Ver Mis Servicios</button>
+    </div>
+  </div>
+</div>

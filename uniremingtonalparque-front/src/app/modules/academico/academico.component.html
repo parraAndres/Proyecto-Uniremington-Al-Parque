@@ -1,0 +1,26 @@
+<div class="form-container">
+  <h2>Módulo Académico</h2>
+  <div *ngIf="!isOnline" class="offline-warning">Modo Offline: Guardado local.</div>
+  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-alert" style="background-color: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">{{ successMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 600px; margin: 0 auto;">
+    
+    <div class="form-group">
+      <label for="estudiante">Nombre del Estudiante</label>
+      <input id="estudiante" type="text" formControlName="estudiante" />
+    </div>
+
+    <div class="form-group">
+      <label for="programa">Programa Académico</label>
+      <input id="programa" type="text" formControlName="programa" />
+    </div>
+
+    <div class="form-group">
+      <label for="horas">Horas de Participación</label>
+      <input id="horas" type="number" formControlName="horas" />
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">Guardar Registro</button>
+  </form>
+</div>

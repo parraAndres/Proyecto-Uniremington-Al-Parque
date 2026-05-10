@@ -1,0 +1,18 @@
+// Colors
+$primary-color: #f97316; // Naranja Vibrante (Cálido)
+$secondary-color: #fbbf24; // Amarillo Ámbar (Cálido)
+$background-light: #fefce8; // Fondo ligeramente cálido
+$text-dark: #431407; // Marrón oscuro en lugar de gris/negro frío
+
+// Modern UI Tokens
+$primary-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+$shadow-soft: 0 4px 20px rgba(234, 88, 12, 0.08);
+$shadow-hover: 0 10px 25px rgba(234, 88, 12, 0.2);
+$glass-bg: rgba(255, 255, 255, 0.85);
+$glass-border: 1px solid rgba(255, 255, 255, 0.3);
+$font-family-primary: 'Inter', sans-serif;
+
+// Breakpoints
+$bp-mobile: 576px;
+$bp-tablet: 768px;
+$bp-desktop: 992px;

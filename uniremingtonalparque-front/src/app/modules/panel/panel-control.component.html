@@ -1,16 +1,21 @@
-<div class="admin-page-container" *ngIf="isAdmin || isDocente">
+<div class="admin-page-container">
   <div class="admin-layout">
     
     <!-- Sidebar Interno -->
     <aside class="internal-sidebar">
       <div class="sidebar-info">
-        <i class="fas" [ngClass]="isAdmin ? 'fa-user-shield' : 'fa-chalkboard-teacher'"></i>
-        <span>{{ isAdmin ? 'Panel Admin' : 'Coordinación' }}</span>
+        <i class="fas" [ngClass]="isAdmin ? 'fa-user-shield' : (isDocente ? 'fa-chalkboard-teacher' : 'fa-user')"></i>
+        <span>{{ isAdmin ? 'Panel Admin' : (isDocente ? 'Coordinación' : 'Mi Perfil') }}</span>
       </div>
       <nav class="internal-nav">
         <!-- VISTA DASHBOARD (Compartida o diferente según rol) -->
-        <button [class.active]="activeView === 'dashboard'" (click)="activeView = 'dashboard'">
+        <button *ngIf="isAdmin || isDocente" [class.active]="activeView === 'dashboard'" (click)="activeView = 'dashboard'">
           <i class="fas fa-chart-pie"></i> Dashboard
+        </button>
+
+        <!-- SECCIÓN NOTICIAS (Común para todos) -->
+        <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
+          <i class="fas fa-newspaper"></i> Noticias
         </button>
 
         <!-- SECCIÓN ADMINISTRACIÓN -->
@@ -27,9 +32,7 @@
           <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
             <i class="fas fa-users-cog"></i> Gestión Usuarios
           </button>
-          <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
-            <i class="fas fa-newspaper"></i> Noticias
-          </button>
+
           <button [class.active]="activeView === 'config'" (click)="activeView = 'config'">
             <i class="fas fa-cogs"></i> Configuración General
           </button>
@@ -609,7 +612,7 @@
 
       <!-- VISTA NOTICIAS -->
       <div *ngIf="activeView === 'news'" class="news-view animate-fade">
-        <div class="modern-card form-card">
+        <div class="modern-card form-card" *ngIf="isAdmin">
           <div class="card-header">
             <h3><i class="fas fa-newspaper"></i> Redactar Nueva Noticia</h3>
           </div>
@@ -662,11 +665,10 @@
               <h4 class="news-title">{{ n.titulo }}</h4>
               <p class="news-excerpt">{{ n.contenido | slice:0:120 }}...</p>
               
-              <div class="news-card-actions">
                 <button class="btn-read-more" routerLink="/" fragment="noticias">
                   Ver en el Home <i class="fas fa-external-link-alt"></i>
                 </button>
-                <button class="btn-delete-premium" (click)="deleteNoticia(n.id!)" title="Eliminar noticia">
+                <button *ngIf="isAdmin" class="btn-delete-premium" (click)="deleteNoticia(n.id!)" title="Eliminar noticia">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>

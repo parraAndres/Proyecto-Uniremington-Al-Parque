@@ -23,9 +23,11 @@ import { interval, startWith, switchMap } from 'rxjs';
 export class PanelControlComponent implements OnInit {
   isAdmin = false;
   isDocente = false;
+  isEstudiante = false;
+  isBeneficiario = false;
   isEditing = false;
   editingUserId = '';
-  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' = 'dashboard';
+  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' = 'news';
   
   successMessage = '';
   errorMessage = '';
@@ -169,10 +171,11 @@ export class PanelControlComponent implements OnInit {
 
   ngOnInit() {
     this.checkUserRole();
+    this.loadNews(); // Todos pueden ver noticias
+
     if (this.isAdmin) {
       this.startStatsPolling();
       this.loadAccounts();
-      this.loadNews();
       this.loadDetailedStats();
       this.loadJornadas();
       this.loadConfigParams();
@@ -194,6 +197,8 @@ export class PanelControlComponent implements OnInit {
     const user = this.authService.currentUserValue;
     this.isAdmin = user && user.rol?.toUpperCase() === 'ADMIN';
     this.isDocente = user && (user.rol?.toUpperCase() === 'PROFESOR' || user.rol?.toUpperCase() === 'DOCENTE');
+    this.isEstudiante = user && user.rol?.toUpperCase() === 'ESTUDIANTE';
+    this.isBeneficiario = user && user.rol?.toUpperCase() === 'BENEFICIARIO';
   }
 
   loadDocenteData() {

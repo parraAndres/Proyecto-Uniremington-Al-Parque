@@ -1,9 +1,10 @@
 package com.vetsync.app.dto.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter @Setter
 public class ClienteRequest {
 
     @NotBlank(message = "El nombre es obligatorio")

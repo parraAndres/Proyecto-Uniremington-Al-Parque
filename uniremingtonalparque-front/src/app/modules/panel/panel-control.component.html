@@ -12,16 +12,19 @@
           <i class="fas fa-chart-pie"></i> Dashboard
         </button>
         <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
-          <i class="fas fa-users-cog"></i> Gestión Cuentas
+          <i class="fas fa-users-cog"></i> Cuentas
         </button>
         <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
-          <i class="fas fa-newspaper"></i> Gestión Noticias
+          <i class="fas fa-newspaper"></i> Noticias
         </button>
       </nav>
       <div class="sidebar-status">
         <div class="update-indicator">
           <i class="fas fa-clock"></i> Actualización: 1h
         </div>
+        <button class="btn-logout-internal" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
       </div>
     </aside>
 
@@ -31,8 +34,8 @@
       <!-- HEADER INTERNO -->
       <header class="content-header">
         <div class="header-text">
-          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : (activeView === 'students' ? 'Gestión de Cuentas Institucionales' : 'Gestión de Noticias y Actualidad') }}</h1>
-          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : (activeView === 'students' ? 'Crea y administra las credenciales para estudiantes y profesores.' : 'Publica y administra las noticias que aparecen en la página principal.') }}</p>
+          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : (activeView === 'students' ? 'Gestión de Cuentas' : 'Gestión de Noticias') }}</h1>
+          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Administra los recursos de la plataforma.' }}</p>
         </div>
       </header>
 
@@ -79,7 +82,7 @@
               <span class="card-value">{{ impactStats.personasAtendidas | number }}</span>
             </div>
           </div>
-          <!-- Cantidad Beneficiarios (Total Asistencias) -->
+          <!-- Cantidad Beneficiarios -->
           <div class="stat-card card-purple">
             <div class="card-icon"><i class="fas fa-hospital-user"></i></div>
             <div class="card-info">
@@ -90,15 +93,15 @@
         </div>
 
         <div class="dashboard-footer-info">
-          <p><i class="fas fa-info-circle"></i> Los datos se actualizan automáticamente cada 60 minutos para optimizar el rendimiento del servidor.</p>
+          <p><i class="fas fa-info-circle"></i> Los datos se actualizan automáticamente cada 60 minutos.</p>
         </div>
       </div>
 
-      <!-- VISTA GESTIÓN CUENTAS -->
+      <!-- VISTA CUENTAS (Estudiantes/Profesores) -->
       <div *ngIf="activeView === 'students'" class="students-view animate-fade">
         <div class="modern-card form-card">
           <div class="card-header">
-            <h3><i class="fas fa-plus"></i> Nuevo Registro de Cuenta</h3>
+            <h3><i class="fas fa-plus"></i> Registro de Cuenta Estudiantil / Docente</h3>
           </div>
           
           <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
@@ -191,30 +194,26 @@
               <thead>
                 <tr>
                   <th>Nombre</th>
-                  <th>Identificación</th>
+                  <th>Documento</th>
                   <th>Rol</th>
                   <th>Facultad</th>
                   <th class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let a of accounts">
-                  <td class="bold">{{ a.nombreCompleto }}</td>
-                  <td>{{ a.email }}</td>
-                  <td>
-                    <span class="role-badge" [class.teacher]="a.role === 'profesor'" [class.student]="a.role === 'estudiante'">
-                      {{ a.role | titlecase }}
-                    </span>
-                  </td>
-                  <td><span class="badge">{{ a.facultad }}</span></td>
+                <tr *ngFor="let acc of accounts">
+                  <td class="bold">{{ acc.nombreCompleto }}</td>
+                  <td>{{ acc.documento }}</td>
+                  <td><span class="badge role">{{ acc.rol }}</span></td>
+                  <td><span class="badge">{{ acc.facultad }}</span></td>
                   <td class="text-center">
-                    <button class="btn-delete-row" (click)="deleteAccount(a.email)" title="Eliminar cuenta">
+                    <button class="btn-delete-row" (click)="deleteAccount(acc.documento)" title="Eliminar cuenta">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </td>
                 </tr>
                 <tr *ngIf="accounts.length === 0">
-                  <td colspan="5" class="empty-row">No se han registrado cuentas aún.</td>
+                  <td colspan="5" class="empty-row">No se han encontrado cuentas de personal.</td>
                 </tr>
               </tbody>
             </table>
@@ -222,52 +221,27 @@
         </div>
       </div>
 
-      <!-- VISTA GESTIÓN NOTICIAS -->
+      <!-- VISTA NOTICIAS -->
       <div *ngIf="activeView === 'news'" class="news-view animate-fade">
         <div class="modern-card form-card">
           <div class="card-header">
-            <h3><i class="fas fa-plus"></i> Publicar Nueva Noticia</h3>
+            <h3><i class="fas fa-newspaper"></i> Redactar Nueva Noticia</h3>
           </div>
-          
-          <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
-          <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
-
           <form [formGroup]="newsForm" (ngSubmit)="onCreateNews()" class="admin-form">
-            <div class="form-row">
-              <div class="field-group" style="flex: 1.5;">
-                <label>Título de la Noticia</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-heading"></i>
-                  <input type="text" formControlName="titulo" placeholder="Ej: Nueva jornada en Rionegro">
-                </div>
-              </div>
-              <div class="field-group">
-                <label>URL de Imagen</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-image"></i>
-                  <input type="text" formControlName="imageUrl" placeholder="https://ejemplo.com/imagen.jpg">
-                </div>
-              </div>
+            <div class="field-group">
+              <label>Título de la Noticia</label>
+              <input type="text" formControlName="titulo" placeholder="Ej: Exitosa jornada en Marinilla">
             </div>
-
-            <div class="form-row">
-              <div class="field-group" style="flex: 1;">
-                <label>Contenido</label>
-                <div class="input-wrapper" style="background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;">
-                  <textarea formControlName="contenido" placeholder="Escribe el cuerpo de la noticia aquí..." style="width: 100%; min-height: 120px; border: none; padding: 15px; font-family: inherit; resize: vertical; background: transparent; outline: none;"></textarea>
-                </div>
-              </div>
+            <div class="field-group">
+              <label>Contenido</label>
+              <textarea formControlName="contenido" rows="5" placeholder="Escribe el cuerpo de la noticia aquí..."></textarea>
             </div>
-
             <div class="form-row">
               <div class="field-group">
-                <label>Autor / Fuente</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-user-edit"></i>
-                  <input type="text" formControlName="autor">
-                </div>
+                <label>URL de Imagen (Opcional)</label>
+                <input type="text" formControlName="imageUrl" placeholder="https://...">
               </div>
-              <div class="field-group button-group" style="align-self: flex-end;">
+              <div class="field-group button-group">
                 <button type="submit" class="btn-admin-submit" [disabled]="newsForm.invalid">
                   <i class="fas fa-paper-plane"></i> Publicar Noticia
                 </button>
@@ -276,36 +250,16 @@
           </form>
         </div>
 
-        <div class="modern-card table-card">
-          <div class="card-header">
-            <h3><i class="fas fa-list"></i> Noticias Publicadas</h3>
-          </div>
-          <div class="table-container">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Título</th>
-                  <th>Autor</th>
-                  <th class="text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let n of noticias">
-                  <td>{{ n.fechaPublicacion | date:'shortDate' }}</td>
-                  <td class="bold">{{ n.titulo }}</td>
-                  <td>{{ n.autor }}</td>
-                  <td class="text-center">
-                    <button class="btn-delete-row" (click)="deleteNoticia(n.id!)" title="Eliminar noticia">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="noticias.length === 0">
-                  <td colspan="4" class="empty-row">No hay noticias publicadas aún.</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="stats-grid">
+          <div *ngFor="let n of noticias" class="news-item-card">
+            <div class="news-content">
+              <h4>{{ n.titulo }}</h4>
+              <p>{{ n.contenido | slice:0:100 }}...</p>
+              <span class="news-date">{{ n.fechaPublicacion | date:'short' }}</span>
+            </div>
+            <button class="btn-delete-news" (click)="deleteNoticia(n.id!)">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
       </div>

@@ -20,4 +20,6 @@ public class RegisterRequest {
     private String genero;
 
     private String rol;
+    private String facultad;
+    private String programa;
 }

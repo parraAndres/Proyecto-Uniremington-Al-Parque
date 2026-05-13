@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { StatsService, ImpactStats } from '../../core/services/stats.service';
 import { UserService } from '../../core/services/user.service';
 import { NewsService, Noticia } from '../../core/services/news.service';
+import { ToastService } from '../../core/services/toast.service';
 import { interval, startWith, switchMap } from 'rxjs';
 
 @Component({
@@ -60,6 +61,7 @@ export class PanelControlComponent implements OnInit {
     private statsService: StatsService,
     private userService: UserService,
     private newsService: NewsService,
+    private toastService: ToastService,
     private router: Router
   ) {
     this.accountForm = this.fb.group({
@@ -143,6 +145,14 @@ export class PanelControlComponent implements OnInit {
       await this.authService.registerUser(newUser);
 
       this.successMessage = 'La cuenta ha sido creada';
+      
+      // Efecto WOW: Notificación de creación de cuenta y asignación a facultad
+      this.toastService.show(
+        'Nueva Cuenta Registrada', 
+        `Se ha registrado el ${formValue.rol} ${formValue.nombreCompleto} para la facultad de ${formValue.facultad}.`, 
+        'info'
+      );
+
       this.accountForm.reset({ rol: 'estudiante' });
       this.loadAccounts();
       
@@ -197,6 +207,14 @@ export class PanelControlComponent implements OnInit {
     this.newsService.createNoticia(this.newsForm.value).subscribe({
       next: () => {
         this.successMessage = 'Noticia publicada correctamente';
+        
+        // Efecto WOW: Notificación a toda la comunidad estudiantil de la nueva noticia
+        this.toastService.show(
+          '¡Nueva Noticia Publicada!', 
+          `Se acaba de publicar: "${this.newsForm.value.titulo}". Notificando a todos los usuarios...`, 
+          'success'
+        );
+
         this.newsForm.reset({ autor: 'Administración' });
         this.loadNews();
         setTimeout(() => this.successMessage = '', 3000);

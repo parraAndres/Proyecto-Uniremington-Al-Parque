@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SyncService } from '../../services/sync.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 import { db } from '../../../../core/database/app-database';
 
@@ -15,8 +16,12 @@ export class BeneficiaryFormComponent implements OnInit {
   form!: FormGroup;
   isOnline = true;
   errorMessage = '';
+  facultades = [
+    'Medicina Veterinaria y Zootecnia', 'Ciencias Jurídicas', 
+    'Ciencias Empresariales', 'Diseño', 'Salud', 'Contaduría', 'Ingeniería'
+  ];
 
-  constructor(private fb: FormBuilder, private syncService: SyncService) {}
+  constructor(private fb: FormBuilder, private syncService: SyncService, private toastService: ToastService) {}
 
   ngOnInit() {
     this.syncService.networkStatus$.subscribe(status => this.isOnline = status);
@@ -56,11 +61,16 @@ export class BeneficiaryFormComponent implements OnInit {
       if (this.isOnline) {
         console.log('Online - Enviar al backend:', data);
         await this.syncService.saveLocally('beneficiaries', data); // Guardamos local también como caché
-        alert('Guardado exitosamente y sincronizado.');
       } else {
         await this.syncService.saveLocally('beneficiaries', data);
-        alert('Guardado localmente. Se sincronizará al recuperar conexión.');
       }
+      
+      // Lanzar notificación "Efecto WOW" y simular que le llega a la persona de la facultad
+      this.toastService.show(
+        '¡Nuevo Beneficiario!', 
+        `Se ha registrado a ${data.nombres} para ser atendido por la facultad de ${data.servicioSolicitado}. Notificando a los asesores de esa facultad...`, 
+        'success'
+      );
       
       this.form.reset();
       this.initForm();

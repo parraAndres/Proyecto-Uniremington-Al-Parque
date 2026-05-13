@@ -73,8 +73,11 @@
       </div>
 
       <div class="form-group">
-        <label for="servicioSolicitado">Servicio Solicitado Principal</label>
-        <input id="servicioSolicitado" type="text" formControlName="servicioSolicitado" />
+        <label for="servicioSolicitado">Facultad Solicitada para Atención</label>
+        <select id="servicioSolicitado" formControlName="servicioSolicitado">
+          <option value="">Seleccione una facultad...</option>
+          <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
+        </select>
       </div>
     </div>
 

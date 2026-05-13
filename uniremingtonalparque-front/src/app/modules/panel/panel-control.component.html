@@ -204,7 +204,11 @@
                 <tr *ngFor="let acc of accounts">
                   <td class="bold">{{ acc.nombreCompleto }}</td>
                   <td>{{ acc.documento }}</td>
-                  <td><span class="badge role">{{ acc.rol }}</span></td>
+                  <td>
+                    <span class="badge role" [class.teacher]="acc.rol === 'profesor' || acc.rol === 'PROFESOR'" [class.student]="acc.rol === 'estudiante' || acc.rol === 'ESTUDIANTE'">
+                      {{ acc.rol | titlecase }}
+                    </span>
+                  </td>
                   <td><span class="badge">{{ acc.facultad }}</span></td>
                   <td class="text-center">
                     <button class="btn-delete-row" (click)="deleteAccount(acc.documento)" title="Eliminar cuenta">

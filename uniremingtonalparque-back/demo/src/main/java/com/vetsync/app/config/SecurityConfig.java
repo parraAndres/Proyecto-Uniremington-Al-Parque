@@ -58,24 +58,20 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/auth/**",
-                    "/uni/auth/**",
-                    "/usuarios/register",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html"
-                ).permitAll()
-                .requestMatchers("/sync/**").authenticated()
-                .requestMatchers("/finanzas/**", "/usuarios/**", "/dashboard/admin").hasRole("ADMIN")
-                .requestMatchers("/dashboard/**").authenticated()
-                .requestMatchers("/citas/**", "/historias/**", "/formulas/**").hasAnyRole("ADMIN","VETERINARIO")
-                .requestMatchers("/inventario/**").hasAnyRole("ADMIN","FARMACEUTICO")
-                .requestMatchers("/clientes/**", "/mascotas/**", "/planes/**").hasAnyRole("ADMIN","VETERINARIO","AUXILIAR")
-                .requestMatchers("/facturas/**", "/pagos/**").hasAnyRole("ADMIN","VETERINARIO")
-                .anyRequest().authenticated()
-            )
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                        "/auth/**",
+                        "/uni/auth/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                    ).permitAll()
+                    .requestMatchers("/uni/**").authenticated() // Todo lo de uni requiere login
+                    .requestMatchers("/sync/**").authenticated()
+                    .requestMatchers("/finanzas/**", "/usuarios/**", "/dashboard/admin").hasRole("ADMIN")
+                    .requestMatchers("/dashboard/**").authenticated()
+                    .anyRequest().authenticated()
+                )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(uniJwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -86,7 +82,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         var config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

@@ -4,6 +4,7 @@ import com.vetsync.app.uniremington.dto.AnalyticsDtos;
 import com.vetsync.app.uniremington.repository.BeneficiarioRepository;
 import com.vetsync.app.uniremington.repository.ParticipacionAcademicaRepository;
 import com.vetsync.app.uniremington.repository.ServicioSocialRepository;
+import com.vetsync.app.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class AnalyticsService {
     private final ServicioSocialRepository servicioSocialRepository;
     private final ParticipacionAcademicaRepository participacionAcademicaRepository;
     private final BeneficiarioRepository beneficiarioRepository;
-    private final com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository usuarioUniremingtonRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public List<AnalyticsDtos.FacultadStats> estadisticasPorFacultad(LocalDateTime inicio, LocalDateTime fin) {
         Map<String, AnalyticsDtos.FacultadStats.FacultadStatsBuilder> acumulado = new HashMap<>();
@@ -108,10 +109,10 @@ public class AnalyticsService {
     public AnalyticsDtos.ImpactStats getImpactStats() {
         long municipiosVisitados = coberturaTerritorial().size();
         long personasAtendidas = beneficiarioRepository.count(); // Beneficiarios únicos
-        long personasRegistradas = usuarioUniremingtonRepository.count();
-        long personasActivas = usuarioUniremingtonRepository.countByUpdatedAtAfter(LocalDateTime.now().minusDays(7));
+        long personasRegistradas = usuarioRepository.count();
+        long personasActivas = usuarioRepository.countByCreadoEnAfter(LocalDateTime.now().minusDays(7));
         long totalAsistencias = servicioSocialRepository.count();
-        long totalEstudiantes = usuarioUniremingtonRepository.countByRol("ESTUDIANTE");
+        long totalEstudiantes = usuarioRepository.countByRol("ESTUDIANTE");
 
         return AnalyticsDtos.ImpactStats.builder()
                 .municipiosVisitados(municipiosVisitados)

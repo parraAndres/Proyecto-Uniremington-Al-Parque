@@ -1,7 +1,7 @@
 package com.vetsync.app.uniremington.security;
 
-import com.vetsync.app.uniremington.entity.UsuarioUniremington;
-import com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository;
+import com.vetsync.app.entity.Usuario;
+import com.vetsync.app.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,25 +10,35 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio que carga usuarios Uniremington por documento para Spring Security.
- * El "username" en el contexto de Spring Security es el número de documento.
+ * Servicio que carga usuarios desde la tabla principal 'usuarios' por documento.
  */
 @Service("uniUserDetailsService")
 @RequiredArgsConstructor
 public class UniUserDetailsService implements UserDetailsService {
 
-    private final UsuarioUniremingtonRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String documento) throws UsernameNotFoundException {
-        UsuarioUniremington usuario = usuarioRepository.findByDocumento(documento)
+        // Soporte para el administrador hardcodeado
+        if ("123456".equals(documento)) {
+            return User.builder()
+                    .username("123456")
+                    .password("$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOnu") // '123456' cifrado
+                    .roles("ADMIN")
+                    .build();
+        }
+
+        Usuario usuario = usuarioRepository.findByDocumento(documento)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "Usuario Uniremington no encontrado con documento: " + documento));
+                        "Usuario no encontrado con documento: " + documento));
+
+        String rolName = usuario.getRol() != null ? usuario.getRol().name() : "CLIENTE";
 
         return User.builder()
                 .username(usuario.getDocumento())
                 .password(usuario.getPassword())
-                .roles("UNIREMINGTON")
+                .roles(rolName)
                 .build();
     }
 }

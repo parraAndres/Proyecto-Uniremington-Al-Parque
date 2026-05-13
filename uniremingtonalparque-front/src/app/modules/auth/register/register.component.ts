@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -17,24 +17,18 @@ export class RegisterComponent {
   successMessage = '';
   isLoading = false;
 
-  genderOptions = [
-    'Femenino',
-    'Masculino',
-    'No binario',
-    'Prefiero no decirlo',
-    'Otro'
-  ];
+  genderOptions = ['Femenino', 'Masculino', 'No binario', 'Prefiero no decirlo', 'Otro'];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.registerForm = this.fb.group({
       nombreCompleto: ['', [Validators.required]],
       identificacion: ['', [Validators.required]],
       genero: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -48,24 +42,23 @@ export class RegisterComponent {
       this.isLoading = true;
       this.errorMessage = '';
       this.successMessage = '';
-      
+
       const formValue = this.registerForm.value;
-      
+
       const newUser = {
         nombreCompleto: formValue.nombreCompleto,
         identificador: formValue.identificacion,
         genero: formValue.genero,
-        password: formValue.password
+        password: formValue.password,
       };
 
       await this.authService.registerUser(newUser);
-      
+
       this.successMessage = '¡Registro exitoso! Redirigiendo al inicio de sesión...';
-      
+
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 2000);
-      
     } catch (error: any) {
       this.errorMessage = error.message || 'Error al registrar usuario';
     } finally {
@@ -74,7 +67,7 @@ export class RegisterComponent {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       control.markAsTouched();
       if ((control as any).controls) {
         this.markFormGroupTouched(control as FormGroup);

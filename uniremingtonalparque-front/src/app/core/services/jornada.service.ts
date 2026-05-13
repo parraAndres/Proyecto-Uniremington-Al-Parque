@@ -11,6 +11,7 @@ export interface Jornada {
   vereda?: string;
   barrio?: string;
   descripcion?: string;
+  imagenUrl?: string;
   estado: string;
   personalAsignado?: any[];
 }

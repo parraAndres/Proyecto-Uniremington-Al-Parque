@@ -75,13 +75,23 @@ export class PanelControlComponent implements OnInit {
   configForm: FormGroup;
   reportForm: FormGroup;
 
-  facultades = ['Ingeniería', 'Ciencias de la Salud', 'Ciencias Jurídicas', 'Ciencias Empresariales', 'Diseño'];
+  facultades = [
+    'Ingeniería', 
+    'Ciencias de la Salud', 
+    'Artes y Diseño', 
+    'Ciencias Jurídicas', 
+    'Ciencias Empresariales', 
+    'Medicina Veterinaria', 
+    'Contaduría'
+  ];
   programas: { [key: string]: string[] } = {
     'Ingeniería': ['Sistemas', 'Industrial', 'Civil'],
-    'Ciencias de la Salud': ['Medicina Veterinaria', 'Enfermería', 'Nutrición'],
+    'Ciencias de la Salud': ['Enfermería', 'Nutrición'],
+    'Artes y Diseño': ['Diseño Gráfico', 'Diseño de Modas'],
     'Ciencias Jurídicas': ['Derecho', 'Criminalística'],
-    'Ciencias Empresariales': ['Contaduría', 'Administración de Empresas'],
-    'Diseño': ['Diseño Gráfico', 'Diseño de Modas']
+    'Ciencias Empresariales': ['Administración de Empresas', 'Negocios Internacionales'],
+    'Medicina Veterinaria': ['Medicina Veterinaria'],
+    'Contaduría': ['Contaduría Pública']
   };
 
   get programasDisponibles() {
@@ -135,6 +145,7 @@ export class PanelControlComponent implements OnInit {
       vereda: [''],
       barrio: [''],
       descripcion: [''],
+      imagenUrl: [''],
       estado: ['PROGRAMADA']
     });
 

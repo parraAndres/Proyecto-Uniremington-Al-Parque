@@ -17,6 +17,10 @@
     gap: 1rem;
     align-items: center;
   }
+
+  @media (max-width: 768px) {
+    display: none; // Ocultar barra superior en móviles para ahorrar espacio
+  }
 }
 
 .app-header {
@@ -38,6 +42,10 @@
     width: 100%;
   }
 
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
+
   .logo {
     display: flex;
     align-items: center;
@@ -55,6 +63,10 @@
       font-weight: 900;
       letter-spacing: 0.5px;
       white-space: nowrap;
+
+      @media (max-width: 768px) {
+        display: none; // Ocultar el texto en móviles, dejando solo el logo
+      }
     }
   }
 
@@ -213,6 +225,15 @@
       &:hover {
         background-color: #002d59;
         border-color: #002d59;
+      }
+    }
+
+    @media (max-width: 768px) {
+      gap: 0.5rem;
+      
+      .btn-login, .btn-register {
+        padding: 0.6rem 1rem;
+        font-size: 14px;
       }
     }
   }
@@ -386,6 +407,33 @@
           strong {
             color: white;
             min-width: 120px;
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        text-align: center;
+        
+        &.footer-logo-column {
+          justify-content: center;
+        }
+
+        h3::after {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .social-links {
+          justify-content: center;
+        }
+
+        .contact-info li, .hours-info li {
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          
+          strong {
+            min-width: auto;
           }
         }
       }

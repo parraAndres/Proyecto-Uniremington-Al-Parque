@@ -39,6 +39,7 @@ public class JornadaController {
             j.setBarrio(details.getBarrio());
             j.setDescripcion(details.getDescripcion());
             j.setEstado(details.getEstado());
+            j.setImagenUrl(details.getImagenUrl());
             return ResponseEntity.ok(jornadaRepository.save(j));
         }).orElse(ResponseEntity.notFound().build());
     }

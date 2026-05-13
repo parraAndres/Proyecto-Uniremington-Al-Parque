@@ -36,6 +36,9 @@ public class Jornada {
     @Column(length = 500)
     private String descripcion;
 
+    @Column(length = 1000)
+    private String imagenUrl;
+
     @Builder.Default
     private String estado = "PROGRAMADA"; // PROGRAMADA, EN_CURSO, FINALIZADA, CANCELADA
 

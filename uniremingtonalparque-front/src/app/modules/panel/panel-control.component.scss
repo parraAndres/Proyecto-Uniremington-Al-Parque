@@ -8,6 +8,10 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .admin-layout {
@@ -62,6 +66,21 @@
     flex-direction: column;
     gap: 0.5rem;
 
+    @media (max-width: 992px) {
+      flex-direction: row;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      scrollbar-width: thin;
+
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 68, 123, 0.2);
+        border-radius: 10px;
+      }
+    }
+
     button {
       width: 100%;
       background: transparent;
@@ -78,6 +97,13 @@
       transition: all 0.3s ease;
 
       i { font-size: 1.1rem; width: 20px; }
+
+      @media (max-width: 992px) {
+        width: auto;
+        white-space: nowrap;
+        padding: 0.6rem 1rem;
+        flex-shrink: 0;
+      }
 
       &:hover {
         background: #f1f5f9;
@@ -361,6 +387,11 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 1.2rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
   }
 
   .field-group {
@@ -433,6 +464,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 700px;
 
   thead th {
     text-align: left;

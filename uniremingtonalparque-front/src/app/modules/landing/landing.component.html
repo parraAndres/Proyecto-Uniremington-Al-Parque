@@ -36,7 +36,7 @@
       </div>
       <div class="facultades-grid">
         <div class="facultad-card" *ngFor="let f of facultades" [style.--card-color]="f.color" (click)="toggleFacultad(f)" [class.expanded]="f.expanded">
-          <div class="icon" [style.color]="f.color">{{ f.icon }}</div>
+          <i [class]="'icon ' + f.icon" [style.color]="f.color"></i>
           <h3>{{ f.nombre }}</h3>
           <div class="desc-wrapper" [class.show]="f.expanded">
             <p>{{ f.desc }}</p>
@@ -102,6 +102,54 @@
             </div>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- JORNADAS ACTIVAS -->
+  <section class="jornadas-section" *ngIf="jornadasActivas.length > 0">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2><i class="fas fa-calendar-check"></i> Jornadas Activas</h2>
+        <p>Próximos eventos y jornadas en curso a los que puedes sumarte.</p>
+        <div class="header-line"></div>
+      </div>
+      <div class="jornadas-grid">
+        <div class="jornada-card" *ngFor="let j of jornadasActivas">
+          <div class="card-image" [style.background-image]="'url(' + ($any(j).imagenUrl || 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=600&auto=format&fit=crop') + ')'">
+            <span class="status-badge" [class]="j.estado.toLowerCase()">{{ j.estado | titlecase }}</span>
+          </div>
+          <div class="card-content">
+            <h3>{{ j.nombre }}</h3>
+            <p class="j-date"><i class="fas fa-calendar-alt"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</p>
+            <p class="j-loc"><i class="fas fa-map-marker-alt"></i> {{ j.municipio }} <span *ngIf="j.vereda">- {{ j.vereda }}</span></p>
+            <p class="j-desc">{{ j.descripcion }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JORNADAS FINALIZADAS -->
+  <section class="jornadas-section bg-light" *ngIf="jornadasFinalizadas.length > 0">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2><i class="fas fa-history"></i> Jornadas Finalizadas</h2>
+        <p>Nuestro impacto generado en las comunidades a través de eventos anteriores.</p>
+        <div class="header-line"></div>
+      </div>
+      <div class="jornadas-grid">
+        <div class="jornada-card past-event" *ngFor="let j of jornadasFinalizadas">
+          <div class="card-image" [style.background-image]="'url(' + ($any(j).imagenUrl || 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=600&auto=format&fit=crop') + ')'">
+            <span class="status-badge finalizada">Completada</span>
+          </div>
+          <div class="card-content">
+            <h3>{{ j.nombre }}</h3>
+            <p class="j-date"><i class="fas fa-calendar-check"></i> Realizado el {{ j.fecha | date:'dd/MM/yyyy' }}</p>
+            <p class="j-loc"><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</p>
+            <p class="j-desc">{{ j.descripcion }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>

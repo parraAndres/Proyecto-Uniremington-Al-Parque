@@ -44,4 +44,9 @@ public class AnalyticsController {
             @RequestParam(required = false) LocalDateTime fechaFin) {
         return analyticsService.resumenGeneral(fechaInicio, fechaFin);
     }
+
+    @GetMapping("/impact")
+    public AnalyticsDtos.ImpactStats getImpactStats() {
+        return analyticsService.getImpactStats();
+    }
 }

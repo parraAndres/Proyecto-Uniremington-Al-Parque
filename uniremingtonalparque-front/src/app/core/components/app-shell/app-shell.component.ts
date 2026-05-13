@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SyncService } from '../../../modules/parque/services/sync.service';
@@ -15,12 +15,32 @@ export class AppShellComponent implements OnInit {
   isOnline = true;
   pendingCount = 0;
   isAuthenticated = false;
+  isMenuOpen = false;
+
+  @ViewChild('hamburgerMenu') hamburgerMenu?: ElementRef;
 
   constructor(
     private syncService: SyncService,
     private authService: AuthService,
     private router: Router
   ) {}
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+    
+    // Si el menú está abierto y hacemos clic en algo que no sea el botón ni el menú en sí, lo cerramos
+    const clickedOnHamburger = targetElement.closest('.hamburger-btn');
+    const clickedInsideDropdown = targetElement.closest('.nav-dropdown');
+    
+    if (this.isMenuOpen && !clickedOnHamburger && !clickedInsideDropdown) {
+      this.isMenuOpen = false;
+    }
+  }
 
   ngOnInit() {
     this.syncService.networkStatus$.subscribe(status => this.isOnline = status);
@@ -30,6 +50,16 @@ export class AppShellComponent implements OnInit {
 
   get showHeaderControls(): boolean {
     return this.isAuthenticated && !this.router.url.includes('/login') && !this.router.url.includes('/register');
+  }
+
+  get showHamburger(): boolean {
+    // Ocultar el menú hamburguesa si estamos en el panel de control
+    return !this.router.url.includes('/panel-control');
+  }
+
+  get showLayout(): boolean {
+    const url = this.router.url.split('?')[0].split('#')[0];
+    return !['/login', '/register'].includes(url);
   }
 
   logout() {

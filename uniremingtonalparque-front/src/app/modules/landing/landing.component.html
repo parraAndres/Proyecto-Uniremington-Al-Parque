@@ -47,6 +47,37 @@
     </div>
   </section>
 
+  <section class="stats-section">
+    <div class="container stats-container">
+      <div class="section-header text-center">
+        <h2>Impacto en Tiempo Real</h2>
+        <p>Mira cómo crece nuestra comunidad y el alcance de nuestros proyectos sociales.</p>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-map-marked-alt"></i></div>
+          <div class="stat-number">{{ stats.municipiosVisitados }}</div>
+          <div class="stat-label">Municipios Visitados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
+          <div class="stat-number">{{ stats.personasAtendidas }}</div>
+          <div class="stat-label">Personas Atendidas</div>
+        </div>
+      </div>
+
+      <div class="cta-container text-center">
+        <p class="cta-text">Si quieres ver más</p>
+        <div class="cta-buttons">
+          <a routerLink="/register" class="btn-primary cta-btn">Regístrate</a>
+          <span class="cta-or">o</span>
+          <a routerLink="/login" class="btn-secondary cta-btn">Inicia sesión</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="nosotros" class="info-section">
     <div class="container info-container">
       <div class="info-image">

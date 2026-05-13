@@ -30,4 +30,15 @@ public class AnalyticsDtos {
         private String problematica;
         private long total;
     }
+
+    @Data
+    @Builder
+    public static class ImpactStats {
+        private long municipiosVisitados;
+        private long personasAtendidas; // Beneficiarios únicos
+        private long personasActivas;    // Usuarios activos últimos 7 días
+        private long personasRegistradas; // Usuarios totales
+        private long totalAsistencias;    // Servicios sociales totales
+        private long totalEstudiantes;    // Usuarios con rol ESTUDIANTE
+    }
 }

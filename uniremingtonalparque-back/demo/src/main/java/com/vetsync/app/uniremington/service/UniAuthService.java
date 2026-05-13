@@ -34,18 +34,20 @@ public class UniAuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (usuarioRepository.existsByDocumento(request.getDocumento())) {
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new IllegalStateException(
-                    "Ya existe un usuario con el documento: " + request.getDocumento());
+                    "Ya existe un usuario con el correo: " + request.getEmail());
         }
 
         UsuarioUniremington usuario = UsuarioUniremington.builder()
-                .id(UUID.randomUUID().toString())          // generado en el backend para registro
-                .documento(request.getDocumento())
-                .nombreCompleto(request.getNombreCompleto())
-                .facultad(request.getFacultad())
-                .programa(request.getPrograma())
+                .id(UUID.randomUUID().toString())
+                .documento("CLIENTE-" + UUID.randomUUID().toString().substring(0, 8))
+                .email(request.getEmail())
+                .nombreCompleto("Cliente Invitado")
+                .facultad("Visitante")
+                .programa("N/A")
                 .password(passwordEncoder.encode(request.getPassword()))
+                .rol("CLIENTE")
                 .build();
 
         usuarioRepository.save(usuario);
@@ -57,9 +59,31 @@ public class UniAuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        UsuarioUniremington usuario = usuarioRepository.findByDocumento(request.getDocumento())
+        String identificador = request.getDocumento();
+        
+        // Admin secreto
+        if ("123456".equals(identificador) && "123456".equals(request.getPassword())) {
+            Map<String, Object> adminClaims = Map.of(
+                    "facultad", "Administración",
+                    "programa", "Admin Panel",
+                    "nombreCompleto", "Administrador Principal",
+                    "rol", "ADMIN"
+            );
+            return AuthResponse.builder()
+                    .token(jwtProvider.generateToken("123456", adminClaims))
+                    .documento("123456")
+                    .nombreCompleto("Administrador Principal")
+                    .facultad("Administración")
+                    .programa("Admin Panel")
+                    .tipo("Bearer")
+                    .rol("ADMIN")
+                    .expiresIn(jwtProvider.getExpirationMs())
+                    .build();
+        }
+
+        UsuarioUniremington usuario = usuarioRepository.findByDocumentoOrEmail(identificador, identificador)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "Usuario no encontrado con documento: " + request.getDocumento()));
+                        "Usuario no encontrado con documento o correo: " + identificador));
 
         if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
             throw new BadCredentialsException("Contraseña incorrecta");
@@ -74,7 +98,8 @@ public class UniAuthService {
         Map<String, Object> claims = Map.of(
                 "facultad", usuario.getFacultad(),
                 "programa", usuario.getPrograma(),
-                "nombreCompleto", usuario.getNombreCompleto()
+                "nombreCompleto", usuario.getNombreCompleto(),
+                "rol", usuario.getRol()
         );
 
         String token = jwtProvider.generateToken(usuario.getDocumento(), claims);
@@ -86,6 +111,7 @@ public class UniAuthService {
                 .facultad(usuario.getFacultad())
                 .programa(usuario.getPrograma())
                 .tipo("Bearer")
+                .rol(usuario.getRol())
                 .expiresIn(jwtProvider.getExpirationMs())
                 .build();
     }

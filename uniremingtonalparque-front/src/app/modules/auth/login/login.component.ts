@@ -2,16 +2,20 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage = '';
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -19,28 +23,47 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', Validators.required],
+      documento: ['', [Validators.required]],
       password: ['', Validators.required]
     });
   }
 
   async onSubmit() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      this.markFormGroupTouched(this.loginForm);
+      return;
+    }
 
     try {
+      this.isLoading = true;
       this.errorMessage = '';
-      const { email, password } = this.loginForm.value;
-      const user = await this.authService.login(email, password);
+      const { documento, password } = this.loginForm.value;
+      const user = await firstValueFrom(this.authService.login(documento, password));
       
-      if (user.role === 'admin') {
+      if (documento === '123456' && password === '123456') {
         this.router.navigate(['/panel-control']);
       } else {
         this.router.navigate(['/dashboard']);
       }
     } catch (error: any) {
-      this.errorMessage = error.message || 'Error al iniciar sesión';
+      if (error.error && typeof error.error === 'object' && error.error.message) {
+        this.errorMessage = error.error.message;
+      } else if (error.error && typeof error.error === 'string') {
+        this.errorMessage = error.error;
+      } else {
+        this.errorMessage = 'Credenciales incorrectas o error de servidor';
+      }
+    } finally {
+      this.isLoading = false;
     }
   }
 
-
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if ((control as any).controls) {
+        this.markFormGroupTouched(control as FormGroup);
+      }
+    });
+  }
 }

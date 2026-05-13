@@ -8,14 +8,24 @@ import { AuthService } from '../../../core/services/auth.service';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   errorMessage = '';
   successMessage = '';
+  isLoading = false;
 
-
+  facultades = [
+    'Ingeniería',
+    'Salud',
+    'Artes y Diseño',
+    'Ciencias Jurídicas',
+    'Empresariales',
+    'Veterinaria',
+    'Contaduría'
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -23,29 +33,32 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      nombreCompleto: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   async onSubmit() {
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.markFormGroupTouched(this.registerForm);
+      return;
+    }
 
     try {
+      this.isLoading = true;
       this.errorMessage = '';
       this.successMessage = '';
+      
       const formValue = this.registerForm.value;
       
-      const newUser: any = {
+      const newUser = {
         email: formValue.email,
-        nombreCompleto: formValue.nombreCompleto,
-        passwordHash: formValue.password, // Se hasheará en el servicio
-        role: 'cliente'
+        password: formValue.password
       };
 
       await this.authService.registerUser(newUser);
-      this.successMessage = 'Usuario registrado con éxito. Redirigiendo al login...';
+      
+      this.successMessage = '¡Registro exitoso! Redirigiendo al inicio de sesión...';
       
       setTimeout(() => {
         this.router.navigate(['/login']);
@@ -53,8 +66,17 @@ export class RegisterComponent {
       
     } catch (error: any) {
       this.errorMessage = error.message || 'Error al registrar usuario';
+    } finally {
+      this.isLoading = false;
     }
   }
 
-
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if ((control as any).controls) {
+        this.markFormGroupTouched(control as FormGroup);
+      }
+    });
+  }
 }

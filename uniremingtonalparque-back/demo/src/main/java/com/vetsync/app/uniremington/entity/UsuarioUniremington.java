@@ -27,6 +27,9 @@ public class UsuarioUniremington {
     @Column(name = "id", length = 36, updatable = false, nullable = false)
     private String id;
 
+    @Column(length = 150, unique = true)
+    private String email;
+
     @NotBlank
     @Column(nullable = false, length = 30, unique = true)
     private String documento;
@@ -47,6 +50,9 @@ public class UsuarioUniremington {
     @NotBlank
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false, length = 50)
+    private String rol; // ADMIN, ESTUDIANTE, CLIENTE
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

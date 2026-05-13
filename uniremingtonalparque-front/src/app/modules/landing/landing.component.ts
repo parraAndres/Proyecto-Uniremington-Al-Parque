@@ -1,6 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { StatsService, ImpactStats } from '../../core/services/stats.service';
+import { interval, Subscription } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-landing',
@@ -12,6 +15,16 @@ import { RouterModule, Router } from '@angular/router';
 export class LandingComponent implements OnInit, OnDestroy {
   currentSlide = 0;
   private intervalId: any;
+  private statsSubscription?: Subscription;
+  
+  stats: ImpactStats = { 
+    municipiosVisitados: 0, 
+    personasAtendidas: 0,
+    personasActivas: 0,
+    personasRegistradas: 0,
+    totalAsistencias: 0,
+    totalEstudiantes: 0
+  };
   
   images = [
     'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop',
@@ -21,7 +34,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   ];
 
   facultades = [
-    { nombre: 'Ingeniería', icon: '⚙️', color: '#ff6b00', desc: 'Soluciones tecnológicas e innovación. Proyectos orientados a resolver problemas técnicos y de infraestructura en las comunidades.', expanded: false },
+    { nombre: 'Ingeniería', icon: '⚙️', color: '#e3000f', desc: 'Soluciones tecnológicas e innovación. Proyectos orientados a resolver problemas técnicos y de infraestructura en las comunidades.', expanded: false },
     { nombre: 'Salud', icon: '⚕️', color: '#00b359', desc: 'Cuidado y bienestar integral. Jornadas de prevención, promoción de la salud y atención básica a poblaciones vulnerables.', expanded: false },
     { nombre: 'Artes y Diseño', icon: '🎨', color: '#ffcc00', desc: 'Expresión creativa y visual. Intervenciones artísticas, talleres creativos y mejoramiento estético de espacios públicos.', expanded: false },
     { nombre: 'Ciencias Jurídicas', icon: '⚖️', color: '#0052cc', desc: 'Justicia y acompañamiento legal. Asesoría jurídica gratuita y resolución de conflictos para la comunidad.', expanded: false },
@@ -31,16 +44,34 @@ export class LandingComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    private router: Router
+    private router: Router,
+    private statsService: StatsService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
   }
 
   ngOnInit() {
     this.startAutoPlay();
+    if (isPlatformBrowser(this.platformId)) {
+      this.statsSubscription = interval(10000)
+        .pipe(
+          startWith(0),
+          switchMap(() => this.statsService.getImpactStats())
+        )
+        .subscribe({
+          next: (res) => {
+            this.stats = res;
+          },
+          error: (err) => console.error('Error fetching stats', err)
+        });
+    }
   }
 
   ngOnDestroy() {
     this.stopAutoPlay();
+    if (this.statsSubscription) {
+      this.statsSubscription.unsubscribe();
+    }
   }
 
   startAutoPlay() {

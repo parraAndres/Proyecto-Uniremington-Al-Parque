@@ -4,18 +4,15 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { db } from '../../core/database/app-database';
 import { AuthService } from '../../core/services/auth.service';
+import { StatsService, ImpactStats } from '../../core/services/stats.service';
+import { interval, startWith, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-panel-control',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './panel-control.component.html',
-  styles: [`
-    .dashboard-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-    .chart-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .chart-card h3 { margin-top: 0; color: var(--primary-color, #004d99); font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-    .canvas-placeholder { width: 100%; height: 250px; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; }
-  `]
+  styleUrls: ['./panel-control.component.scss']
 })
 export class PanelControlComponent implements OnInit {
   students: any[] = [];
@@ -23,6 +20,15 @@ export class PanelControlComponent implements OnInit {
   isAdmin = false;
   successMessage = '';
   errorMessage = '';
+  impactStats: ImpactStats = {
+    municipiosVisitados: 0,
+    personasAtendidas: 0,
+    personasActivas: 0,
+    personasRegistradas: 0,
+    totalAsistencias: 0,
+    totalEstudiantes: 0
+  };
+  activeView: 'dashboard' | 'students' = 'dashboard';
 
   facultades = [
     'Medicina Veterinaria y Zootecnia',
@@ -47,6 +53,7 @@ export class PanelControlComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private statsService: StatsService,
     private router: Router
   ) {
     this.studentForm = this.fb.group({
@@ -66,19 +73,31 @@ export class PanelControlComponent implements OnInit {
   ngOnInit() {
     // Verificar si ya hay un usuario activo al momento de cargar el componente
     const currentUser = this.authService['currentUserSubject']?.value;
-    if (currentUser && currentUser.role === 'admin') {
+    if (currentUser && currentUser.documento === '123456') {
       this.isAdmin = true;
       this.loadStudents();
     }
 
     // También suscribirse por si el usuario se autentica después
     this.authService.currentUser$.subscribe(user => {
-      if (user && user.role === 'admin') {
+      if (user && user.documento === '123456') {
         this.isAdmin = true;
         this.loadStudents();
-      } else if (user && user.role !== 'admin') {
+        this.startStatsPolling();
+      } else if (user && user.documento !== '123456') {
         this.router.navigate(['/dashboard']);
       }
+    });
+  }
+
+  startStatsPolling() {
+    // Actualización cada 1 hora (3600000 ms) para optimización
+    interval(3600000).pipe(
+      startWith(0),
+      switchMap(() => this.statsService.getImpactStats())
+    ).subscribe({
+      next: (stats) => this.impactStats = stats,
+      error: (err) => console.error('Error fetching admin stats', err)
     });
   }
 
@@ -138,5 +157,10 @@ export class PanelControlComponent implements OnInit {
         this.errorMessage = 'Error al eliminar el estudiante';
       }
     }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

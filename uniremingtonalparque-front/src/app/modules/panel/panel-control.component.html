@@ -1,76 +1,207 @@
-<div class="form-container" style="max-width: 1200px;">
-  <h2>Panel de Control Estratégico</h2>
-  <p>Visualización analítica de los datos capturados en el territorio.</p>
+<div class="admin-page-container" *ngIf="isAdmin">
+  <div class="admin-layout">
+    
+    <!-- Sidebar Interno -->
+    <aside class="internal-sidebar">
+      <div class="sidebar-info">
+        <i class="fas fa-user-shield admin-icon"></i>
+        <span>Panel Admin</span>
+      </div>
+      <nav class="internal-nav">
+        <button [class.active]="activeView === 'dashboard'" (click)="activeView = 'dashboard'">
+          <i class="fas fa-chart-pie"></i> Dashboard
+        </button>
+        <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
+          <i class="fas fa-users-cog"></i> Estudiantes
+        </button>
+      </nav>
+      <div class="sidebar-status">
+        <div class="update-indicator">
+          <i class="fas fa-clock"></i> Actualización: 1h
+        </div>
+      </div>
+    </aside>
 
-  <div *ngIf="isAdmin" class="admin-section" style="margin-bottom: 2rem; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-    <h3>Registro de Estudiantes (Admin)</h3>
-    <p style="margin-bottom: 1rem; color: #666;">Crea cuentas para los estudiantes que participarán en Uniremington al Parque.</p>
+    <!-- Área de Contenido -->
+    <section class="admin-content">
+      
+      <!-- HEADER INTERNO -->
+      <header class="content-header">
+        <div class="header-text">
+          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : 'Gestión de Cuentas Estudiantiles' }}</h1>
+          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Crea y administra las credenciales para los estudiantes participantes.' }}</p>
+        </div>
+      </header>
 
-    <div *ngIf="errorMessage" class="error-alert" style="color: #9f0000; margin-bottom: 1rem;">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-alert" style="color: #009933; margin-bottom: 1rem;">{{ successMessage }}</div>
+      <!-- VISTA DASHBOARD -->
+      <div *ngIf="activeView === 'dashboard'" class="dashboard-view animate-fade">
+        <div class="stats-grid">
+          <!-- Personas Registradas -->
+          <div class="stat-card card-blue">
+            <div class="card-icon"><i class="fas fa-user-plus"></i></div>
+            <div class="card-info">
+              <span class="card-label">Personas Registradas</span>
+              <span class="card-value">{{ impactStats.personasRegistradas | number }}</span>
+            </div>
+          </div>
+          <!-- Estudiantes Registrados -->
+          <div class="stat-card card-cyan" style="border-left: 5px solid #00acc1;">
+            <div class="card-icon" style="background: linear-gradient(135deg, #00acc1, #007c91);"><i class="fas fa-user-graduate"></i></div>
+            <div class="card-info">
+              <span class="card-label">Estudiantes</span>
+              <span class="card-value">{{ impactStats.totalEstudiantes | number }}</span>
+            </div>
+          </div>
+          <!-- Personas Activas -->
+          <div class="stat-card card-green">
+            <div class="card-icon"><i class="fas fa-user-check"></i></div>
+            <div class="card-info">
+              <span class="card-label">Personas Activas</span>
+              <span class="card-value">{{ impactStats.personasActivas | number }}</span>
+            </div>
+          </div>
+          <!-- Pueblos Visitados -->
+          <div class="stat-card card-red">
+            <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+            <div class="card-info">
+              <span class="card-label">Pueblos Visitados</span>
+              <span class="card-value">{{ impactStats.municipiosVisitados | number }}</span>
+            </div>
+          </div>
+          <!-- Personas Asistidas -->
+          <div class="stat-card card-orange">
+            <div class="card-icon"><i class="fas fa-hands-helping"></i></div>
+            <div class="card-info">
+              <span class="card-label">Personas Asistidas</span>
+              <span class="card-value">{{ impactStats.personasAtendidas | number }}</span>
+            </div>
+          </div>
+          <!-- Cantidad Beneficiarios (Total Asistencias) -->
+          <div class="stat-card card-purple">
+            <div class="card-icon"><i class="fas fa-hospital-user"></i></div>
+            <div class="card-info">
+              <span class="card-label">Cantidad Beneficiarios</span>
+              <span class="card-value">{{ impactStats.totalAsistencias | number }}</span>
+            </div>
+          </div>
+        </div>
 
-    <form [formGroup]="studentForm" (ngSubmit)="onRegisterStudent()" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-      <div class="form-group">
-        <label for="nombreCompleto">Nombre Completo</label>
-        <input id="nombreCompleto" type="text" formControlName="nombreCompleto" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" />
+        <div class="dashboard-footer-info">
+          <p><i class="fas fa-info-circle"></i> Los datos se actualizan automáticamente cada 60 minutos para optimizar el rendimiento del servidor.</p>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="email">Correo Institucional</label>
-        <input id="email" type="email" formControlName="email" placeholder="estudiante@uniremington.edu.co" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" />
+      <!-- VISTA ESTUDIANTES -->
+      <div *ngIf="activeView === 'students'" class="students-view animate-fade">
+        <div class="modern-card form-card">
+          <div class="card-header">
+            <h3><i class="fas fa-plus"></i> Nuevo Registro de Estudiante</h3>
+          </div>
+          
+          <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
+
+          <form [formGroup]="studentForm" (ngSubmit)="onRegisterStudent()" class="admin-form">
+            <div class="form-row">
+              <div class="field-group">
+                <label>Nombre Completo</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-user"></i>
+                  <input type="text" formControlName="nombreCompleto" placeholder="Ej: Carlos Mario Restrepo">
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Correo Electrónico</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-envelope"></i>
+                  <input type="email" formControlName="email" placeholder="usuario@uniremington.edu.co">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label>Facultad</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-university"></i>
+                  <select formControlName="facultad" class="custom-select">
+                    <option value="">Seleccione una facultad</option>
+                    <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Programa</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-graduation-cap"></i>
+                  <select formControlName="programa" class="custom-select">
+                    <option value="">Seleccione un programa</option>
+                    <option *ngFor="let p of programasDisponibles" [value]="p">{{ p }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label>Contraseña Temporal</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-key"></i>
+                  <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+                </div>
+              </div>
+              <div class="field-group button-group">
+                <button type="submit" class="btn-admin-submit" [disabled]="studentForm.invalid">
+                  <i class="fas fa-check"></i> Registrar Estudiante
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modern-card table-card">
+          <div class="card-header">
+            <h3><i class="fas fa-list-ul"></i> Cuentas Administradas</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo / Documento</th>
+                  <th>Facultad</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of students">
+                  <td class="bold">{{ s.nombreCompleto }}</td>
+                  <td>{{ s.email }}</td>
+                  <td><span class="badge">{{ s.facultad }}</span></td>
+                  <td class="text-center">
+                    <button class="btn-delete-row" (click)="deleteStudent(s.email)" title="Eliminar estudiante">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="students.length === 0">
+                  <td colspan="4" class="empty-row">No se han registrado estudiantes aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="facultad">Facultad</label>
-        <select id="facultad" formControlName="facultad" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
-          <option value="">Seleccione...</option>
-          <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
-        </select>
-      </div>
+    </section>
+  </div>
+</div>
 
-      <div class="form-group">
-        <label for="programa">Programa Académico</label>
-        <select id="programa" formControlName="programa" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
-          <option value="">Seleccione...</option>
-          <option *ngFor="let p of programasDisponibles" [value]="p">{{ p }}</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Contraseña (Temporal)</label>
-        <input id="password" type="password" formControlName="password" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" />
-      </div>
-
-      <div class="form-group" style="display: flex; align-items: flex-end;">
-        <button type="submit" class="btn-primary" [disabled]="studentForm.invalid" style="width: 100%; padding: 0.6rem; background: var(--primary-color, #004d99); color: white; border: none; border-radius: 4px; cursor: pointer;">Registrar Estudiante</button>
-      </div>
-    </form>
-
-    <div style="margin-top: 2rem;">
-      <h4 style="margin-bottom: 1rem; color: #333; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Cuentas de Estudiantes</h4>
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead>
-          <tr style="background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
-            <th style="padding: 0.8rem; font-weight: 600;">Nombre Completo</th>
-            <th style="padding: 0.8rem; font-weight: 600;">Correo/Documento</th>
-            <th style="padding: 0.8rem; font-weight: 600;">Facultad</th>
-            <th style="padding: 0.8rem; font-weight: 600; text-align: center;">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let s of students" style="border-bottom: 1px solid #eee;">
-            <td style="padding: 0.8rem;">{{ s.nombreCompleto }}</td>
-            <td style="padding: 0.8rem;">{{ s.email }}</td>
-            <td style="padding: 0.8rem;">{{ s.facultad }}</td>
-            <td style="padding: 0.8rem; text-align: center;">
-              <button (click)="deleteStudent(s.email)" style="background-color: #cc0000; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Eliminar</button>
-            </td>
-          </tr>
-          <tr *ngIf="students.length === 0">
-            <td colspan="4" style="padding: 1rem; text-align: center; color: #777;">No hay estudiantes registrados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="unauthorized-container" *ngIf="!isAdmin">
+  <div class="unauth-box">
+    <i class="fas fa-user-lock"></i>
+    <h2>Acceso no autorizado</h2>
+    <p>Debes ingresar con el código secreto para ver estas estadísticas.</p>
+    <button routerLink="/login" class="btn-return">Ir al Login</button>
   </div>
 </div>

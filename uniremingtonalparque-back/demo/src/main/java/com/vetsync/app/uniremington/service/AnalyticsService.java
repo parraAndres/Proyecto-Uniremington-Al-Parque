@@ -19,6 +19,7 @@ public class AnalyticsService {
     private final ServicioSocialRepository servicioSocialRepository;
     private final ParticipacionAcademicaRepository participacionAcademicaRepository;
     private final BeneficiarioRepository beneficiarioRepository;
+    private final com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository usuarioUniremingtonRepository;
 
     public List<AnalyticsDtos.FacultadStats> estadisticasPorFacultad(LocalDateTime inicio, LocalDateTime fin) {
         Map<String, AnalyticsDtos.FacultadStats.FacultadStatsBuilder> acumulado = new HashMap<>();
@@ -102,5 +103,23 @@ public class AnalyticsService {
         out.put("problematicasFrecuentes", problematicasFrecuentes(inicio, fin));
         out.put("coberturaTerritorial", coberturaTerritorial());
         return out;
+    }
+
+    public AnalyticsDtos.ImpactStats getImpactStats() {
+        long municipiosVisitados = coberturaTerritorial().size();
+        long personasAtendidas = beneficiarioRepository.count(); // Beneficiarios únicos
+        long personasRegistradas = usuarioUniremingtonRepository.count();
+        long personasActivas = usuarioUniremingtonRepository.countByUpdatedAtAfter(LocalDateTime.now().minusDays(7));
+        long totalAsistencias = servicioSocialRepository.count();
+        long totalEstudiantes = usuarioUniremingtonRepository.countByRol("ESTUDIANTE");
+
+        return AnalyticsDtos.ImpactStats.builder()
+                .municipiosVisitados(municipiosVisitados)
+                .personasAtendidas(personasAtendidas)
+                .personasRegistradas(personasRegistradas)
+                .personasActivas(personasActivas)
+                .totalAsistencias(totalAsistencias)
+                .totalEstudiantes(totalEstudiantes)
+                .build();
     }
 }

@@ -1,25 +1,42 @@
 <div class="app-layout">
-  <header class="app-header">
-    <div class="logo">
-      <img src="assets/img/logo.png" alt="Uniremington" class="logo-img">
+  <div class="top-bar" *ngIf="showLayout">
+    <div class="top-bar-container" style="justify-content: flex-end;">
+      <div class="top-bar-right">
+        <span class="phone-contact"><i class="fas fa-phone-alt"></i> Línea Gratuita Nacional: 018000 410 203</span>
+      </div>
     </div>
-    <nav class="main-nav">
-      <a routerLink="/" fragment="nosotros" class="nav-link">Sobre nosotros</a>
-      <a routerLink="/" fragment="facultades" class="nav-link">Nuestras facultades</a>
-    </nav>
+  </div>
 
-    <div class="auth-buttons" *ngIf="!isAuthenticated" style="margin-left:auto;">
-      <a routerLink="/login" class="btn-login" style="margin-right:0.5rem;">Iniciar sesión</a>
-      <a routerLink="/register" class="btn-register">Registrarse</a>
-    </div>
-    <div class="network-status" *ngIf="showHeaderControls">
-      <span class="status-indicator" [class.online]="isOnline" [class.offline]="!isOnline">
-        {{ isOnline ? 'Conectado' : 'Sin conexión' }}
-      </span>
-      <span *ngIf="pendingCount > 0" class="pending-badge clickable-badge" routerLink="/offline-status" title="Ir al gestor de sincronización">
-        {{ pendingCount }} pendient{{ pendingCount > 1 ? 'es' : 'e' }} de subir
-      </span>
-      <button class="btn-logout" (click)="logout()" title="Cerrar sesión">Salir</button>
+  <header class="app-header" *ngIf="showLayout">
+    <div class="header-container">
+      <div class="logo" routerLink="/" style="cursor: pointer;">
+        <img src="assets/img/logo.png" alt="Uniremington" class="logo-img">
+        <span class="logo-text">Uniremington Al Parque</span>
+      </div>
+      <div class="auth-controls">
+        <div class="auth-buttons" *ngIf="!isAuthenticated">
+          <a routerLink="/login" class="btn-login">Iniciar sesión</a>
+          <a routerLink="/register" class="btn-register">Registrarse</a>
+        </div>
+        <div class="network-status" *ngIf="showHeaderControls">
+          <span class="status-indicator" [class.online]="isOnline" [class.offline]="!isOnline">
+            {{ isOnline ? 'Conectado' : 'Sin conexión' }}
+          </span>
+          <span *ngIf="pendingCount > 0" class="pending-badge clickable-badge" routerLink="/offline-status" title="Ir al gestor de sincronización">
+            {{ pendingCount }} pendient{{ pendingCount > 1 ? 'es' : 'e' }} de subir
+          </span>
+          <button class="btn-logout" (click)="logout()" title="Cerrar sesión">Salir</button>
+        </div>
+        <div class="hamburger-menu-container" *ngIf="showHamburger">
+          <button class="hamburger-btn" (click)="toggleMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="auth-dropdown nav-dropdown" [class.show]="isMenuOpen">
+            <a href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer" class="nav-link" (click)="toggleMenu()">Sobre nosotros</a>
+            <a routerLink="/" fragment="facultades" class="nav-link" (click)="toggleMenu()">Nuestras facultades</a>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -27,8 +44,12 @@
     <router-outlet></router-outlet>
   </main>
 
-  <footer class="app-footer">
+  <footer class="app-footer" *ngIf="showLayout">
     <div class="footer-content container">
+      <div class="footer-column footer-logo-column">
+        <img src="assets/img/logouni.png" alt="Uniremington Logo" class="footer-logo">
+      </div>
+
       <div class="footer-column">
         <h3>Nuestras Redes</h3>
         <p>Conéctate con nosotros y mantente al día con todas nuestras actividades.</p>

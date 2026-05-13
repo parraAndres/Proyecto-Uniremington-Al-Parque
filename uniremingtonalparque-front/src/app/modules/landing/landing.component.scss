@@ -1,6 +1,6 @@
 :host {
-  --primary: #ff6b00;
-  --primary-hover: #e66000;
+  --primary: #e3000f;
+  --primary-hover: #b3000b;
   --secondary: #0052cc;
   --secondary-hover: #0043a8;
   --dark: #1a1a2e;
@@ -360,6 +360,137 @@
 
       &:hover .click-hint {
         opacity: 1;
+      }
+    }
+  }
+}
+
+/* STATS SECTION */
+.stats-section {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--secondary) 0%, #003380 100%);
+  color: var(--white);
+
+  .section-header {
+    margin-bottom: 3.5rem;
+    
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--white);
+    }
+    
+    p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2.5rem 3rem;
+      text-align: center;
+      min-width: 250px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .stat-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+      }
+
+      .stat-number {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, #fff, #ffcc00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .cta-container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+
+    .cta-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+
+      .cta-btn {
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        
+        &.btn-primary {
+          background-color: var(--primary);
+          color: var(--white);
+          
+          &:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+          }
+        }
+        
+        &.btn-secondary {
+          background-color: transparent;
+          color: var(--white);
+          border: 2px solid var(--white);
+          
+          &:hover {
+            background-color: var(--white);
+            color: var(--secondary);
+            transform: translateY(-2px);
+          }
+        }
+      }
+
+      .cta-or {
+        font-weight: 600;
+        opacity: 0.8;
       }
     }
   }

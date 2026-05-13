@@ -18,5 +18,6 @@ public class AuthResponse {
     private String facultad;
     private String programa;
     private String tipo;      // "Bearer"
+    private String rol;
     private long expiresIn;   // milisegundos de expiración
 }

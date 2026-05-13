@@ -107,7 +107,7 @@ public class ReporteService {
         for (String h : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(h, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10)));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setBackgroundColor(new Color(230, 230, 230));
+            cell.setBackgroundColor(new java.awt.Color(230, 230, 230));
             table.addCell(cell);
         }
 

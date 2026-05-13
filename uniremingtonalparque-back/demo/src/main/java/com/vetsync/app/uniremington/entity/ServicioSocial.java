@@ -42,6 +42,9 @@ public class ServicioSocial {
     @Column(nullable = false)
     private LocalDateTime fechaServicio;
 
+    @Column(length = 50)
+    private String estado = "ABIERTO"; // ABIERTO, EN_PROCESO, FINALIZADO
+
     @Column(columnDefinition = "TEXT")
     private String observaciones;
 

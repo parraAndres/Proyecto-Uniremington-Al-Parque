@@ -1,46 +1,67 @@
-<div class="admin-page-container" *ngIf="isAdmin">
+<div class="admin-page-container" *ngIf="isAdmin || isDocente">
   <div class="admin-layout">
     
     <!-- Sidebar Interno -->
     <aside class="internal-sidebar">
       <div class="sidebar-info">
-        <i class="fas fa-user-shield admin-icon"></i>
-        <span>Panel Admin</span>
+        <i class="fas" [ngClass]="isAdmin ? 'fa-user-shield' : 'fa-chalkboard-teacher'"></i>
+        <span>{{ isAdmin ? 'Panel Admin' : 'Coordinación' }}</span>
       </div>
       <nav class="internal-nav">
+        <!-- VISTA DASHBOARD (Compartida o diferente según rol) -->
         <button [class.active]="activeView === 'dashboard'" (click)="activeView = 'dashboard'">
           <i class="fas fa-chart-pie"></i> Dashboard
         </button>
-        <button [class.active]="activeView === 'impact'" (click)="activeView = 'impact'">
-          <i class="fas fa-chart-bar"></i> Gestión de Impacto
-        </button>
-        <button [class.active]="activeView === 'efficiency'" (click)="activeView = 'efficiency'">
-          <i class="fas fa-stopwatch"></i> Eficiencia Operativa
-        </button>
-        <button [class.active]="activeView === 'territorial'" (click)="activeView = 'territorial'">
-          <i class="fas fa-map-marked-alt"></i> Análisis Territorial
-        </button>
-        <button [class.active]="activeView === 'ranking'" (click)="activeView = 'ranking'">
-          <i class="fas fa-trophy"></i> Ranking Estudiantes
-        </button>
-        <button [class.active]="activeView === 'jornadas'" (click)="activeView = 'jornadas'">
-          <i class="fas fa-map-marked-alt"></i> Gestión de Jornadas
-        </button>
-        <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
-          <i class="fas fa-users-cog"></i> Gestión Usuarios
-        </button>
-        <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
-          <i class="fas fa-newspaper"></i> Noticias
-        </button>
-        <button [class.active]="activeView === 'config'" (click)="activeView = 'config'">
-          <i class="fas fa-cogs"></i> Configuración General
-        </button>
-        <button [class.active]="activeView === 'strategic'" (click)="activeView = 'strategic'">
-          <i class="fas fa-satellite"></i> Monitoreo Estratégico
-        </button>
-        <button [class.active]="activeView === 'reports'" (click)="activeView = 'reports'">
-          <i class="fas fa-file-export"></i> Reportes
-        </button>
+
+        <!-- SECCIÓN ADMINISTRACIÓN -->
+        <ng-container *ngIf="isAdmin">
+          <button [class.active]="activeView === 'strategic'" (click)="activeView = 'strategic'">
+            <i class="fas fa-satellite"></i> Monitoreo Estratégico
+          </button>
+          <button [class.active]="activeView === 'reports'" (click)="activeView = 'reports'">
+            <i class="fas fa-file-export"></i> Reportes
+          </button>
+          <button [class.active]="activeView === 'jornadas'" (click)="activeView = 'jornadas'">
+            <i class="fas fa-map-marked-alt"></i> Gestión de Jornadas
+          </button>
+          <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
+            <i class="fas fa-users-cog"></i> Gestión Usuarios
+          </button>
+          <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
+            <i class="fas fa-newspaper"></i> Noticias
+          </button>
+          <button [class.active]="activeView === 'config'" (click)="activeView = 'config'">
+            <i class="fas fa-cogs"></i> Configuración General
+          </button>
+          
+          <div class="nav-divider">Analítica</div>
+          <button [class.active]="activeView === 'impact'" (click)="activeView = 'impact'">
+            <i class="fas fa-chart-bar"></i> Impacto Social
+          </button>
+          <button [class.active]="activeView === 'efficiency'" (click)="activeView = 'efficiency'">
+            <i class="fas fa-stopwatch"></i> Eficiencia
+          </button>
+          <button [class.active]="activeView === 'territorial'" (click)="activeView = 'territorial'">
+            <i class="fas fa-map-marked-alt"></i> Territorial
+          </button>
+          <button [class.active]="activeView === 'ranking'" (click)="activeView = 'ranking'">
+            <i class="fas fa-trophy"></i> Ranking
+          </button>
+        </ng-container>
+
+        <!-- SECCIÓN DOCENTE -->
+        <ng-container *ngIf="isDocente">
+          <div class="nav-divider">Mi Coordinación</div>
+          <button [class.active]="activeView === 'docente_students'" (click)="activeView = 'docente_students'">
+            <i class="fas fa-user-graduate"></i> Mis Estudiantes
+          </button>
+          <button [class.active]="activeView === 'docente_jornadas'" (click)="activeView = 'docente_jornadas'">
+            <i class="fas fa-calendar-check"></i> Mis Jornadas
+          </button>
+          <button [class.active]="activeView === 'docente_casos'" (click)="activeView = 'docente_casos'">
+            <i class="fas fa-folder-open"></i> Casos Pendientes
+          </button>
+        </ng-container>
       </nav>
 
       <div class="sidebar-status">
@@ -60,48 +81,87 @@
       <header class="content-header">
         <div class="header-text">
           <h1>{{ 
-            activeView === 'dashboard' ? 'Resumen General' : 
+            activeView === 'dashboard' ? (isAdmin ? 'Resumen Institucional' : 'Mi Coordinación Operativa') : 
+            activeView === 'docente_students' ? 'Mis Estudiantes Asignados' :
+            activeView === 'docente_jornadas' ? 'Mis Jornadas de Impacto' :
+            activeView === 'docente_casos' ? 'Casos Pendientes de Seguimiento' :
             activeView === 'impact' ? 'Gestión de Impacto por Facultad' : 
             activeView === 'efficiency' ? 'Eficiencia y Remisiones' : 
-            activeView === 'territorial' ? 'Análisis Territorial de Problemáticas' : 
-            activeView === 'ranking' ? 'Ranking de Prácticas Estudiantiles' :
-            activeView === 'students' ? 'Gestión de Cuentas' : 'Gestión de Noticias' 
+            activeView === 'territorial' ? 'Análisis Territorial' : 
+            activeView === 'ranking' ? 'Ranking de Prácticas' :
+            activeView === 'students' ? 'Gestión de Cuentas' : 'Administración' 
           }}</h1>
-          <p>Monitoreo y administración del programa Uniremington al Parque.</p>
+          <p>{{ isAdmin ? 'Monitoreo y administración global del programa.' : 'Gestión y seguimiento de actividades en territorio.' }}</p>
         </div>
       </header>
 
-      <!-- VISTA DASHBOARD (RESUMEN) -->
+      <!-- VISTA DASHBOARD (RESUMEN ADAPTATIVO) -->
       <div *ngIf="activeView === 'dashboard'" class="dashboard-view animate-fade">
         <div class="stats-grid">
-          <div class="stat-card card-blue">
-            <div class="card-icon"><i class="fas fa-user-friends"></i></div>
-            <div class="card-info">
-              <span class="card-label">Total Beneficiarios</span>
-              <span class="card-value">{{ impactStats.personasAtendidas | number }}</span>
+          <!-- Stats para el Docente -->
+          <ng-container *ngIf="isDocente">
+            <div class="stat-card card-blue">
+              <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
+              <div class="card-info">
+                <span class="card-label">Mis Estudiantes</span>
+                <span class="card-value">{{ docenteStats.totalEstudiantes }}</span>
+              </div>
             </div>
-          </div>
-          <div class="stat-card card-cyan">
-            <div class="card-icon"><i class="fas fa-concierge-bell"></i></div>
-            <div class="card-info">
-              <span class="card-label">Total Servicios</span>
-              <span class="card-value">{{ impactStats.totalAsistencias | number }}</span>
+            <div class="stat-card card-cyan">
+              <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+              <div class="card-info">
+                <span class="card-label">Mis Jornadas</span>
+                <span class="card-value">{{ docenteStats.totalJornadas }}</span>
+              </div>
             </div>
-          </div>
-          <div class="stat-card card-green">
-            <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
-            <div class="card-info">
-              <span class="card-label">Jornadas Activas</span>
-              <span class="card-value">12</span>
+            <div class="stat-card card-purple">
+              <div class="card-icon"><i class="fas fa-hands-helping"></i></div>
+              <div class="card-info">
+                <span class="card-label">Atenciones Generadas</span>
+                <span class="card-value">{{ docenteStats.beneficiariosAtendidos }}</span>
+              </div>
             </div>
-          </div>
-          <div class="stat-card card-orange">
-            <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
-            <div class="card-info">
-              <span class="card-label">Estudiantes Participantes</span>
-              <span class="card-value">{{ impactStats.totalEstudiantes | number }}</span>
+            <div class="stat-card card-orange">
+              <div class="card-icon"><i class="fas fa-folder-open"></i></div>
+              <div class="card-info">
+                <span class="card-label">Casos por Cerrar</span>
+                <span class="card-value">{{ docenteStats.casosPendientes }}</span>
+              </div>
             </div>
-          </div>
+          </ng-container>
+
+          <!-- Stats para el Admin (Existente) -->
+          <ng-container *ngIf="isAdmin">
+            <div class="stat-card card-blue">
+              <div class="card-icon"><i class="fas fa-user-friends"></i></div>
+              <div class="card-info">
+                <span class="card-label">Total Beneficiarios</span>
+                <span class="card-value">{{ impactStats.personasAtendidas | number }}</span>
+              </div>
+            </div>
+            <div class="stat-card card-cyan">
+              <div class="card-icon"><i class="fas fa-concierge-bell"></i></div>
+              <div class="card-info">
+                <span class="card-label">Total Servicios</span>
+                <span class="card-value">{{ impactStats.totalAsistencias | number }}</span>
+              </div>
+            </div>
+            <!-- ... otros cards de admin ... -->
+            <div class="stat-card card-green">
+              <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+              <div class="card-info">
+                <span class="card-label">Jornadas Activas</span>
+                <span class="card-value">12</span>
+              </div>
+            </div>
+            <div class="stat-card card-orange">
+              <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
+              <div class="card-info">
+                <span class="card-label">Estudiantes Participantes</span>
+                <span class="card-value">{{ impactStats.totalEstudiantes | number }}</span>
+              </div>
+            </div>
+          </ng-container>
         </div>
 
         <!-- Card de Inversión Social -->
@@ -116,6 +176,82 @@
               <i class="fas fa-chart-line"></i>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- VISTA MIS ESTUDIANTES (DOCENTE) -->
+      <div class="docente-view animate-fade" *ngIf="activeView === 'docente_students'">
+        <div class="data-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Programa</th>
+                <th>Email</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let est of misEstudiantes">
+                <td>{{ est.nombreCompleto }}</td>
+                <td>{{ est.documento }}</td>
+                <td>{{ est.programa }}</td>
+                <td>{{ est.email }}</td>
+                <td><span class="status-badge" [class.active]="est.activo">{{ est.activo ? 'Activo' : 'Inactivo' }}</span></td>
+              </tr>
+              <tr *ngIf="misEstudiantes.length === 0">
+                <td colspan="5" class="empty-state">No tiene estudiantes asignados actualmente.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VISTA MIS JORNADAS (DOCENTE) -->
+      <div class="docente-view animate-fade" *ngIf="activeView === 'docente_jornadas'">
+        <div class="jornadas-grid">
+          <div class="jornada-card" *ngFor="let j of misJornadas">
+            <div class="j-header">
+              <span class="j-date">{{ j.fecha | date:'dd/MM/yyyy' }}</span>
+              <span class="status-badge" [attr.data-status]="j.estado">{{ j.estado }}</span>
+            </div>
+            <h3>{{ j.nombre }}</h3>
+            <p class="j-loc"><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</p>
+            <p class="j-desc">{{ j.descripcion }}</p>
+          </div>
+          <div class="empty-state" *ngIf="misJornadas.length === 0">
+            No tiene jornadas asignadas.
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA CASOS PENDIENTES (DOCENTE) -->
+      <div class="docente-view animate-fade" *ngIf="activeView === 'docente_casos'">
+        <div class="data-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Beneficiario</th>
+                <th>Facultad</th>
+                <th>Servicio</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let caso of misCasosPendientes">
+                <td>{{ caso.fechaServicio | date:'dd/MM/yy' }}</td>
+                <td>{{ caso.beneficiario?.nombre }}</td>
+                <td>{{ caso.facultad }}</td>
+                <td>{{ caso.tipoServicio }}</td>
+                <td><span class="status-badge warning">{{ caso.estado }}</span></td>
+              </tr>
+              <tr *ngIf="misCasosPendientes.length === 0">
+                <td colspan="5" class="empty-state">No hay casos pendientes en sus jornadas.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

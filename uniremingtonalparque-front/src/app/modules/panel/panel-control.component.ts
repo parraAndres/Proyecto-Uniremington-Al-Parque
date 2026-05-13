@@ -9,6 +9,7 @@ import { NewsService, Noticia } from '../../core/services/news.service';
 import { JornadaService, Jornada } from '../../core/services/jornada.service';
 import { ConfigParamService, ConfigParam } from '../../core/services/config-param.service';
 import { ReporteService } from '../../core/services/reporte.service';
+import { DocenteService } from '../../core/services/docente.service';
 import { ToastService } from '../../core/services/toast.service';
 import { interval, startWith, switchMap } from 'rxjs';
 
@@ -21,12 +22,19 @@ import { interval, startWith, switchMap } from 'rxjs';
 })
 export class PanelControlComponent implements OnInit {
   isAdmin = false;
+  isDocente = false;
   isEditing = false;
   editingUserId = '';
-  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' = 'dashboard';
+  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' = 'dashboard';
   
   successMessage = '';
   errorMessage = '';
+
+  // Datos Docente
+  misEstudiantes: User[] = [];
+  misJornadas: any[] = [];
+  misCasosPendientes: any[] = [];
+  docenteStats: any = { totalJornadas: 0, totalEstudiantes: 0, beneficiariosAtendidos: 0, casosPendientes: 0 };
 
   // Filtros Reportes
   reportFilters = {
@@ -98,6 +106,7 @@ export class PanelControlComponent implements OnInit {
     private jornadaService: JornadaService,
     private configService: ConfigParamService,
     private reporteService: ReporteService,
+    private docenteService: DocenteService,
     public toastService: ToastService,
     private router: Router
   ) {
@@ -148,7 +157,7 @@ export class PanelControlComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.checkAdminStatus();
+    this.checkUserRole();
     if (this.isAdmin) {
       this.startStatsPolling();
       this.loadAccounts();
@@ -156,6 +165,8 @@ export class PanelControlComponent implements OnInit {
       this.loadDetailedStats();
       this.loadJornadas();
       this.loadConfigParams();
+    } else if (this.isDocente) {
+      this.loadDocenteData();
     }
   }
 
@@ -168,9 +179,20 @@ export class PanelControlComponent implements OnInit {
     this.reporteService.downloadPdf(this.reportForm.value);
   }
 
-  checkAdminStatus() {
+  checkUserRole() {
     const user = this.authService.currentUserValue;
-    this.isAdmin = user && user.rol === 'ADMIN';
+    this.isAdmin = user && user.rol?.toUpperCase() === 'ADMIN';
+    this.isDocente = user && (user.rol?.toUpperCase() === 'PROFESOR' || user.rol?.toUpperCase() === 'DOCENTE');
+  }
+
+  loadDocenteData() {
+    const user = this.authService.currentUserValue;
+    if (!user) return;
+
+    this.docenteService.getStats(user.id).subscribe(res => this.docenteStats = res);
+    this.docenteService.getMisEstudiantes(user.id).subscribe(res => this.misEstudiantes = res);
+    this.docenteService.getMisJornadas(user.id).subscribe(res => this.misJornadas = res);
+    this.docenteService.getCasosPendientes(user.id).subscribe(res => this.misCasosPendientes = res);
   }
 
   startStatsPolling() {

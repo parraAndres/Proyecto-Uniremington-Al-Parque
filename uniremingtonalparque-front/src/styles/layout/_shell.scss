@@ -289,10 +289,10 @@
 }
 
 .app-footer {
-  background-color: #1a1a1a;
-  color: #e0e0e0;
+  background-color: #0d0d0d;
+  color: #f0f0f0;
   padding: 4rem 0 0 0;
-  border-top: 4px solid var(--secondary-color, #ffcc00);
+  border-top: 4px solid #ea0a2a;
 
   .footer-content {
     display: grid;
@@ -327,14 +327,14 @@
           left: 0;
           width: 50px;
           height: 2px;
-          background-color: var(--secondary-color, #ffcc00);
+          background-color: #ea0a2a;
         }
       }
 
       p {
         line-height: 1.6;
         margin-bottom: 1.5rem;
-        color: #b0b0b0;
+        color: rgba(255, 255, 255, 0.8);
       }
 
       .social-links {
@@ -348,7 +348,7 @@
           justify-content: center;
           width: 40px;
           height: 40px;
-          background-color: rgba(255, 255, 255, 0.05);
+          background-color: rgba(255, 255, 255, 0.1);
           color: white;
           border-radius: 50%;
           text-decoration: none;
@@ -356,10 +356,10 @@
           font-size: 1.1rem;
 
           &:hover {
-            background-color: var(--secondary-color, #ffcc00);
-            color: #1a1a1a;
+            background-color: #ea0a2a;
+            color: white;
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(234, 10, 42, 0.4);
           }
         }
       }
@@ -374,10 +374,10 @@
           align-items: flex-start;
           gap: 1rem;
           margin-bottom: 1rem;
-          color: #b0b0b0;
+          color: rgba(255, 255, 255, 0.85);
 
           i {
-            color: var(--secondary-color, #ffcc00);
+            color: #ea0a2a;
             margin-top: 0.25rem;
             width: 20px;
             text-align: center;
@@ -393,14 +393,14 @@
   }
 
   .footer-bottom {
-    background-color: #111;
+    background-color: #000000;
     padding: 1.5rem 0;
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     p {
       font-size: 0.85rem;
-      color: #777;
+      color: rgba(255, 255, 255, 0.6);
       margin: 0;
     }
   }

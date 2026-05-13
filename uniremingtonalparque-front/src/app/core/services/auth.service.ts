@@ -34,6 +34,10 @@ export class AuthService {
     return !!this.currentUserSubject.value;
   }
 
+  get currentUserValue(): any | null {
+    return this.currentUserSubject.value;
+  }
+
   private loadSession() {
     const userJson = localStorage.getItem('currentUser');
     if (userJson) {

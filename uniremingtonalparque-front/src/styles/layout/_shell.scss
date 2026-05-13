@@ -143,14 +143,40 @@
         color: #00447b;
         text-decoration: none;
         font-weight: 600;
-        font-size: 20px;
+        font-size: 16px;
         text-transform: uppercase;
-        transition: color 0.3s ease;
-        padding: 0.5rem 0;
+        transition: all 0.3s ease;
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        border-radius: 6px;
+
+        i {
+          font-size: 1.1rem;
+          width: 20px;
+          text-align: center;
+        }
 
         &:hover {
           color: #ea0a2a;
+          background-color: rgba(234, 10, 42, 0.05);
         }
+
+        &.logout-link {
+          color: #ea0a2a;
+          
+          &:hover {
+            background-color: #ea0a2a;
+            color: white;
+          }
+        }
+      }
+
+      .menu-divider {
+        border: 0;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        margin: 0.5rem 0;
       }
     }
   }

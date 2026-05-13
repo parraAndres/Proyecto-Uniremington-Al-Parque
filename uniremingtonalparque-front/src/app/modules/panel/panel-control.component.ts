@@ -72,20 +72,27 @@ export class PanelControlComponent implements OnInit {
 
   ngOnInit() {
     // Verificar si ya hay un usuario activo al momento de cargar el componente
-    const currentUser = this.authService['currentUserSubject']?.value;
+    const currentUser = this.authService.currentUserValue;
     if (currentUser && currentUser.documento === '123456') {
       this.isAdmin = true;
       this.loadStudents();
+      this.startStatsPolling();
     }
 
-    // También suscribirse por si el usuario se autentica después
+    // Suscribirse para cambios en el estado de autenticación
     this.authService.currentUser$.subscribe(user => {
-      if (user && user.documento === '123456') {
-        this.isAdmin = true;
-        this.loadStudents();
-        this.startStatsPolling();
-      } else if (user && user.documento !== '123456') {
-        this.router.navigate(['/dashboard']);
+      if (user) {
+        if (user.documento === '123456') {
+          this.isAdmin = true;
+          this.loadStudents();
+          // Asegurarse de que el polling solo inicie una vez si no estaba ya activo
+          // startStatsPolling ya maneja el estado interno si es necesario, 
+          // o podemos simplemente llamarlo aquí.
+          this.startStatsPolling();
+        } else {
+          // Si no es admin, redirigir al dashboard
+          this.router.navigate(['/dashboard']);
+        }
       }
     });
   }

@@ -25,15 +25,32 @@
           <span *ngIf="pendingCount > 0" class="pending-badge clickable-badge" routerLink="/offline-status" title="Ir al gestor de sincronización">
             {{ pendingCount }} pendient{{ pendingCount > 1 ? 'es' : 'e' }} de subir
           </span>
-          <button class="btn-logout" (click)="logout()" title="Cerrar sesión">Salir</button>
         </div>
         <div class="hamburger-menu-container" *ngIf="showHamburger">
           <button class="hamburger-btn" (click)="toggleMenu()">
             <i class="fas fa-bars"></i>
           </button>
           <div class="auth-dropdown nav-dropdown" [class.show]="isMenuOpen">
-            <a href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer" class="nav-link" (click)="toggleMenu()">Sobre nosotros</a>
-            <a routerLink="/" fragment="facultades" class="nav-link" (click)="toggleMenu()">Nuestras facultades</a>
+            <!-- Opción para Admin: Alternar entre Panel de control y Volver al inicio -->
+            <ng-container *ngIf="isAdmin">
+              <a routerLink="/" class="nav-link" *ngIf="isAtPanelControl" (click)="toggleMenu()">
+                <i class="fas fa-home"></i> Volver A Inicio
+              </a>
+              <a routerLink="/panel-control" class="nav-link" *ngIf="!isAtPanelControl" (click)="toggleMenu()">
+                <i class="fas fa-cog"></i> Panel de control
+              </a>
+            </ng-container>
+
+            <a href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer" class="nav-link" (click)="toggleMenu()">
+              <i class="fas fa-info-circle"></i> Sobre nosotros
+            </a>
+            <a routerLink="/" fragment="facultades" class="nav-link" (click)="toggleMenu()">
+              <i class="fas fa-university"></i> Nuestras facultades
+            </a>
+            <hr *ngIf="isAuthenticated" class="menu-divider">
+            <a (click)="logout(); toggleMenu()" class="nav-link logout-link" *ngIf="isAuthenticated" style="cursor: pointer;">
+              <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
           </div>
         </div>
       </div>

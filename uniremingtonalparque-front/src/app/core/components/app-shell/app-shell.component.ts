@@ -15,6 +15,7 @@ export class AppShellComponent implements OnInit {
   isOnline = true;
   pendingCount = 0;
   isAuthenticated = false;
+  isAdmin = false;
   isMenuOpen = false;
 
   @ViewChild('hamburgerMenu') hamburgerMenu?: ElementRef;
@@ -45,7 +46,10 @@ export class AppShellComponent implements OnInit {
   ngOnInit() {
     this.syncService.networkStatus$.subscribe(status => this.isOnline = status);
     this.syncService.pendingCount$.subscribe(count => this.pendingCount = count);
-    this.authService.currentUser$.subscribe(user => this.isAuthenticated = !!user);
+    this.authService.currentUser$.subscribe(user => {
+      this.isAuthenticated = !!user;
+      this.isAdmin = user?.documento === '123456';
+    });
   }
 
   get showHeaderControls(): boolean {
@@ -53,13 +57,16 @@ export class AppShellComponent implements OnInit {
   }
 
   get showHamburger(): boolean {
-    // Ocultar el menú hamburguesa si estamos en el panel de control
-    return !this.router.url.includes('/panel-control');
+    return true;
   }
 
   get showLayout(): boolean {
     const url = this.router.url.split('?')[0].split('#')[0];
     return !['/login', '/register'].includes(url);
+  }
+
+  get isAtPanelControl(): boolean {
+    return this.router.url.includes('/panel-control');
   }
 
   logout() {

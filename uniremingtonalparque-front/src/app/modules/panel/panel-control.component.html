@@ -202,8 +202,8 @@
                   <td class="bold">{{ a.nombreCompleto }}</td>
                   <td>{{ a.email }}</td>
                   <td>
-                    <span class="role-badge" [class.teacher]="a.role === 'profesor'" [class.student]="a.role === 'estudiante'">
-                      {{ a.role | titlecase }}
+                    <span class="role-badge" [class.teacher]="a.rol === 'profesor' || a.rol === 'PROFESOR'" [class.student]="a.rol === 'estudiante' || a.rol === 'ESTUDIANTE'">
+                      {{ a.rol | titlecase }}
                     </span>
                   </td>
                   <td><span class="badge">{{ a.facultad }}</span></td>

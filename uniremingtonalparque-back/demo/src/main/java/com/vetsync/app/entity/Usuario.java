@@ -6,10 +6,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuarios")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Usuario {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 80)
@@ -31,5 +35,7 @@ public class Usuario {
     @Column(updatable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
-    public enum Rol { ADMIN, VETERINARIO, FARMACEUTICO, AUXILIAR }
+    public enum Rol {
+        ADMIN, VETERINARIO, FARMACEUTICO, AUXILIAR
+    }
 }

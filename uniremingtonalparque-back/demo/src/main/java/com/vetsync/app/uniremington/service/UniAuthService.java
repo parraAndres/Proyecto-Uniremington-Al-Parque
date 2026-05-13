@@ -1,10 +1,10 @@
 package com.vetsync.app.uniremington.service;
 
-import com.vetsync.app.entity.Usuario;
-import com.vetsync.app.repository.UsuarioRepository;
 import com.vetsync.app.uniremington.dto.AuthResponse;
 import com.vetsync.app.uniremington.dto.LoginRequest;
 import com.vetsync.app.uniremington.dto.RegisterRequest;
+import com.vetsync.app.uniremington.entity.UsuarioUniremington;
+import com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository;
 import com.vetsync.app.uniremington.security.UniJwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,17 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
-/**
- * Servicio de autenticación del módulo "Uniremington al Parque".
- * Fusionado con la tabla principal 'usuarios'.
- */
 @Service
 @RequiredArgsConstructor
 public class UniAuthService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioUniremingtonRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final UniJwtProvider jwtProvider;
 
@@ -31,27 +29,12 @@ public class UniAuthService {
     public AuthResponse register(RegisterRequest request) {
         String email = request.getEmail();
         String documento = request.getDocumento();
-        String iden = request.getIdentificador();
-
-        if (iden != null && !iden.isBlank()) {
-            if (iden.contains("@")) {
-                email = iden;
-                documento = "MAIL-" + iden;
-            } else {
-                documento = iden;
-            }
-        }
 
         if (documento == null || documento.isBlank()) {
             throw new IllegalArgumentException("El documento de identidad es obligatorio");
         }
 
-        // El email es obligatorio en la tabla 'usuarios'
-        if (email == null || email.isBlank()) {
-            email = documento + "@uniremington.edu.co"; // Generamos uno si no viene
-        }
-
-        if (usuarioRepository.existsByEmail(email)) {
+        if (email != null && !email.isBlank() && usuarioRepository.existsByEmail(email)) {
             throw new IllegalStateException("Ya existe un usuario con el correo: " + email);
         }
         
@@ -59,25 +42,25 @@ public class UniAuthService {
             throw new IllegalStateException("Ya existe un usuario con el documento: " + documento);
         }
 
-        String rolStr = (request.getRol() != null && !request.getRol().isBlank()) 
-                     ? request.getRol().toUpperCase() 
-                     : "CLIENTE";
+        // Lógica de roles automática
+        String rolRaw = (request.getRol() != null) ? request.getRol().toLowerCase() : "cliente";
+        String rolFinal;
         
-        Usuario.Rol rolEnum;
-        try {
-            rolEnum = Usuario.Rol.valueOf(rolStr);
-        } catch (IllegalArgumentException e) {
-            rolEnum = Usuario.Rol.CLIENTE;
+        if (rolRaw.equals("cliente")) {
+            rolFinal = "BENEFICIARIO";
+        } else {
+            rolFinal = rolRaw.toUpperCase(); // ADMIN, ESTUDIANTE, PROFESOR
         }
 
-        Usuario usuario = Usuario.builder()
+        UsuarioUniremington usuario = UsuarioUniremington.builder()
+                .id(UUID.randomUUID().toString())
                 .documento(documento)
                 .email(email)
-                .nombre(request.getNombreCompleto())
+                .nombreCompleto(request.getNombreCompleto())
                 .facultad(request.getFacultad() != null ? request.getFacultad() : "Visitante")
                 .programa(request.getPrograma() != null ? request.getPrograma() : "N/A")
                 .password(passwordEncoder.encode(request.getPassword()))
-                .rol(rolEnum)
+                .rol(rolFinal)
                 .genero(request.getGenero())
                 .activo(true)
                 .build();
@@ -91,15 +74,10 @@ public class UniAuthService {
     public AuthResponse login(LoginRequest request) {
         String identificador = request.getDocumento();
         
+        // Admin secreto
         if ("123456".equals(identificador) && "123456".equals(request.getPassword())) {
-            Map<String, Object> adminClaims = Map.of(
-                    "facultad", "Administración",
-                    "programa", "Admin Panel",
-                    "nombreCompleto", "Administrador Principal",
-                    "rol", "ADMIN"
-            );
             return AuthResponse.builder()
-                    .token(jwtProvider.generateToken("123456", adminClaims))
+                    .token(jwtProvider.generateToken("123456", Map.of("rol", "ADMIN", "facultad", "Administración")))
                     .documento("123456")
                     .nombreCompleto("Administrador Principal")
                     .facultad("Administración")
@@ -110,9 +88,13 @@ public class UniAuthService {
                     .build();
         }
 
-        Usuario usuario = usuarioRepository.findByIdentificador(identificador)
+        UsuarioUniremington usuario = usuarioRepository.findByDocumentoOrEmail(identificador, identificador)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "Usuario no encontrado con documento o correo: " + identificador));
+
+        if (!usuario.isActivo()) {
+            throw new BadCredentialsException("Esta cuenta ha sido bloqueada. Contacte al administrador.");
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
             throw new BadCredentialsException("Contraseña incorrecta");
@@ -121,12 +103,13 @@ public class UniAuthService {
         return buildResponse(usuario);
     }
 
-    private AuthResponse buildResponse(Usuario usuario) {
+    private AuthResponse buildResponse(UsuarioUniremington usuario) {
         Map<String, Object> claims = Map.of(
-                "facultad", usuario.getFacultad() != null ? usuario.getFacultad() : "",
-                "programa", usuario.getPrograma() != null ? usuario.getPrograma() : "",
-                "nombreCompleto", usuario.getNombre(),
-                "rol", usuario.getRol().name()
+                "facultad", usuario.getFacultad(),
+                "programa", usuario.getPrograma(),
+                "nombreCompleto", usuario.getNombreCompleto(),
+                "rol", usuario.getRol(),
+                "activo", usuario.isActivo()
         );
 
         String token = jwtProvider.generateToken(usuario.getDocumento(), claims);
@@ -134,11 +117,11 @@ public class UniAuthService {
         return AuthResponse.builder()
                 .token(token)
                 .documento(usuario.getDocumento())
-                .nombreCompleto(usuario.getNombre())
+                .nombreCompleto(usuario.getNombreCompleto())
                 .facultad(usuario.getFacultad())
                 .programa(usuario.getPrograma())
                 .tipo("Bearer")
-                .rol(usuario.getRol().name())
+                .rol(usuario.getRol())
                 .expiresIn(jwtProvider.getExpirationMs())
                 .build();
     }

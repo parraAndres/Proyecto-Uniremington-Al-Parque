@@ -53,6 +53,9 @@ public class Beneficiario {
     private String barrio;
 
     @Column(length = 100)
+    private String vereda;
+
+    @Column(length = 100)
     private String tipoPoblacion;
 
     @Column(length = 150)

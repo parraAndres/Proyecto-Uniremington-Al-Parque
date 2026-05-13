@@ -58,6 +58,9 @@ public class UsuarioUniremington {
     private String genero;
 
     @Column(nullable = false)
+    private boolean activo = true;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

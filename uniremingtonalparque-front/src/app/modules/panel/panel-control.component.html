@@ -11,16 +11,41 @@
         <button [class.active]="activeView === 'dashboard'" (click)="activeView = 'dashboard'">
           <i class="fas fa-chart-pie"></i> Dashboard
         </button>
+        <button [class.active]="activeView === 'impact'" (click)="activeView = 'impact'">
+          <i class="fas fa-chart-bar"></i> Gestión de Impacto
+        </button>
+        <button [class.active]="activeView === 'efficiency'" (click)="activeView = 'efficiency'">
+          <i class="fas fa-stopwatch"></i> Eficiencia Operativa
+        </button>
+        <button [class.active]="activeView === 'territorial'" (click)="activeView = 'territorial'">
+          <i class="fas fa-map-marked-alt"></i> Análisis Territorial
+        </button>
+        <button [class.active]="activeView === 'ranking'" (click)="activeView = 'ranking'">
+          <i class="fas fa-trophy"></i> Ranking Estudiantes
+        </button>
+        <button [class.active]="activeView === 'jornadas'" (click)="activeView = 'jornadas'">
+          <i class="fas fa-map-marked-alt"></i> Gestión de Jornadas
+        </button>
         <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
-          <i class="fas fa-users-cog"></i> Cuentas
+          <i class="fas fa-users-cog"></i> Gestión Usuarios
         </button>
         <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
           <i class="fas fa-newspaper"></i> Noticias
         </button>
+        <button [class.active]="activeView === 'config'" (click)="activeView = 'config'">
+          <i class="fas fa-cogs"></i> Configuración General
+        </button>
+        <button [class.active]="activeView === 'strategic'" (click)="activeView = 'strategic'">
+          <i class="fas fa-satellite"></i> Monitoreo Estratégico
+        </button>
+        <button [class.active]="activeView === 'reports'" (click)="activeView = 'reports'">
+          <i class="fas fa-file-export"></i> Reportes
+        </button>
       </nav>
+
       <div class="sidebar-status">
         <div class="update-indicator">
-          <i class="fas fa-clock"></i> Actualización: 1h
+          <i class="fas fa-clock"></i> Actualización: 10s
         </div>
         <button class="btn-logout-internal" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i> Salir
@@ -34,190 +59,403 @@
       <!-- HEADER INTERNO -->
       <header class="content-header">
         <div class="header-text">
-          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : (activeView === 'students' ? 'Gestión de Cuentas' : 'Gestión de Noticias') }}</h1>
-          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Administra los recursos de la plataforma.' }}</p>
+          <h1>{{ 
+            activeView === 'dashboard' ? 'Resumen General' : 
+            activeView === 'impact' ? 'Gestión de Impacto por Facultad' : 
+            activeView === 'efficiency' ? 'Eficiencia y Remisiones' : 
+            activeView === 'territorial' ? 'Análisis Territorial de Problemáticas' : 
+            activeView === 'ranking' ? 'Ranking de Prácticas Estudiantiles' :
+            activeView === 'students' ? 'Gestión de Cuentas' : 'Gestión de Noticias' 
+          }}</h1>
+          <p>Monitoreo y administración del programa Uniremington al Parque.</p>
         </div>
       </header>
 
-      <!-- VISTA DASHBOARD -->
+      <!-- VISTA DASHBOARD (RESUMEN) -->
       <div *ngIf="activeView === 'dashboard'" class="dashboard-view animate-fade">
         <div class="stats-grid">
-          <!-- Personas Registradas -->
           <div class="stat-card card-blue">
-            <div class="card-icon"><i class="fas fa-user-plus"></i></div>
+            <div class="card-icon"><i class="fas fa-user-friends"></i></div>
             <div class="card-info">
-              <span class="card-label">Personas Registradas</span>
-              <span class="card-value">{{ impactStats.personasRegistradas | number }}</span>
-            </div>
-          </div>
-          <!-- Estudiantes Registrados -->
-          <div class="stat-card card-cyan" style="border-left: 5px solid #00acc1;">
-            <div class="card-icon" style="background: linear-gradient(135deg, #00acc1, #007c91);"><i class="fas fa-user-graduate"></i></div>
-            <div class="card-info">
-              <span class="card-label">Estudiantes</span>
-              <span class="card-value">{{ impactStats.totalEstudiantes | number }}</span>
-            </div>
-          </div>
-          <!-- Personas Activas -->
-          <div class="stat-card card-green">
-            <div class="card-icon"><i class="fas fa-user-check"></i></div>
-            <div class="card-info">
-              <span class="card-label">Personas Activas</span>
-              <span class="card-value">{{ impactStats.personasActivas | number }}</span>
-            </div>
-          </div>
-          <!-- Pueblos Visitados -->
-          <div class="stat-card card-red">
-            <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
-            <div class="card-info">
-              <span class="card-label">Pueblos Visitados</span>
-              <span class="card-value">{{ impactStats.municipiosVisitados | number }}</span>
-            </div>
-          </div>
-          <!-- Personas Asistidas -->
-          <div class="stat-card card-orange">
-            <div class="card-icon"><i class="fas fa-hands-helping"></i></div>
-            <div class="card-info">
-              <span class="card-label">Personas Asistidas</span>
+              <span class="card-label">Total Beneficiarios</span>
               <span class="card-value">{{ impactStats.personasAtendidas | number }}</span>
             </div>
           </div>
-          <!-- Cantidad Beneficiarios -->
-          <div class="stat-card card-purple">
-            <div class="card-icon"><i class="fas fa-hospital-user"></i></div>
+          <div class="stat-card card-cyan">
+            <div class="card-icon"><i class="fas fa-concierge-bell"></i></div>
             <div class="card-info">
-              <span class="card-label">Cantidad Beneficiarios</span>
+              <span class="card-label">Total Servicios</span>
               <span class="card-value">{{ impactStats.totalAsistencias | number }}</span>
             </div>
           </div>
+          <div class="stat-card card-green">
+            <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="card-info">
+              <span class="card-label">Jornadas Activas</span>
+              <span class="card-value">12</span>
+            </div>
+          </div>
+          <div class="stat-card card-orange">
+            <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
+            <div class="card-info">
+              <span class="card-label">Estudiantes Participantes</span>
+              <span class="card-value">{{ impactStats.totalEstudiantes | number }}</span>
+            </div>
+          </div>
         </div>
 
-        <div class="dashboard-footer-info">
-          <p><i class="fas fa-info-circle"></i> Los datos se actualizan automáticamente cada 60 minutos.</p>
+        <!-- Card de Inversión Social -->
+        <div class="modern-card investment-card mt-4">
+          <div class="investment-content">
+            <div class="inv-text">
+              <h3>Inversión Social Estimada</h3>
+              <p>Valorización del impacto generado por el programa en las comunidades.</p>
+              <div class="inv-value">{{ impactStats.inversionSocialEstimada | currency:'USD':'symbol':'1.0-0' }}</div>
+            </div>
+            <div class="inv-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- VISTA CUENTAS (Estudiantes/Profesores) -->
-      <div *ngIf="activeView === 'students'" class="students-view animate-fade">
+      <!-- VISTA IMPACTO POR FACULTAD -->
+      <div *ngIf="activeView === 'impact'" class="impact-view animate-fade">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-university"></i> Desglose de Impacto por Facultad</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Facultad</th>
+                  <th class="text-center">Beneficiarios</th>
+                  <th class="text-center">Servicios</th>
+                  <th class="text-center">Horas Práctica</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let f of facultadStats">
+                  <td class="bold">{{ f.facultad }}</td>
+                  <td class="text-center">{{ f.beneficiariosUnicos | number }}</td>
+                  <td class="text-center">{{ f.totalAtenciones | number }}</td>
+                  <td class="text-center"><span class="badge">{{ f.horasAcademicas }}h</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA EFICIENCIA -->
+      <div *ngIf="activeView === 'efficiency'" class="efficiency-view animate-fade">
+        <div class="stats-grid">
+          <div class="stat-card card-purple">
+            <div class="card-icon"><i class="fas fa-clock"></i></div>
+            <div class="card-info">
+              <span class="card-label">Tiempo Promedio Atención</span>
+              <span class="card-value">{{ efficiencyMetrics.tiempoPromedioAtencion }} min</span>
+            </div>
+          </div>
+          <div class="stat-card card-green">
+            <div class="card-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="card-info">
+              <span class="card-label">Tasa de Efectividad</span>
+              <span class="card-value">{{ efficiencyMetrics.tasaEfectividad | number:'1.0-1' }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modern-card mt-4">
+          <div class="card-header">
+            <h3><i class="fas fa-exchange-alt"></i> Relación Atenciones vs Remisiones</h3>
+          </div>
+          <div class="efficiency-details p-4">
+            <div class="efficiency-bar-container">
+              <div class="eff-item">
+                <label>Casos Atendidos Directamente ({{ efficiencyMetrics.casosAtendidosDirectos }})</label>
+                <div class="progress-bar"><div class="progress" [style.width.%]="efficiencyMetrics.tasaEfectividad"></div></div>
+              </div>
+              <div class="eff-item mt-3">
+                <label>Casos Remitidos a otras Facultades ({{ efficiencyMetrics.casosRemitidos }})</label>
+                <div class="progress-bar"><div class="progress referral" [style.width.%]="100 - efficiencyMetrics.tasaEfectividad"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA TERRITORIAL -->
+      <div *ngIf="activeView === 'territorial'" class="territorial-view animate-fade">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Problemáticas de Mayor Impacto por Zona</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Problemática Detectada</th>
+                  <th>Zona Más Afectada</th>
+                  <th class="text-center">Casos Reportados</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of territorialStats">
+                  <td class="bold">{{ t.problematica }}</td>
+                  <td>{{ t.zonaMasAfectada }}</td>
+                  <td class="text-center"><span class="badge red">{{ t.total }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA RANKING ESTUDIANTES -->
+      <div *ngIf="activeView === 'ranking'" class="ranking-view animate-fade">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-medal"></i> Top 10 Estudiantes con más Horas de Práctica</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Estudiante</th>
+                  <th>Facultad</th>
+                  <th class="text-center">Horas Acumuladas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of rankingEstudiantes; let i = index">
+                  <td class="text-center">
+                    <span class="rank-number" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">{{ i + 1 }}</span>
+                  </td>
+                  <td class="bold">{{ r.nombre }}</td>
+                  <td>{{ r.facultad }}</td>
+                  <td class="text-center"><span class="badge purple">{{ r.horas }}h</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA JORNADAS -->
+      <div *ngIf="activeView === 'jornadas'" class="jornadas-view animate-fade">
         <div class="modern-card form-card">
           <div class="card-header">
-            <h3><i class="fas fa-plus"></i> Registro de Cuenta Estudiantil / Docente</h3>
+            <h3><i class="fas fa-calendar-plus"></i> Crear Nueva Jornada</h3>
           </div>
-          
-          <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
-          <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
-
-          <form [formGroup]="accountForm" (ngSubmit)="onRegisterAccount()" class="admin-form">
+          <form [formGroup]="jornadaForm" (ngSubmit)="onCreateJornada()" class="admin-form">
             <div class="form-row">
               <div class="field-group">
-                <label>Nombre Completo</label>
+                <label>Nombre de la Jornada</label>
                 <div class="input-wrapper">
-                  <i class="fas fa-user"></i>
-                  <input type="text" formControlName="nombreCompleto" placeholder="Ej: Carlos Mario Restrepo">
+                  <i class="fas fa-bullhorn"></i>
+                  <input type="text" formControlName="nombre" placeholder="Ej: Jornada de Salud Marinilla">
                 </div>
               </div>
               <div class="field-group">
-                <label>Correo Electrónico / Identificador</label>
+                <label>Fecha del Evento</label>
                 <div class="input-wrapper">
-                  <i class="fas fa-envelope"></i>
-                  <input type="email" formControlName="email" placeholder="usuario@uniremington.edu.co">
+                  <i class="fas fa-calendar-alt"></i>
+                  <input type="date" formControlName="fecha">
                 </div>
               </div>
             </div>
 
             <div class="form-row">
               <div class="field-group">
-                <label>Documento de Identidad</label>
+                <label>Municipio</label>
                 <div class="input-wrapper">
-                  <i class="fas fa-id-card"></i>
-                  <input type="text" formControlName="documento" placeholder="Ej: 10203040">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <input type="text" formControlName="municipio" placeholder="Ej: Marinilla">
                 </div>
               </div>
               <div class="field-group">
-                <label>Facultad</label>
+                <label>Vereda / Barrio (Opcional)</label>
                 <div class="input-wrapper">
-                  <i class="fas fa-university"></i>
-                  <select formControlName="facultad" class="custom-select">
-                    <option value="">Seleccione una facultad</option>
-                    <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
-                  </select>
+                  <i class="fas fa-road"></i>
+                  <input type="text" formControlName="vereda" placeholder="Ej: El Chocho">
                 </div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>Descripción / Objetivos</label>
+              <div class="input-wrapper textarea-wrapper">
+                <i class="fas fa-align-left"></i>
+                <textarea formControlName="descripcion" rows="3" placeholder="Objetivos de la jornada..."></textarea>
               </div>
             </div>
 
             <div class="form-row">
               <div class="field-group">
-                <label>Programa</label>
+                <label>Estado</label>
                 <div class="input-wrapper">
-                  <i class="fas fa-graduation-cap"></i>
-                  <select formControlName="programa" class="custom-select">
-                    <option value="">Seleccione un programa</option>
-                    <option *ngFor="let p of programasDisponibles" [value]="p">{{ p }}</option>
+                  <i class="fas fa-info-circle"></i>
+                  <select formControlName="estado" class="custom-select">
+                    <option value="PROGRAMADA">Programada</option>
+                    <option value="EN_CURSO">En Curso</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                    <option value="CANCELADA">Cancelada</option>
                   </select>
-                </div>
-              </div>
-              <div class="field-group">
-                <label>Tipo de Cuenta (Rol)</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-user-tag"></i>
-                  <select formControlName="rol" class="custom-select">
-                    <option value="estudiante">Estudiante</option>
-                    <option value="profesor">Profesor</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="field-group">
-                <label>Contraseña Temporal</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-key"></i>
-                  <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
                 </div>
               </div>
               <div class="field-group button-group">
-                <button type="submit" class="btn-admin-submit" [disabled]="accountForm.invalid">
-                  <i class="fas fa-check"></i> Registrar Cuenta
+                <button type="submit" class="btn-admin-submit" [disabled]="jornadaForm.invalid">
+                  <i class="fas fa-save"></i> Crear Jornada
                 </button>
               </div>
             </div>
           </form>
         </div>
 
-        <div class="modern-card table-card">
-          <div class="card-header">
-            <h3><i class="fas fa-list-ul"></i> Cuentas Administradas</h3>
+        <!-- Lista de Jornadas -->
+        <div class="jornadas-grid mt-4">
+          <div *ngFor="let j of jornadas" class="jornada-card animate-fade">
+            <div class="jornada-header">
+              <h4>{{ j.nombre }}</h4>
+              <span class="jornada-status" [class]="j.estado.toLowerCase()">{{ j.estado }}</span>
+            </div>
+            <div class="jornada-body">
+              <p><i class="fas fa-calendar-day"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</p>
+              <p><i class="fas fa-map-pin"></i> {{ j.municipio }} <span *ngIf="j.vereda">- {{ j.vereda }}</span></p>
+              
+              <div class="assignment-section">
+                <h5><i class="fas fa-users-cog"></i> Personal Asignado ({{ j.personalAsignado?.length || 0 }})</h5>
+                <div class="assigned-chips">
+                  <span *ngFor="let p of j.personalAsignado" class="user-chip">
+                    {{ p.nombreCompleto || p.nombre }}
+                    <i class="fas fa-times" (click)="quitarDe_Jornada(j.id!, p.id)"></i>
+                  </span>
+                </div>
+
+                <div class="assign-controls mt-3">
+                  <select #userSelect class="custom-select-small">
+                    <option value="">Asignar docente/estudiante...</option>
+                    <optgroup label="Docentes">
+                      <option *ngFor="let d of docentesActivos" [value]="d.id">{{ d.nombreCompleto || d.nombre }}</option>
+                    </optgroup>
+                    <optgroup label="Estudiantes">
+                      <option *ngFor="let e of estudiantesActivos" [value]="e.id">{{ e.nombreCompleto || e.nombre }}</option>
+                    </optgroup>
+                  </select>
+                  <button (click)="asignarA_Jornada(j.id!, userSelect.value); userSelect.value = ''" class="btn-assign-small">Asignar</button>
+                </div>
+              </div>
+            </div>
+            <div class="jornada-footer">
+              <button class="btn-delete-jornada" (click)="deleteJornada(j.id!)">
+                <i class="fas fa-trash-alt"></i> Eliminar
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
+      <div *ngIf="activeView === 'students'" class="students-view animate-fade">
+        <div class="modern-card form-card">
+          <div class="card-header">
+            <h3><i class="fas fa-user-edit"></i> {{ isEditing ? 'Editar Usuario' : 'Registro de Nueva Cuenta' }}</h3>
+          </div>
+          <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
+          <form [formGroup]="accountForm" (ngSubmit)="onRegisterAccount()" class="admin-form">
+            <div class="form-row">
+              <div class="field-group">
+                <label>Nombre Completo</label>
+                <div class="input-wrapper"><i class="fas fa-user"></i><input type="text" formControlName="nombreCompleto" placeholder="Ej: Carlos Mario"></div>
+              </div>
+              <div class="field-group">
+                <label>Correo / ID</label>
+                <div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" formControlName="email" placeholder="usuario@uniremington.edu.co"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field-group">
+                <label>Documento</label>
+                <div class="input-wrapper"><i class="fas fa-id-card"></i><input type="text" formControlName="documento"></div>
+              </div>
+              <div class="field-group">
+                <label>Facultad</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-university"></i>
+                  <select formControlName="facultad" class="custom-select">
+                    <option value="">Seleccione facultad</option>
+                    <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field-group">
+                <label>Programa</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-graduation-cap"></i>
+                  <select formControlName="programa" class="custom-select">
+                    <option value="">Seleccione programa</option>
+                    <option *ngFor="let p of programasDisponibles" [value]="p">{{ p }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Rol</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-user-tag"></i>
+                  <select formControlName="rol" class="custom-select">
+                    <option value="estudiante">Estudiante</option>
+                    <option value="profesor">Profesor</option>
+                    <option value="admin">Administrador</option>
+                    <option value="cliente">Cliente (Beneficiario)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Género</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-venus-mars"></i>
+                  <select formControlName="genero" class="custom-select">
+                    <option value="masculino">Masculino</option>
+                    <option value="femenino">Femenino</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field-group">
+                <label>Contraseña</label>
+                <div class="input-wrapper"><i class="fas fa-key"></i><input type="password" formControlName="password"></div>
+              </div>
+              <div class="field-group button-group admin-btn-group">
+                <button type="submit" class="btn-admin-submit" [disabled]="accountForm.invalid">
+                  <i class="fas" [class.fa-check]="!isEditing" [class.fa-save]="isEditing"></i> {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}
+                </button>
+                <button type="button" *ngIf="isEditing" class="btn-admin-cancel" (click)="cancelEdit()">Cancelar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modern-card table-card mt-4">
           <div class="table-container">
             <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Documento</th>
-                  <th>Rol</th>
-                  <th>Facultad</th>
-                  <th class="text-center">Acciones</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Nombre</th><th>Documento</th><th>Rol</th><th>Facultad</th><th class="text-center">Acciones</th></tr></thead>
               <tbody>
                 <tr *ngFor="let acc of accounts">
-                  <td class="bold">{{ acc.nombreCompleto }}</td>
+                  <td class="bold"><i class="fas fa-circle status-dot" [class.active]="acc.activo" [class.blocked]="!acc.activo"></i> {{ acc.nombre || acc.nombreCompleto }}</td>
                   <td>{{ acc.documento }}</td>
-                  <td>
-                    <span class="badge role" [class.teacher]="acc.rol === 'profesor' || acc.rol === 'PROFESOR'" [class.student]="acc.rol === 'estudiante' || acc.rol === 'ESTUDIANTE'">
-                      {{ acc.rol | titlecase }}
-                    </span>
+                  <td><span class="role-badge" [class.student]="acc.rol === 'ESTUDIANTE'" [class.teacher]="acc.rol === 'PROFESOR'" [class.admin]="acc.rol === 'ADMIN'">{{ acc.rol }}</span></td>
+                  <td>{{ acc.facultad }}</td>
+                  <td class="text-center actions-cell">
+                    <button class="btn-action edit" (click)="editUser(acc)"><i class="fas fa-edit"></i></button>
+                    <button class="btn-action block" (click)="toggleBlock(acc)"><i class="fas" [class.fa-user-slash]="acc.activo" [class.fa-user-check]="!acc.activo"></i></button>
+                    <button class="btn-action delete" (click)="deleteAccount(acc.documento)"><i class="fas fa-trash-alt"></i></button>
                   </td>
-                  <td><span class="badge">{{ acc.facultad }}</span></td>
-                  <td class="text-center">
-                    <button class="btn-delete-row" (click)="deleteAccount(acc.documento)" title="Eliminar cuenta">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="accounts.length === 0">
-                  <td colspan="5" class="empty-row">No se han encontrado cuentas de personal.</td>
                 </tr>
               </tbody>
             </table>
@@ -232,18 +470,31 @@
             <h3><i class="fas fa-newspaper"></i> Redactar Nueva Noticia</h3>
           </div>
           <form [formGroup]="newsForm" (ngSubmit)="onCreateNews()" class="admin-form">
-            <div class="field-group">
-              <label>Título de la Noticia</label>
-              <input type="text" formControlName="titulo" placeholder="Ej: Exitosa jornada en Marinilla">
+            <div class="form-row">
+              <div class="field-group full-width">
+                <label>Título de la Noticia</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-heading"></i>
+                  <input type="text" formControlName="titulo" placeholder="Ej: Exitosa jornada de salud en Marinilla">
+                </div>
+              </div>
             </div>
+
             <div class="field-group">
-              <label>Contenido</label>
-              <textarea formControlName="contenido" rows="5" placeholder="Escribe el cuerpo de la noticia aquí..."></textarea>
+              <label>Cuerpo del Contenido</label>
+              <div class="input-wrapper textarea-wrapper">
+                <i class="fas fa-align-left"></i>
+                <textarea formControlName="contenido" rows="6" placeholder="Describe los detalles de la noticia..."></textarea>
+              </div>
             </div>
+
             <div class="form-row">
               <div class="field-group">
-                <label>URL de Imagen (Opcional)</label>
-                <input type="text" formControlName="imageUrl" placeholder="https://...">
+                <label>URL de Imagen de Portada (Opcional)</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-image"></i>
+                  <input type="text" formControlName="imageUrl" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
               </div>
               <div class="field-group button-group">
                 <button type="submit" class="btn-admin-submit" [disabled]="newsForm.invalid">
@@ -254,20 +505,220 @@
           </form>
         </div>
 
-        <div class="stats-grid">
-          <div *ngFor="let n of noticias" class="news-item-card">
-            <div class="news-content">
-              <h4>{{ n.titulo }}</h4>
-              <p>{{ n.contenido | slice:0:100 }}...</p>
-              <span class="news-date">{{ n.fechaPublicacion | date:'short' }}</span>
+        <div class="news-feed-grid mt-4" *ngIf="noticias.length > 0">
+          <div *ngFor="let n of noticias" class="premium-news-card animate-fade">
+            <div class="news-card-image" *ngIf="n.imageUrl">
+              <img [src]="n.imageUrl" [alt]="n.titulo">
+              <div class="news-category-badge">Noticia</div>
             </div>
-            <button class="btn-delete-news" (click)="deleteNoticia(n.id!)">
-              <i class="fas fa-times"></i>
-            </button>
+            <div class="news-card-body">
+              <div class="news-meta">
+                <span class="news-date"><i class="far fa-calendar-alt"></i> {{ n.fechaPublicacion | date:'dd MMM, yyyy' }}</span>
+              </div>
+              <h4 class="news-title">{{ n.titulo }}</h4>
+              <p class="news-excerpt">{{ n.contenido | slice:0:120 }}...</p>
+              
+              <div class="news-card-actions">
+                <button class="btn-read-more" routerLink="/" fragment="noticias">
+                  Ver en el Home <i class="fas fa-external-link-alt"></i>
+                </button>
+                <button class="btn-delete-premium" (click)="deleteNoticia(n.id!)" title="Eliminar noticia">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div *ngIf="noticias.length === 0" class="premium-empty-state animate-fade">
+          <div class="empty-icon-wrapper">
+            <i class="fas fa-newspaper"></i>
+          </div>
+          <h3>Sin noticias publicadas</h3>
+          <p>Comienza a informar a la comunidad creando tu primera publicación arriba.</p>
         </div>
       </div>
 
+      <!-- VISTA CONFIGURACION -->
+      <div *ngIf="activeView === 'config'" class="config-view animate-fade">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-tools"></i> Centro de Configuración Global</h3>
+          </div>
+          <div class="config-tabs-container">
+            <nav class="config-nav">
+              <button [class.active]="selectedConfigType === 'FACULTAD'" (click)="changeConfigType('FACULTAD')">Facultades</button>
+              <button [class.active]="selectedConfigType === 'TIPO_SERVICIO'" (click)="changeConfigType('TIPO_SERVICIO')">Servicios</button>
+              <button [class.active]="selectedConfigType === 'CATEGORIA'" (click)="changeConfigType('CATEGORIA')">Categorías</button>
+              <button [class.active]="selectedConfigType === 'PROBLEMATICA'" (click)="changeConfigType('PROBLEMATICA')">Problemáticas</button>
+              <button [class.active]="selectedConfigType === 'ESTADO_CASO'" (click)="changeConfigType('ESTADO_CASO')">Estados de Caso</button>
+            </nav>
+
+            <div class="config-content p-4">
+              <div class="config-form-inline">
+                <form [formGroup]="configForm" (ngSubmit)="onSaveConfig()" class="inline-form">
+                  <div class="field-group">
+                    <input type="text" formControlName="valor" [placeholder]="'Nuevo ' + selectedConfigType.toLowerCase()">
+                  </div>
+                  <div class="field-group">
+                    <input type="text" formControlName="descripcion" placeholder="Descripción corta">
+                  </div>
+                  <button type="submit" class="btn-save-config" [disabled]="configForm.invalid">
+                    <i class="fas fa-plus"></i> Agregar
+                  </button>
+                </form>
+              </div>
+
+              <div class="config-list mt-4">
+                <table class="admin-table">
+                  <thead><tr><th>Valor</th><th>Descripción</th><th class="text-center">Acciones</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let p of configParams">
+                      <td class="bold">{{ p.valor }}</td>
+                      <td>{{ p.descripcion }}</td>
+                      <td class="text-center">
+                        <button class="btn-action delete" (click)="deleteConfig(p.id!)"><i class="fas fa-trash-alt"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- VISTA ESTRATEGICA -->
+      <div *ngIf="activeView === 'strategic'" class="strategic-view animate-fade">
+        <div class="stats-grid">
+          <!-- Cobertura Nacional -->
+          <div class="modern-card strategic-card">
+            <div class="card-header">
+              <h3><i class="fas fa-globe-americas"></i> Cobertura en Territorio</h3>
+            </div>
+            <div class="table-container scrollable-y">
+              <table class="admin-table">
+                <thead><tr><th>Municipio</th><th class="text-center">Atenciones</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let c of coberturaStats">
+                    <td>{{ c.municipio }}</td>
+                    <td class="text-center"><span class="badge blue">{{ c.totalAtenciones }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Operatividad de Casos -->
+          <div class="modern-card strategic-card">
+            <div class="card-header">
+              <h3><i class="fas fa-tasks"></i> Operatividad de Casos</h3>
+            </div>
+            <div class="casos-stats-container p-4">
+              <div class="casos-summary">
+                <div class="c-stat">
+                  <span class="c-val">{{ casosStats.abiertos }}</span>
+                  <span class="c-lab">Abiertos</span>
+                </div>
+                <div class="c-stat">
+                  <span class="c-val">{{ casosStats.cerrados }}</span>
+                  <span class="c-lab">Cerrados</span>
+                </div>
+              </div>
+              <div class="resolucion-gauge mt-4">
+                <label>Tasa de Resolución</label>
+                <div class="progress-bar lg"><div class="progress" [style.width.%]="casosStats.porcentajeResolucion"></div></div>
+                <span class="gauge-val">{{ casosStats.porcentajeResolucion | number:'1.0-1' }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modern-card mt-4">
+          <div class="card-header">
+            <h3><i class="fas fa-project-diagram"></i> Impacto Social y Oferta Institucional</h3>
+          </div>
+          <div class="strategic-details p-4">
+            <div class="impact-info-grid">
+              <div class="impact-box">
+                <i class="fas fa-heartbeat"></i>
+                <h4>Salud</h4>
+                <p>Vacunación, desparasitación y chequeos preventivos en zonas rurales.</p>
+              </div>
+              <div class="impact-box">
+                <i class="fas fa-balance-scale"></i>
+                <h4>Derecho</h4>
+                <p>Asesorías legales gratuitas y conciliaciones comunitarias.</p>
+              </div>
+              <div class="impact-box">
+                <i class="fas fa-laptop-code"></i>
+                <h4>Ingeniería</h4>
+                <p>Apoyo técnico en digitalización y procesos para micro-empresas.</p>
+              </div>
+              <div class="impact-box">
+                <i class="fas fa-chart-line"></i>
+                <h4>Empresariales</h4>
+                <p>Capacitación en finanzas y planes de negocio para emprendedores.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- VISTA REPORTES -->
+      <div *ngIf="activeView === 'reports'" class="reports-view animate-fade">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-file-download"></i> Centro de Reportes e Indicadores</h3>
+          </div>
+          <div class="reports-container p-5">
+            <div class="reports-description mb-4">
+              <p>Genera reportes oficiales del programa filtrando por ubicación geográfica y rango de tiempo. Estos documentos son válidos para procesos de acreditación.</p>
+            </div>
+
+            <form [formGroup]="reportForm" class="filter-form-grid">
+              <div class="filter-group">
+                <label>Desde</label>
+                <input type="date" formControlName="inicio">
+              </div>
+              <div class="filter-group">
+                <label>Hasta</label>
+                <input type="date" formControlName="fin">
+              </div>
+              <div class="filter-group">
+                <label>Municipio</label>
+                <input type="text" formControlName="municipio" placeholder="Ej: Marinilla">
+              </div>
+              <div class="filter-group">
+                <label>Vereda</label>
+                <input type="text" formControlName="vereda" placeholder="Ej: El Chocho">
+              </div>
+              <div class="filter-group">
+                <label>Barrio</label>
+                <input type="text" formControlName="barrio" placeholder="Ej: San Antonio">
+              </div>
+            </form>
+
+            <div class="export-actions-grid mt-5">
+              <div class="export-card excel" (click)="exportExcel()">
+                <div class="export-icon"><i class="fas fa-file-excel"></i></div>
+                <div class="export-text">
+                  <h4>Exportar a Excel</h4>
+                  <p>Formato .xlsx para análisis de datos avanzado.</p>
+                </div>
+                <i class="fas fa-download download-arrow"></i>
+              </div>
+
+              <div class="export-card pdf" (click)="exportPdf()">
+                <div class="export-icon"><i class="fas fa-file-pdf"></i></div>
+                <div class="export-text">
+                  <h4>Exportar a PDF</h4>
+                  <p>Documento oficial con logo institucional.</p>
+                </div>
+                <i class="fas fa-download download-arrow"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </div>
@@ -276,7 +727,7 @@
   <div class="unauth-box">
     <i class="fas fa-user-lock"></i>
     <h2>Acceso no autorizado</h2>
-    <p>Debes ingresar con el código secreto para ver estas estadísticas.</p>
+    <p>Debes ingresar como administrador para ver estas estadísticas.</p>
     <button routerLink="/login" class="btn-return">Ir al Login</button>
   </div>
 </div>

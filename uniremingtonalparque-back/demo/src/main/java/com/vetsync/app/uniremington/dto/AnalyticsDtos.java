@@ -1,14 +1,34 @@
 package com.vetsync.app.uniremington.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 public class AnalyticsDtos {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ImpactStats {
+        private long personasRegistradas;
+        private long personasActivas;
+        private long municipiosVisitados;
+        private long personasAtendidas; // Beneficiarios únicos
+        private long totalAsistencias;  // Total servicios
+        private long totalEstudiantes;
+        private BigDecimal inversionSocialEstimada;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class FacultadStats {
         private String facultad;
         private long totalAtenciones;
@@ -18,6 +38,8 @@ public class AnalyticsDtos {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CoberturaTerritorialStats {
         private String municipio;
         private long beneficiariosUnicos;
@@ -26,19 +48,11 @@ public class AnalyticsDtos {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ProblematicaStats {
         private String problematica;
         private long total;
-    }
-
-    @Data
-    @Builder
-    public static class ImpactStats {
-        private long municipiosVisitados;
-        private long personasAtendidas; // Beneficiarios únicos
-        private long personasActivas;    // Usuarios activos últimos 7 días
-        private long personasRegistradas; // Usuarios totales
-        private long totalAsistencias;    // Servicios sociales totales
-        private long totalEstudiantes;    // Usuarios con rol ESTUDIANTE
+        private String zonaMasAfectada;
     }
 }

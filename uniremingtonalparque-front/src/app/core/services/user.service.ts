@@ -7,10 +7,13 @@ export interface User {
   id: string;
   email: string;
   documento: string;
-  nombreCompleto: string;
+  nombre?: string;
+  nombreCompleto?: string;
   facultad: string;
   programa: string;
   rol: string;
+  genero?: string;
+  activo: boolean;
 }
 
 @Injectable({
@@ -23,6 +26,14 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
+  }
+
+  updateUser(id: string, userData: any): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, userData);
+  }
+
+  toggleUserStatus(id: string): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/${id}/toggle-status`, {});
   }
 
   deleteUser(idOrEmail: string): Observable<void> {

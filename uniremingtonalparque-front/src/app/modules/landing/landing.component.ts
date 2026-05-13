@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { StatsService, ImpactStats } from '../../core/services/stats.service';
+import { NewsService, Noticia } from '../../core/services/news.service';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 
@@ -16,6 +17,9 @@ export class LandingComponent implements OnInit, OnDestroy {
   currentSlide = 0;
   private intervalId: any;
   private statsSubscription?: Subscription;
+  private newsSubscription?: Subscription;
+  
+  noticias: Noticia[] = [];
   
   stats: ImpactStats = { 
     municipiosVisitados: 0, 
@@ -46,6 +50,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private statsService: StatsService,
+    private newsService: NewsService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
   }
@@ -53,18 +58,38 @@ export class LandingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.startAutoPlay();
     if (isPlatformBrowser(this.platformId)) {
+      // Polling de estadísticas
       this.statsSubscription = interval(10000)
         .pipe(
           startWith(0),
           switchMap(() => this.statsService.getImpactStats())
         )
         .subscribe({
-          next: (res) => {
-            this.stats = res;
-          },
+          next: (res) => this.stats = res,
           error: (err) => console.error('Error fetching stats', err)
         });
+
+      // Cargar noticias
+      this.loadNews();
     }
+  }
+
+  loadNews() {
+    this.newsService.getNoticias().subscribe({
+      next: (res) => {
+        this.noticias = res;
+        if (this.noticias.length === 0) {
+          this.noticias = [{
+            titulo: '¡Uniremington al Parque llega a tu municipio!',
+            contenido: 'Estamos emocionados de anunciar que nuestra próxima jornada de servicios gratuitos será este fin de semana. ¡Te esperamos!',
+            imageUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=2070&auto=format&fit=crop',
+            fechaPublicacion: new Date().toISOString(),
+            autor: 'Administración'
+          }];
+        }
+      },
+      error: (err) => console.error('Error loading news', err)
+    });
   }
 
   ngOnDestroy() {

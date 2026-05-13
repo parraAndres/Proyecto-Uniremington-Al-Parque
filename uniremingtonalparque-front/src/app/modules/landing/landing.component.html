@@ -77,6 +77,34 @@
       </div>
     </div>
   </section>
+  <section class="news-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Noticias y Actualidad</h2>
+        <p>Entérate de las últimas novedades y resultados de nuestro programa social.</p>
+      </div>
+
+      <div class="news-grid">
+        <article class="news-card animate-fade" *ngFor="let n of noticias">
+          <div class="news-image">
+            <img [src]="n.imageUrl || 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800'" [alt]="n.titulo">
+            <div class="news-date">
+              <i class="far fa-calendar-alt"></i>
+              {{ n.fechaPublicacion | date:'dd MMM, yyyy' }}
+            </div>
+          </div>
+          <div class="news-content">
+            <h3>{{ n.titulo }}</h3>
+            <p>{{ n.contenido }}</p>
+            <div class="news-footer">
+              <span class="author"><i class="fas fa-user-edit"></i> {{ n.autor || 'Redacción' }}</span>
+              <button class="btn-read-more">Leer más <i class="fas fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
   <section id="nosotros" class="info-section">
     <div class="container info-container">

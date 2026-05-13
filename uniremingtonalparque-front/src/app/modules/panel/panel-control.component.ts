@@ -6,6 +6,7 @@ import { db } from '../../core/database/app-database';
 import { AuthService } from '../../core/services/auth.service';
 import { StatsService, ImpactStats } from '../../core/services/stats.service';
 import { UserService } from '../../core/services/user.service';
+import { NewsService, Noticia } from '../../core/services/news.service';
 import { interval, startWith, switchMap } from 'rxjs';
 
 @Component({
@@ -16,8 +17,6 @@ import { interval, startWith, switchMap } from 'rxjs';
   styleUrls: ['./panel-control.component.scss']
 })
 export class PanelControlComponent implements OnInit {
-  accounts: any[] = [];
-  accountForm: FormGroup;
   isAdmin = false;
   successMessage = '';
   errorMessage = '';
@@ -29,7 +28,11 @@ export class PanelControlComponent implements OnInit {
     totalAsistencias: 0,
     totalEstudiantes: 0
   };
-  activeView: 'dashboard' | 'students' = 'dashboard';
+  activeView: 'dashboard' | 'students' | 'news' = 'dashboard';
+  accounts: any[] = [];
+  noticias: Noticia[] = [];
+  accountForm!: FormGroup;
+  newsForm!: FormGroup;
 
   facultades = [
     'Medicina Veterinaria y Zootecnia',
@@ -56,6 +59,7 @@ export class PanelControlComponent implements OnInit {
     private authService: AuthService,
     private statsService: StatsService,
     private userService: UserService,
+    private newsService: NewsService,
     private router: Router
   ) {
     this.accountForm = this.fb.group({
@@ -68,6 +72,13 @@ export class PanelControlComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
+    this.newsForm = this.fb.group({
+      titulo: ['', Validators.required],
+      contenido: ['', Validators.required],
+      imageUrl: [''],
+      autor: ['Administración']
+    });
+
     this.accountForm.get('facultad')?.valueChanges.subscribe(() => {
       this.accountForm.patchValue({ programa: '' });
     });
@@ -78,6 +89,7 @@ export class PanelControlComponent implements OnInit {
     if (currentUser && currentUser.documento === '123456') {
       this.isAdmin = true;
       this.loadAccounts();
+      this.loadNews();
       this.startStatsPolling();
     }
 
@@ -86,6 +98,7 @@ export class PanelControlComponent implements OnInit {
         if (user.documento === '123456') {
           this.isAdmin = true;
           this.loadAccounts();
+          this.loadNews();
           this.startStatsPolling();
         } else {
           this.router.navigate(['/dashboard']);
@@ -170,6 +183,40 @@ export class PanelControlComponent implements OnInit {
     }
   }
 
+
+  loadNews() {
+    this.newsService.getNoticias().subscribe({
+      next: (res) => this.noticias = res,
+      error: (err) => console.error('Error loading news', err)
+    });
+  }
+
+  onCreateNews() {
+    if (this.newsForm.invalid) return;
+    
+    this.newsService.createNoticia(this.newsForm.value).subscribe({
+      next: () => {
+        this.successMessage = 'Noticia publicada correctamente';
+        this.newsForm.reset({ autor: 'Administración' });
+        this.loadNews();
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: () => this.errorMessage = 'Error al publicar la noticia'
+    });
+  }
+
+  deleteNoticia(id: string) {
+    if (confirm('¿Estás seguro de eliminar esta noticia?')) {
+      this.newsService.deleteNoticia(id).subscribe({
+        next: () => {
+          this.successMessage = 'Noticia eliminada';
+          this.loadNews();
+          setTimeout(() => this.successMessage = '', 3000);
+        },
+        error: () => this.errorMessage = 'Error al eliminar la noticia'
+      });
+    }
+  }
 
   logout() {
     this.authService.logout();

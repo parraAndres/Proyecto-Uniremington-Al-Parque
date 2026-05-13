@@ -14,6 +14,9 @@
         <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
           <i class="fas fa-users-cog"></i> Gestión Cuentas
         </button>
+        <button [class.active]="activeView === 'news'" (click)="activeView = 'news'">
+          <i class="fas fa-newspaper"></i> Gestión Noticias
+        </button>
       </nav>
       <div class="sidebar-status">
         <div class="update-indicator">
@@ -28,8 +31,8 @@
       <!-- HEADER INTERNO -->
       <header class="content-header">
         <div class="header-text">
-          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : 'Gestión de Cuentas Institucionales' }}</h1>
-          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Crea y administra las credenciales para estudiantes y profesores.' }}</p>
+          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : (activeView === 'students' ? 'Gestión de Cuentas Institucionales' : 'Gestión de Noticias y Actualidad') }}</h1>
+          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : (activeView === 'students' ? 'Crea y administra las credenciales para estudiantes y profesores.' : 'Publica y administra las noticias que aparecen en la página principal.') }}</p>
         </div>
       </header>
 
@@ -212,6 +215,94 @@
                 </tr>
                 <tr *ngIf="accounts.length === 0">
                   <td colspan="5" class="empty-row">No se han registrado cuentas aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA GESTIÓN NOTICIAS -->
+      <div *ngIf="activeView === 'news'" class="news-view animate-fade">
+        <div class="modern-card form-card">
+          <div class="card-header">
+            <h3><i class="fas fa-plus"></i> Publicar Nueva Noticia</h3>
+          </div>
+          
+          <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
+
+          <form [formGroup]="newsForm" (ngSubmit)="onCreateNews()" class="admin-form">
+            <div class="form-row">
+              <div class="field-group" style="flex: 1.5;">
+                <label>Título de la Noticia</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-heading"></i>
+                  <input type="text" formControlName="titulo" placeholder="Ej: Nueva jornada en Rionegro">
+                </div>
+              </div>
+              <div class="field-group">
+                <label>URL de Imagen</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-image"></i>
+                  <input type="text" formControlName="imageUrl" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field-group" style="flex: 1;">
+                <label>Contenido</label>
+                <div class="input-wrapper" style="background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;">
+                  <textarea formControlName="contenido" placeholder="Escribe el cuerpo de la noticia aquí..." style="width: 100%; min-height: 120px; border: none; padding: 15px; font-family: inherit; resize: vertical; background: transparent; outline: none;"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label>Autor / Fuente</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-user-edit"></i>
+                  <input type="text" formControlName="autor">
+                </div>
+              </div>
+              <div class="field-group button-group" style="align-self: flex-end;">
+                <button type="submit" class="btn-admin-submit" [disabled]="newsForm.invalid">
+                  <i class="fas fa-paper-plane"></i> Publicar Noticia
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modern-card table-card">
+          <div class="card-header">
+            <h3><i class="fas fa-list"></i> Noticias Publicadas</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Título</th>
+                  <th>Autor</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let n of noticias">
+                  <td>{{ n.fechaPublicacion | date:'shortDate' }}</td>
+                  <td class="bold">{{ n.titulo }}</td>
+                  <td>{{ n.autor }}</td>
+                  <td class="text-center">
+                    <button class="btn-delete-row" (click)="deleteNoticia(n.id!)" title="Eliminar noticia">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="noticias.length === 0">
+                  <td colspan="4" class="empty-row">No hay noticias publicadas aún.</td>
                 </tr>
               </tbody>
             </table>

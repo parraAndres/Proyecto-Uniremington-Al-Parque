@@ -1,0 +1,165 @@
+<div class="modacad-container">
+  <div class="modacad-header">
+    <div class="header-icon-wrap gradient-teal">
+      <i class="fas fa-graduation-cap"></i>
+    </div>
+    <div>
+      <h1>Módulo Académico</h1>
+      <p>Control de participación estudiantil, horas y evaluación del programa UAP</p>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="stats-summary-grid">
+    <div class="stat-summary-card card-teal">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ participaciones.length }}</span>
+        <span class="stat-lab">Estudiantes</span>
+      </div>
+    </div>
+    <div class="stat-summary-card card-blue">
+      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ totalHoras }}</span>
+        <span class="stat-lab">Horas Totales</span>
+      </div>
+    </div>
+    <div class="stat-summary-card card-green">
+      <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ promHoras | number:'1.0-1' }}</span>
+        <span class="stat-lab">Promedio Horas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="modacad-tabs">
+    <button [class.active]="activeTab === 'participacion'" (click)="activeTab = 'participacion'">
+      <i class="fas fa-users"></i> Participación Estudiantil
+    </button>
+    <button [class.active]="activeTab === 'horas'" (click)="activeTab = 'horas'">
+      <i class="fas fa-hourglass-half"></i> Control de Horas
+    </button>
+    <button [class.active]="activeTab === 'evaluacion'" (click)="activeTab = 'evaluacion'">
+      <i class="fas fa-star"></i> Evaluar Participación
+    </button>
+  </nav>
+
+  <!-- PARTICIPACIÓN ESTUDIANTIL -->
+  <div *ngIf="activeTab === 'participacion'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-user-graduate"></i> Ver Participación Estudiantil</h3>
+      </div>
+      <div *ngIf="participaciones.length === 0" class="empty-state">
+        <i class="fas fa-user-graduate"></i>
+        <p>No hay registros de participación académica aún.</p>
+      </div>
+      <div class="participation-list" *ngIf="participaciones.length > 0">
+        <div *ngFor="let p of participaciones" class="participation-item">
+          <div class="part-info">
+            <span class="part-name"><i class="fas fa-user"></i> {{ p.estudiante }}</span>
+            <span class="part-programa">{{ p.programa }}</span>
+          </div>
+          <div class="part-progress-wrap">
+            <div class="part-progress-bar">
+              <div class="part-progress-fill" [style.width.%]="p.participacionPct"></div>
+            </div>
+            <span class="part-pct">{{ p.participacionPct | number:'1.0-0' }}%</span>
+          </div>
+          <span class="hours-badge">{{ p.horas }}h</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROL DE HORAS -->
+  <div *ngIf="activeTab === 'horas'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-stopwatch"></i> Control de Horas Acumuladas</h3>
+      </div>
+      <div *ngIf="horasData.length === 0" class="empty-state">
+        <i class="fas fa-stopwatch"></i>
+        <p>No hay horas registradas aún.</p>
+      </div>
+      <table class="data-table" *ngIf="horasData.length > 0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudiante</th>
+            <th class="text-center">Horas</th>
+            <th class="text-center">Cumplimiento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of horasData; let i = index">
+            <td><span class="rank-badge" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">{{ i+1 }}</span></td>
+            <td class="bold">{{ e.nombre }}</td>
+            <td class="text-center"><span class="hours-badge">{{ e.horas }}h</span></td>
+            <td class="text-center">
+              <div class="inline-progress">
+                <div class="ip-bar"><div class="ip-fill" [style.width.%]="(e.horas/40)*100 > 100 ? 100 : (e.horas/40)*100"></div></div>
+                <span class="ip-pct">{{ ((e.horas/40)*100) | number:'1.0-0' }}%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EVALUAR PARTICIPACIÓN -->
+  <div *ngIf="activeTab === 'evaluacion'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-star-half-alt"></i> Evaluación de Participación</h3>
+      </div>
+      <div *ngIf="evaluaciones.length === 0" class="empty-state">
+        <i class="fas fa-star"></i>
+        <p>No hay datos para evaluar.</p>
+      </div>
+      <div class="evaluation-grid" *ngIf="evaluaciones.length > 0">
+        <div *ngFor="let e of evaluaciones" class="eval-card" [class]="'eval-' + e.color">
+          <div class="eval-header">
+            <i class="fas fa-user-circle"></i>
+            <div>
+              <h4>{{ e.estudiante }}</h4>
+              <span>{{ e.programa }}</span>
+            </div>
+          </div>
+          <div class="eval-body">
+            <div class="eval-metric">
+              <span class="eval-hours">{{ e.horas }}h</span>
+              <span>Horas completadas</span>
+            </div>
+            <div class="eval-nivel" [class]="'nivel-' + e.color">
+              <i class="fas" [class.fa-trophy]="e.color==='green'" [class.fa-thumbs-up]="e.color==='blue'" [class.fa-exclamation]="e.color==='orange'"></i>
+              {{ e.nivel }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ranking remoto si está disponible -->
+      <div *ngIf="rankingEstudiantes.length > 0" class="mt-4">
+        <h4 class="section-subtitle"><i class="fas fa-trophy"></i> Ranking Global (Sincronizado)</h4>
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Nombre</th><th>Facultad</th><th class="text-center">Horas</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rankingEstudiantes; let i = index">
+              <td><span class="rank-badge" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">{{ i+1 }}</span></td>
+              <td class="bold">{{ r.nombre }}</td>
+              <td>{{ r.facultad }}</td>
+              <td class="text-center"><span class="hours-badge">{{ r.horas }}h</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

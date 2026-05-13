@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { SyncService } from '../../services/sync.service';
 import { ToastService } from '../../../../core/services/toast.service';
 
@@ -9,12 +9,14 @@ import { db } from '../../../../core/database/app-database';
 @Component({
   selector: 'app-beneficiary-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './beneficiary-form.component.html'
 })
 export class BeneficiaryFormComponent implements OnInit {
   form!: FormGroup;
   isOnline = true;
+  isEditing = false;
+  searchDoc = '';
   errorMessage = '';
   facultades = [
     'Medicina Veterinaria y Zootecnia', 'Ciencias Jurídicas', 
@@ -45,6 +47,25 @@ export class BeneficiaryFormComponent implements OnInit {
     });
   }
 
+  async searchByDocument() {
+    if (!this.searchDoc) return;
+    try {
+      this.errorMessage = '';
+      const existing = await db.beneficiaries.where('documento').equals(this.searchDoc).first();
+      if (existing) {
+        this.isEditing = true;
+        this.form.patchValue(existing);
+        this.toastService.show('Beneficiario Encontrado', `Datos cargados para edición.`, 'info');
+      } else {
+        this.isEditing = false;
+        this.errorMessage = 'Beneficiario no encontrado. Puede proceder a registrarlo.';
+        this.form.reset({ id: crypto.randomUUID(), documento: this.searchDoc });
+      }
+    } catch (e: any) {
+      this.errorMessage = 'Error al buscar beneficiario.';
+    }
+  }
+
   async onSubmit() {
     if (this.form.invalid) return;
 
@@ -52,10 +73,11 @@ export class BeneficiaryFormComponent implements OnInit {
       this.errorMessage = '';
       const data = this.form.value;
       
-      // Validación de duplicidad por documento en Dexie
-      const existing = await db.beneficiaries.where('documento').equals(data.documento).first();
-      if (existing) {
-        throw new Error('Ya existe un beneficiario registrado con este documento.');
+      if (!this.isEditing) {
+        const existing = await db.beneficiaries.where('documento').equals(data.documento).first();
+        if (existing) {
+          throw new Error('Ya existe un beneficiario registrado con este documento. Búscalo para editarlo.');
+        }
       }
 
       if (this.isOnline) {
@@ -72,6 +94,8 @@ export class BeneficiaryFormComponent implements OnInit {
         'success'
       );
       
+      this.isEditing = false;
+      this.searchDoc = '';
       this.form.reset();
       this.initForm();
       

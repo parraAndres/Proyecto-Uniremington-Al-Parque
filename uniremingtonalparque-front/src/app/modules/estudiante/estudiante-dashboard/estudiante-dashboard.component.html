@@ -1,0 +1,90 @@
+<div class="estudiante-dash">
+  <!-- Header Jornada Actual -->
+  <div class="jornada-hero" *ngIf="jornadaActual">
+    <div class="jornada-info">
+      <div class="jornada-status-dot" [class.en-curso]="jornadaActual?.estado === 'EN_CURSO'"></div>
+      <div>
+        <span class="jornada-label">Jornada Actual</span>
+        <h2>{{ jornadaActual?.nombre }}</h2>
+        <p><i class="fas fa-map-marker-alt"></i> {{ jornadaActual?.municipio }}
+          <span *ngIf="jornadaActual?.vereda"> — {{ jornadaActual?.vereda }}</span>
+          &nbsp;|&nbsp; <i class="fas fa-calendar"></i> {{ jornadaActual?.fecha | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+    </div>
+    <div class="jornada-badge" [class.activa]="jornadaActual?.estado === 'EN_CURSO'" [class.programada]="jornadaActual?.estado === 'PROGRAMADA'">
+      <i class="fas" [class.fa-play-circle]="jornadaActual?.estado === 'EN_CURSO'" [class.fa-clock]="jornadaActual?.estado === 'PROGRAMADA'"></i>
+      {{ jornadaActual?.estado === 'EN_CURSO' ? 'En Curso' : 'Programada' }}
+    </div>
+  </div>
+
+  <!-- Sin jornada activa -->
+  <div class="no-jornada-banner" *ngIf="!jornadaActual">
+    <i class="fas fa-info-circle"></i>
+    <span>No hay jornada activa en este momento. Espera la asignación de tu coordinador.</span>
+  </div>
+
+  <!-- Bienvenida + Estado Conexión -->
+  <div class="dash-welcome">
+    <div class="welcome-text">
+      <h1>¡Hola, {{ user?.nombreCompleto || 'Estudiante' }}! 👋</h1>
+      <p>{{ fechaActual }}</p>
+      <p class="facultad-tag"><i class="fas fa-university"></i> {{ user?.facultad || 'Facultad Asignada' }}</p>
+    </div>
+    <div class="connectivity-card" [class.online]="isOnline" [class.offline]="!isOnline">
+      <i class="fas" [class.fa-wifi]="isOnline" [class.fa-wifi-slash]="!isOnline"></i>
+      <div>
+        <span class="conn-status">{{ isOnline ? 'Conectado' : 'Modo Offline' }}</span>
+        <span class="conn-desc">{{ isOnline ? 'Datos sincronizados' : pendingCount + ' registros pendientes' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats rápidas -->
+  <div class="quick-stats">
+    <div class="qs-card">
+      <i class="fas fa-hands-helping"></i>
+      <div>
+        <span class="qs-val">{{ totalAtenciones }}</span>
+        <span class="qs-lab">Atenciones</span>
+      </div>
+    </div>
+    <div class="qs-card">
+      <i class="fas fa-users"></i>
+      <div>
+        <span class="qs-val">{{ totalBeneficiarios }}</span>
+        <span class="qs-lab">Beneficiarios</span>
+      </div>
+    </div>
+    <div class="qs-card">
+      <i class="fas fa-tasks"></i>
+      <div>
+        <span class="qs-val">{{ totalSeguimientos }}</span>
+        <span class="qs-lab">Seguimientos</span>
+      </div>
+    </div>
+    <div class="qs-card pending-card" *ngIf="pendingCount > 0">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div>
+        <span class="qs-val">{{ pendingCount }}</span>
+        <span class="qs-lab">Pendientes Sync</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Módulos -->
+  <h3 class="modules-title"><i class="fas fa-th-large"></i> Mis Herramientas</h3>
+  <div class="student-modules-grid">
+    <a *ngFor="let m of modulos" [routerLink]="m.ruta" class="student-module-card" [class]="'module-' + m.color">
+      <div class="module-card-icon">
+        <i [class]="m.icon"></i>
+        <span *ngIf="m.badge" class="module-badge">{{ m.badge }}</span>
+      </div>
+      <div class="module-card-info">
+        <h4>{{ m.nombre }}</h4>
+        <p>{{ m.descripcion }}</p>
+      </div>
+      <i class="fas fa-chevron-right module-arrow"></i>
+    </a>
+  </div>
+</div>

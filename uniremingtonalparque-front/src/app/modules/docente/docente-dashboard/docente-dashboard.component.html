@@ -1,0 +1,85 @@
+<div class="docente-dash">
+  <!-- Topbar -->
+  <div class="docente-topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">
+        <i class="fas fa-university"></i>
+        <span>UAP — Coordinador</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-connectivity" [class.online]="isOnline" [class.offline]="!isOnline">
+        <i class="fas" [class.fa-wifi]="isOnline" [class.fa-exclamation-triangle]="!isOnline"></i>
+        {{ isOnline ? 'Online' : 'Offline' }}
+      </div>
+      <div class="topbar-user">
+        <i class="fas fa-user-tie"></i>
+        <div>
+          <span class="user-name">{{ user?.nombreCompleto }}</span>
+          <span class="user-role">Docente / Coordinador</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="docente-content">
+    <!-- Stats Bar -->
+    <div class="docente-stats">
+      <div class="ds-card">
+        <i class="fas fa-user-friends"></i>
+        <div><span class="ds-val">{{ totalBeneficiarios }}</span><span class="ds-lab">Beneficiarios</span></div>
+      </div>
+      <div class="ds-card">
+        <i class="fas fa-concierge-bell"></i>
+        <div><span class="ds-val">{{ totalAtenciones }}</span><span class="ds-lab">Atenciones</span></div>
+      </div>
+      <div class="ds-card">
+        <i class="fas fa-tasks"></i>
+        <div><span class="ds-val">{{ totalSeguimientos }}</span><span class="ds-lab">Seguimientos</span></div>
+      </div>
+      <div class="ds-card" *ngIf="impactStats.totalEstudiantes">
+        <i class="fas fa-user-graduate"></i>
+        <div><span class="ds-val">{{ impactStats.totalEstudiantes }}</span><span class="ds-lab">Estudiantes UAP</span></div>
+      </div>
+    </div>
+
+    <!-- Módulos Grid -->
+    <h2 class="modules-heading"><i class="fas fa-th"></i> Módulos de Coordinación</h2>
+    <div class="docente-modules-grid">
+      <a *ngFor="let m of modulos" [routerLink]="m.ruta" class="docente-module-card" [class]="'dmc-' + m.color">
+        <div class="dmc-icon-wrap">
+          <i [class]="m.icon"></i>
+        </div>
+        <div class="dmc-body">
+          <h3>{{ m.nombre }}</h3>
+          <p>{{ m.desc }}</p>
+          <ul class="dmc-subitems">
+            <li *ngFor="let s of m.subItems"><i class="fas fa-check-circle"></i> {{ s }}</li>
+          </ul>
+        </div>
+        <div class="dmc-arrow">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+    </div>
+
+    <!-- Jornadas Recientes -->
+    <div class="jornadas-preview" *ngIf="jornadas.length > 0">
+      <h3 class="preview-title"><i class="fas fa-calendar-alt"></i> Jornadas Recientes</h3>
+      <div class="jornadas-preview-grid">
+        <div *ngFor="let j of jornadas" class="jp-card">
+          <div class="jp-status" [class]="j.estado?.toLowerCase()"></div>
+          <div class="jp-info">
+            <strong>{{ j.nombre }}</strong>
+            <span><i class="fas fa-map-pin"></i> {{ j.municipio }}</span>
+            <span><i class="fas fa-calendar"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <span class="jp-estado-badge">{{ j.estado }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

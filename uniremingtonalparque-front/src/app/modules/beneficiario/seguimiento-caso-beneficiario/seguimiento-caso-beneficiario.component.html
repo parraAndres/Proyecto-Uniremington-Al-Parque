@@ -1,0 +1,60 @@
+<div class="seguimiento-ben-container">
+  <div class="seguimiento-ben-header">
+    <div class="header-icon-wrap gradient-teal">
+      <i class="fas fa-search-plus"></i>
+    </div>
+    <div>
+      <h1>Seguimiento de mi Caso</h1>
+      <p>Avances, recomendaciones y próximas citas de tu proceso</p>
+    </div>
+  </div>
+
+  <!-- Próxima Cita Banner -->
+  <div class="proxima-cita-banner" *ngIf="getProximaCita()">
+    <div class="cita-icon"><i class="fas fa-calendar-check"></i></div>
+    <div class="cita-info">
+      <span class="cita-label">Próxima Visita / Seguimiento</span>
+      <h3>{{ getProximaCita()?.estado }}</h3>
+      <p><i class="fas fa-calendar"></i> {{ getProximaCita()?.fechaProgramada | date:'dd/MM/yyyy' }}</p>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="seguimientos.length === 0" class="empty-state-ben">
+    <div class="empty-icon"><i class="fas fa-search-plus"></i></div>
+    <h3>No hay seguimientos activos</h3>
+    <p>Cuando el equipo del programa registre seguimientos para tu caso, los verás aquí.</p>
+  </div>
+
+  <!-- Timeline de Seguimientos -->
+  <div class="seguimientos-timeline" *ngIf="seguimientos.length > 0">
+    <h3 class="timeline-title"><i class="fas fa-history"></i> Historial de Avances</h3>
+    
+    <div *ngFor="let s of seguimientos" class="seg-timeline-item" [class]="'seg-' + getEstadoClass(s.estado)">
+      <div class="seg-timeline-marker">
+        <i class="fas" 
+           [class.fa-check-circle]="s.estado === 'CERRADO'"
+           [class.fa-sync-alt]="s.estado === 'EN_PROCESO'"
+           [class.fa-folder-open]="s.estado === 'ABIERTO'"
+           [class.fa-map-marker-alt]="s.estado === 'VISITA_PROGRAMADA'"></i>
+      </div>
+      <div class="seg-timeline-content">
+        <div class="seg-timeline-header">
+          <span class="seg-estado-label" [class]="'estado-' + getEstadoClass(s.estado)">{{ s.estado }}</span>
+          <span class="seg-fecha"><i class="fas fa-calendar"></i> {{ s.fechaProgramada | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="seg-avances">
+          <h4><i class="fas fa-chart-line"></i> Avances</h4>
+          <p>{{ s.avances }}</p>
+        </div>
+        <div *ngIf="s.aprobado" class="seg-aprobado">
+          <i class="fas fa-stamp"></i> Aprobado por el coordinador
+          <span *ngIf="s.fechaAprobacion"> — {{ s.fechaAprobacion | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div *ngIf="s.motivoCambio" class="seg-motivo">
+          <i class="fas fa-comment-dots"></i> {{ s.motivoCambio }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

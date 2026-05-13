@@ -1,0 +1,48 @@
+<div class="mis-atenciones-container">
+  <div class="mis-atenciones-header">
+    <div class="header-icon-wrap gradient-blue">
+      <i class="fas fa-hand-holding-heart"></i>
+    </div>
+    <div>
+      <h1>Mis Atenciones Recibidas</h1>
+      <p>Historial de servicios recibidos a través del programa Uniremington al Parque</p>
+    </div>
+  </div>
+
+  <!-- Summary Bar -->
+  <div class="atenciones-summary">
+    <div class="summary-item">
+      <span class="sum-val">{{ atenciones.length }}</span>
+      <span class="sum-lab">Servicios Recibidos</span>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="atenciones.length === 0" class="empty-state-ben">
+    <div class="empty-icon"><i class="fas fa-hand-holding-heart"></i></div>
+    <h3>Aún no tienes atenciones registradas</h3>
+    <p>Cuando los estudiantes del programa te atiendan, los registros aparecerán aquí.</p>
+  </div>
+
+  <!-- Atenciones Cards -->
+  <div class="atenciones-list" *ngIf="atenciones.length > 0">
+    <div *ngFor="let a of atenciones; let i = index" class="atencion-received-card">
+      <div class="arc-number">{{ i + 1 }}</div>
+      <div class="arc-content">
+        <div class="arc-header">
+          <span class="arc-service-type"><i class="fas fa-concierge-bell"></i> {{ a.tipoServicio }}</span>
+          <span class="arc-date"><i class="fas fa-calendar-alt"></i> {{ a.fechaAtencion || 'Fecha no registrada' }}</span>
+        </div>
+        <p class="arc-description">{{ a.descripcion }}</p>
+        <div class="arc-footer">
+          <span class="arc-facultad"><i class="fas fa-university"></i> {{ getFacultadLabel(a.facultadResponsable) }}</span>
+          <span class="arc-resultado resultado-{{ a.resultado }}">{{ a.resultado }}</span>
+          <span class="arc-tiempo"><i class="fas fa-clock"></i> {{ a.tiempoAtencion }} min</span>
+        </div>
+        <div *ngIf="a.observaciones" class="arc-observaciones">
+          <i class="fas fa-comment-alt"></i> <strong>Recomendación:</strong> {{ a.observaciones }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

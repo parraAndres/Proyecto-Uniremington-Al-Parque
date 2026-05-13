@@ -1,0 +1,124 @@
+<div class="atencion-container">
+  <div class="atencion-header">
+    <div class="header-icon-wrap gradient-green">
+      <i class="fas fa-hands-helping"></i>
+    </div>
+    <div>
+      <h1>Registro de Atención</h1>
+      <p>Documenta el servicio prestado a un beneficiario del programa UAP</p>
+    </div>
+    <!-- Timer Widget -->
+    <div class="timer-widget">
+      <div class="timer-display">
+        <i class="fas fa-stopwatch"></i>
+        <span>{{ elapsedMinutes }} min</span>
+      </div>
+      <div class="timer-controls">
+        <button *ngIf="!isTimerRunning" (click)="startTimer()" class="btn-timer-start"><i class="fas fa-play"></i> Iniciar</button>
+        <button *ngIf="isTimerRunning" (click)="stopTimer()" class="btn-timer-stop"><i class="fas fa-stop"></i> Detener</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert-success" *ngIf="successMessage"><i class="fas fa-check-circle"></i> {{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage"><i class="fas fa-exclamation-circle"></i> {{ errorMessage }}</div>
+
+  <!-- Offline Banner -->
+  <div class="offline-banner" *ngIf="!isOnline">
+    <i class="fas fa-wifi-slash"></i>
+    <span>Modo Offline — Los datos se guardarán localmente y se sincronizarán al reconectarse.</span>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="atencion-form">
+    
+    <!-- Seleccionar Beneficiario -->
+    <div class="form-section">
+      <h3 class="section-title"><span class="step-num">1</span> Seleccionar Beneficiario</h3>
+      <div class="search-beneficiario">
+        <div class="search-input-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" [value]="searchTerm" (input)="searchBeneficiario($any($event.target).value)" 
+                 placeholder="Buscar por nombre o documento...">
+        </div>
+        <div class="search-results" *ngIf="filteredBeneficiarios.length > 0 && searchTerm">
+          <div *ngFor="let b of filteredBeneficiarios | slice:0:5" class="search-result-item" (click)="selectBeneficiario(b)">
+            <i class="fas fa-user-circle"></i>
+            <div>
+              <strong>{{ b.nombres }} {{ b.apellidos }}</strong>
+              <span>Doc: {{ b.documento }} — {{ b.municipio }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="form.get('beneficiarioId')?.value" class="selected-beneficiario">
+          <i class="fas fa-check-circle"></i> Beneficiario seleccionado: <strong>{{ searchTerm }}</strong>
+        </div>
+        <div *ngIf="!form.get('beneficiarioId')?.value && beneficiarios.length === 0" class="no-beneficiarios">
+          <i class="fas fa-exclamation-triangle"></i>
+          No hay beneficiarios registrados. <a routerLink="/parque/beneficiarios">Registra uno primero.</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seleccionar Servicio -->
+    <div class="form-section">
+      <h3 class="section-title"><span class="step-num">2</span> Seleccionar Servicio</h3>
+      <div class="services-grid">
+        <label *ngFor="let s of servicios" class="service-option" [class.selected]="form.get('tipoServicio')?.value === s">
+          <input type="radio" formControlName="tipoServicio" [value]="s">
+          <i class="fas fa-check-circle"></i>
+          {{ s }}
+        </label>
+      </div>
+    </div>
+
+    <!-- Descripción y Observaciones -->
+    <div class="form-section">
+      <h3 class="section-title"><span class="step-num">3</span> Describir la Atención</h3>
+      <div class="form-row">
+        <div class="field-group full-width">
+          <label><i class="fas fa-align-left"></i> Descripción de la Atención *</label>
+          <textarea formControlName="descripcion" rows="4" placeholder="Describe detalladamente el servicio prestado, incluyendo el proceso y los resultados..."></textarea>
+          <span class="char-count">{{ form.get('descripcion')?.value?.length || 0 }} caracteres</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group full-width">
+          <label><i class="fas fa-comment-medical"></i> Observaciones y Recomendaciones</label>
+          <textarea formControlName="observaciones" rows="3" placeholder="Observaciones adicionales, recomendaciones al beneficiario..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tiempo y Resultado -->
+    <div class="form-section">
+      <h3 class="section-title"><span class="step-num">4</span> Tiempo y Resultado</h3>
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-clock"></i> Tiempo de Atención (minutos) *</label>
+          <input type="number" formControlName="tiempoAtencion" min="1" placeholder="Ej: 30">
+          <small *ngIf="isTimerRunning" class="timer-hint">⏱ Temporizador activo: {{ elapsedMinutes }} min</small>
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-clipboard-check"></i> Resultado de la Atención *</label>
+          <select formControlName="resultado" class="custom-select">
+            <option value="orientacion">Orientación / Información</option>
+            <option value="intervencion">Intervención Directa</option>
+            <option value="remision">Remisión a otra área</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-calendar"></i> Fecha de Atención</label>
+          <input type="date" formControlName="fechaAtencion">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit-atencion" [disabled]="form.invalid">
+        <i class="fas fa-save"></i> Registrar Atención
+        <span *ngIf="!isOnline" class="offline-tag">(Offline)</span>
+      </button>
+    </div>
+  </form>
+</div>

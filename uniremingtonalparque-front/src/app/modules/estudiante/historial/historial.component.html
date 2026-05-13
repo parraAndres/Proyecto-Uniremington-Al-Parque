@@ -1,0 +1,138 @@
+<div class="historial-container">
+  <div class="historial-header">
+    <div class="header-icon-wrap gradient-purple">
+      <i class="fas fa-history"></i>
+    </div>
+    <div>
+      <h1>Historial de Atenciones</h1>
+      <p>Servicios realizados, beneficiarios atendidos y estado de casos</p>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats-bar">
+    <div class="qsb-item">
+      <span class="qsb-val">{{ atenciones.length }}</span>
+      <span class="qsb-lab">Servicios Realizados</span>
+    </div>
+    <div class="qsb-item">
+      <span class="qsb-val">{{ uniqueBeneficiariosAtendidos.length }}</span>
+      <span class="qsb-lab">Beneficiarios Únicos</span>
+    </div>
+    <div class="qsb-item">
+      <span class="qsb-val">{{ seguimientos.length }}</span>
+      <span class="qsb-lab">Casos en Seguimiento</span>
+    </div>
+    <div class="qsb-item offline-qsb" *ngIf="!isOnline">
+      <i class="fas fa-wifi-slash"></i>
+      <span class="qsb-lab">Modo Offline</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="historial-tabs">
+    <button [class.active]="activeTab === 'servicios'" (click)="activeTab = 'servicios'">
+      <i class="fas fa-concierge-bell"></i> Servicios Realizados
+    </button>
+    <button [class.active]="activeTab === 'beneficiarios'" (click)="activeTab = 'beneficiarios'">
+      <i class="fas fa-users"></i> Beneficiarios Atendidos
+    </button>
+    <button [class.active]="activeTab === 'estados'" (click)="activeTab = 'estados'">
+      <i class="fas fa-tasks"></i> Estado de Casos
+    </button>
+  </nav>
+
+  <!-- SERVICIOS -->
+  <div *ngIf="activeTab === 'servicios'" class="tab-content animate-fade">
+    <div class="filter-bar">
+      <div class="filter-input-wrap">
+        <i class="fas fa-filter"></i>
+        <input type="text" [(ngModel)]="filterServicio" placeholder="Filtrar por tipo de servicio..." class="filter-input">
+      </div>
+    </div>
+    <div class="data-card">
+      <div *ngIf="filteredAtenciones.length === 0" class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No hay atenciones registradas.</p>
+        <a routerLink="/estudiante/atencion" class="btn-action-link"><i class="fas fa-plus"></i> Registrar primera atención</a>
+      </div>
+      <div class="atenciones-timeline" *ngIf="filteredAtenciones.length > 0">
+        <div *ngFor="let a of filteredAtenciones" class="atencion-timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="service-type-badge">{{ a.tipoServicio }}</span>
+              <span class="timeline-date"><i class="fas fa-calendar"></i> {{ a.fechaAtencion || 'Sin fecha' }}</span>
+            </div>
+            <p class="timeline-beneficiario"><i class="fas fa-user"></i> {{ getBeneficiarioNombre(a.beneficiarioId) }}</p>
+            <p class="timeline-desc">{{ a.descripcion }}</p>
+            <div class="timeline-footer">
+              <span><i class="fas fa-clock"></i> {{ a.tiempoAtencion }} min</span>
+              <span class="resultado-tag">{{ a.resultado }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENEFICIARIOS ATENDIDOS -->
+  <div *ngIf="activeTab === 'beneficiarios'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div *ngIf="uniqueBeneficiariosAtendidos.length === 0" class="empty-state">
+        <i class="fas fa-users"></i>
+        <p>Aún no has atendido beneficiarios.</p>
+      </div>
+      <div class="beneficiarios-grid" *ngIf="uniqueBeneficiariosAtendidos.length > 0">
+        <div *ngFor="let b of uniqueBeneficiariosAtendidos" class="beneficiario-card-historial">
+          <div class="ben-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="ben-info">
+            <h4>{{ b.nombres }} {{ b.apellidos }}</h4>
+            <span class="ben-doc"><i class="fas fa-id-card"></i> {{ b.documento }}</span>
+            <span class="ben-loc"><i class="fas fa-map-marker-alt"></i> {{ b.municipio }}, {{ b.barrio }}</span>
+            <span class="ben-poblacion">{{ b.tipoPoblacion }}</span>
+          </div>
+          <div class="ben-meta">
+            <span class="atenciones-count">
+              {{ atenciones.filter(a => a.beneficiarioId === b.id).length }} atenciones
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADO DE CASOS -->
+  <div *ngIf="activeTab === 'estados'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div *ngIf="atencionesConEstado.length === 0" class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <p>No hay casos para mostrar.</p>
+      </div>
+      <table class="data-table" *ngIf="atencionesConEstado.length > 0">
+        <thead>
+          <tr>
+            <th>Beneficiario</th>
+            <th>Servicio</th>
+            <th class="text-center">Estado del Caso</th>
+            <th class="text-center">Tiempo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of atencionesConEstado">
+            <td class="bold">{{ a.beneficiario }}</td>
+            <td>{{ a.tipoServicio }}</td>
+            <td class="text-center">
+              <span class="estado-pill" [class]="'estado-' + (a.estadoCaso || 'none').toLowerCase().replace('_', '-')">
+                {{ a.estadoCaso || 'Sin seguimiento' }}
+              </span>
+            </td>
+            <td class="text-center">{{ a.tiempoAtencion }} min</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

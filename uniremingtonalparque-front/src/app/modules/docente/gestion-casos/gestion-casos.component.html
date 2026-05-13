@@ -1,0 +1,191 @@
+<div class="gestion-container">
+  <div class="gestion-header">
+    <div class="header-icon-wrap">
+      <i class="fas fa-folder-open"></i>
+    </div>
+    <div>
+      <h1>Gestión de Casos</h1>
+      <p>Creación, seguimiento y programación de casos del programa UAP</p>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert-success" *ngIf="successMessage"><i class="fas fa-check-circle"></i> {{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage"><i class="fas fa-exclamation-circle"></i> {{ errorMessage }}</div>
+
+  <!-- Tabs -->
+  <nav class="gestion-tabs">
+    <button [class.active]="activeTab === 'crear'" (click)="activeTab = 'crear'">
+      <i class="fas fa-plus-circle"></i> Crear Seguimiento
+    </button>
+    <button [class.active]="activeTab === 'estados'" (click)="activeTab = 'estados'">
+      <i class="fas fa-exchange-alt"></i> Cambiar Estados
+    </button>
+    <button [class.active]="activeTab === 'visitas'" (click)="activeTab = 'visitas'">
+      <i class="fas fa-calendar-plus"></i> Programar Visitas
+    </button>
+  </nav>
+
+  <!-- CREAR SEGUIMIENTO -->
+  <div *ngIf="activeTab === 'crear'" class="tab-content animate-fade">
+    <div class="form-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-file-medical-alt"></i> Nuevo Seguimiento de Caso</h3>
+      </div>
+      <form [formGroup]="seguimientoForm" (ngSubmit)="crearSeguimiento()" class="modern-form">
+        <div class="form-row">
+          <div class="field-group">
+            <label><i class="fas fa-user"></i> Beneficiario</label>
+            <select formControlName="beneficiarioId" class="custom-select">
+              <option value="">Seleccione beneficiario...</option>
+              <option *ngFor="let b of beneficiarios" [value]="b.id">{{ b.nombres }} {{ b.apellidos }} ({{ b.documento }})</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label><i class="fas fa-info-circle"></i> Estado Inicial</label>
+            <select formControlName="estado" class="custom-select">
+              <option value="ABIERTO">Abierto</option>
+              <option value="EN_PROCESO">En Proceso</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field-group">
+            <label><i class="fas fa-calendar-alt"></i> Fecha Programada</label>
+            <input type="date" formControlName="fechaProgramada">
+          </div>
+        </div>
+        <div class="field-group full-width">
+          <label><i class="fas fa-tasks"></i> Avances / Descripción del Caso</label>
+          <textarea formControlName="avances" rows="3" placeholder="Describe el estado inicial del caso..."></textarea>
+        </div>
+        <div class="field-group full-width">
+          <label><i class="fas fa-comment-alt"></i> Observaciones (Opcional)</label>
+          <textarea formControlName="observaciones" rows="2" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary-action" [disabled]="seguimientoForm.invalid">
+          <i class="fas fa-save"></i> Crear Seguimiento
+        </button>
+      </form>
+    </div>
+
+    <!-- Lista de seguimientos existentes -->
+    <div class="cases-list mt-4" *ngIf="seguimientos.length > 0">
+      <h4 class="section-subtitle"><i class="fas fa-list"></i> Casos Registrados ({{ seguimientos.length }})</h4>
+      <div class="case-cards-grid">
+        <div *ngFor="let s of seguimientos" class="case-card">
+          <div class="case-card-header">
+            <span class="case-beneficiario">{{ getBeneficiarioNombre(s.beneficiarioId) }}</span>
+            <span class="estado-pill" [class]="'estado-' + s.estado?.toLowerCase()?.replace('_', '-')">{{ s.estado }}</span>
+          </div>
+          <p class="case-avances">{{ s.avances }}</p>
+          <div class="case-footer">
+            <span><i class="fas fa-calendar"></i> {{ s.fechaProgramada | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="s.aprobado" class="approved-tag"><i class="fas fa-check"></i> Aprobado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMBIAR ESTADOS -->
+  <div *ngIf="activeTab === 'estados'" class="tab-content animate-fade">
+    <div class="form-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-traffic-light"></i> Cambio de Estado de Caso</h3>
+      </div>
+      <form [formGroup]="estadoForm" (ngSubmit)="cambiarEstado()" class="modern-form">
+        <div class="form-row">
+          <div class="field-group">
+            <label><i class="fas fa-folder-open"></i> Caso / Seguimiento</label>
+            <select formControlName="seguimientoId" class="custom-select">
+              <option value="">Seleccione un caso...</option>
+              <option *ngFor="let s of seguimientos" [value]="s.id">
+                {{ getBeneficiarioNombre(s.beneficiarioId) }} — {{ s.estado }}
+              </option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label><i class="fas fa-exchange-alt"></i> Nuevo Estado</label>
+            <select formControlName="nuevoEstado" class="custom-select">
+              <option value="">Seleccione nuevo estado...</option>
+              <option *ngFor="let e of estadosDisponibles" [value]="e">{{ e }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group full-width">
+          <label><i class="fas fa-comment-dots"></i> Motivo del Cambio</label>
+          <textarea formControlName="motivoCambio" rows="3" placeholder="Justificación del cambio de estado..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary-action" [disabled]="estadoForm.invalid">
+          <i class="fas fa-sync-alt"></i> Cambiar Estado
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla de estados actuales -->
+    <div class="content-card mt-4" *ngIf="seguimientos.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Beneficiario</th>
+            <th>Estado Actual</th>
+            <th>Fecha</th>
+            <th>Avances</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of seguimientos">
+            <td class="bold">{{ getBeneficiarioNombre(s.beneficiarioId) }}</td>
+            <td><span class="estado-pill" [class]="'estado-' + s.estado?.toLowerCase()?.replace('_', '-')">{{ s.estado }}</span></td>
+            <td>{{ s.fechaProgramada | date:'dd/MM/yyyy' }}</td>
+            <td>{{ s.avances | slice:0:60 }}...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PROGRAMAR VISITAS -->
+  <div *ngIf="activeTab === 'visitas'" class="tab-content animate-fade">
+    <div class="form-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-map-marker-alt"></i> Programar Visita o Seguimiento</h3>
+      </div>
+      <form [formGroup]="visitaForm" (ngSubmit)="programarVisita()" class="modern-form">
+        <div class="form-row">
+          <div class="field-group">
+            <label><i class="fas fa-link"></i> Caso Relacionado</label>
+            <select formControlName="seguimientoId" class="custom-select">
+              <option value="">Seleccione caso...</option>
+              <option *ngFor="let s of seguimientos" [value]="s.id">
+                {{ getBeneficiarioNombre(s.beneficiarioId) }} — {{ s.estado }}
+              </option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label><i class="fas fa-calendar-day"></i> Fecha de Visita</label>
+            <input type="date" formControlName="fechaVisita">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field-group">
+            <label><i class="fas fa-map-pin"></i> Lugar</label>
+            <input type="text" formControlName="lugar" placeholder="Ej: Barrio San José, Marinilla">
+          </div>
+          <div class="field-group">
+            <label><i class="fas fa-user-tie"></i> Responsable</label>
+            <input type="text" formControlName="responsable" placeholder="Nombre del responsable">
+          </div>
+        </div>
+        <div class="field-group full-width">
+          <label><i class="fas fa-bullseye"></i> Objetivo de la Visita</label>
+          <textarea formControlName="objetivo" rows="3" placeholder="Describe el objetivo de esta visita o seguimiento..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary-action" [disabled]="visitaForm.invalid">
+          <i class="fas fa-calendar-check"></i> Programar Visita
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

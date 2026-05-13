@@ -1,0 +1,154 @@
+<div class="reportes-container">
+  <div class="reportes-header">
+    <div class="header-icon-wrap gradient-purple">
+      <i class="fas fa-chart-bar"></i>
+    </div>
+    <div>
+      <h1>Reportes Académicos</h1>
+      <p>Estadísticas de participación, horas acumuladas e impacto por facultad</p>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="stats-summary-grid">
+    <div class="stat-summary-card card-blue">
+      <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ totalEstudiantes }}</span>
+        <span class="stat-lab">Estudiantes UAP</span>
+      </div>
+    </div>
+    <div class="stat-summary-card card-green">
+      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ totalHorasAcumuladas | number }}</span>
+        <span class="stat-lab">Horas Acumuladas</span>
+      </div>
+    </div>
+    <div class="stat-summary-card card-orange">
+      <div class="stat-icon"><i class="fas fa-university"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ impactoFacultad.length }}</span>
+        <span class="stat-lab">Facultades Activas</span>
+      </div>
+    </div>
+    <div class="stat-summary-card card-purple">
+      <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+      <div class="stat-info">
+        <span class="stat-val">{{ jornadasStats.length }}</span>
+        <span class="stat-lab">Jornadas Registradas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <nav class="reportes-tabs">
+    <button [class.active]="activeTab === 'jornadas'" (click)="activeTab = 'jornadas'">
+      <i class="fas fa-map-marked-alt"></i> Por Jornada UAP
+    </button>
+    <button [class.active]="activeTab === 'horas'" (click)="activeTab = 'horas'">
+      <i class="fas fa-hourglass-half"></i> Horas Acumuladas
+    </button>
+    <button [class.active]="activeTab === 'impacto'" (click)="activeTab = 'impacto'">
+      <i class="fas fa-chart-pie"></i> Impacto por Facultad
+    </button>
+  </nav>
+
+  <!-- JORNADAS UAP -->
+  <div *ngIf="activeTab === 'jornadas'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-calendar-alt"></i> Estudiantes por Jornada UAP</h3>
+      </div>
+      <div *ngIf="jornadasStats.length === 0" class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <p>No hay jornadas registradas aún.</p>
+      </div>
+      <div class="jornadas-report-grid" *ngIf="jornadasStats.length > 0">
+        <div *ngFor="let j of jornadasStats; let i = index" class="jornada-report-card">
+          <div class="jornada-number">#{{ i + 1 }}</div>
+          <div class="jornada-info">
+            <h4>{{ j.jornada }}</h4>
+            <span class="jornada-date"><i class="fas fa-calendar"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="jornada-metrics">
+            <div class="metric">
+              <span class="metric-val">{{ j.estudiantes }}</span>
+              <span class="metric-lab">Estudiantes</span>
+            </div>
+            <div class="metric">
+              <span class="metric-val">{{ j.servicios }}</span>
+              <span class="metric-lab">Servicios</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HORAS ACUMULADAS -->
+  <div *ngIf="activeTab === 'horas'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-stopwatch"></i> Horas Acumuladas por Estudiante en Labores UAP</h3>
+      </div>
+      <div *ngIf="horasEstudiantes.length === 0" class="empty-state">
+        <i class="fas fa-clock"></i>
+        <p>No hay registros de horas académicas aún.</p>
+      </div>
+      <table class="data-table" *ngIf="horasEstudiantes.length > 0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudiante</th>
+            <th>Programa</th>
+            <th class="text-center">Horas Acumuladas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of horasEstudiantes; let i = index">
+            <td class="rank-cell">
+              <span class="rank-badge" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">{{ i+1 }}</span>
+            </td>
+            <td class="bold">{{ e.nombre }}</td>
+            <td>{{ e.programa }}</td>
+            <td class="text-center"><span class="hours-badge">{{ e.horas }}h</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- IMPACTO POR FACULTAD -->
+  <div *ngIf="activeTab === 'impacto'" class="tab-content animate-fade">
+    <div class="data-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-university"></i> Impacto por Facultad — Estadísticas del Programa</h3>
+      </div>
+      <div *ngIf="impactoFacultad.length === 0" class="empty-state">
+        <i class="fas fa-chart-pie"></i>
+        <p>No hay estadísticas de impacto disponibles.</p>
+      </div>
+      <div class="impact-faculty-grid" *ngIf="impactoFacultad.length > 0">
+        <div *ngFor="let f of impactoFacultad" class="impact-faculty-card">
+          <div class="faculty-icon"><i class="fas fa-graduation-cap"></i></div>
+          <h4>{{ f.facultad }}</h4>
+          <div class="faculty-metrics">
+            <div class="f-metric">
+              <span class="f-val">{{ f.servicios | number }}</span>
+              <span class="f-lab">Servicios</span>
+            </div>
+            <div class="f-metric">
+              <span class="f-val">{{ f.beneficiariosUnicos | number }}</span>
+              <span class="f-lab">Beneficiarios</span>
+            </div>
+            <div class="f-metric" *ngIf="f.horas">
+              <span class="f-val">{{ f.horas }}h</span>
+              <span class="f-lab">Horas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

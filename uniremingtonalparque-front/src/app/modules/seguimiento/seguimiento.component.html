@@ -1,38 +1,72 @@
-<div class="form-container">
-  <h2>Módulo de Seguimiento</h2>
-  <div *ngIf="!isOnline" class="offline-warning">Modo Offline: Guardado local.</div>
-  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
-  <div *ngIf="successMessage" class="success-alert" style="background-color: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">{{ successMessage }}</div>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 600px; margin: 0 auto;">
-    <div class="form-group">
-      <label for="beneficiarioId">Beneficiario</label>
-      <select id="beneficiarioId" formControlName="beneficiarioId">
-        <option value="">Seleccione...</option>
-        <option *ngFor="let b of beneficiarios" [value]="b.id">{{ b.nombres }} {{ b.apellidos }} ({{ b.documento }})</option>
-      </select>
+<div class="supervision-container">
+  <div class="sup-header">
+    <div class="header-icon-wrap gradient-purple">
+      <i class="fas fa-tasks"></i>
     </div>
-
-    <div class="form-group">
-      <label for="estado">Estado del Caso</label>
-      <select id="estado" formControlName="estado">
-        <option value="">Seleccione...</option>
-        <option value="abierto">Abierto</option>
-        <option value="proceso">En Proceso</option>
-        <option value="cerrado">Cerrado</option>
-      </select>
+    <div>
+      <h1>Módulo de Seguimiento</h1>
+      <p>Actualiza el estado de los casos, agrega avances y registra observaciones adicionales.</p>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label for="fechaProgramada">Fecha de Próximo Seguimiento</label>
-      <input id="fechaProgramada" type="date" formControlName="fechaProgramada" />
-    </div>
+  <div *ngIf="!isOnline" class="offline-banner">
+    <i class="fas fa-wifi-slash"></i> Modo Offline: Los datos se guardarán localmente.
+  </div>
+  <div *ngIf="errorMessage" class="alert-error">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
 
-    <div class="form-group">
-      <label for="avances">Registro de Avances</label>
-      <textarea id="avances" formControlName="avances" rows="4" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 0.75rem; font-family: inherit;"></textarea>
-    </div>
+  <div class="data-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-row">
+        <div class="field-group full-width">
+          <label><i class="fas fa-user-circle"></i> Beneficiario *</label>
+          <select id="beneficiarioId" formControlName="beneficiarioId" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option *ngFor="let b of beneficiarios" [value]="b.id">{{ b.nombres }} {{ b.apellidos }} ({{ b.documento }})</option>
+          </select>
+        </div>
+      </div>
 
-    <button type="submit" class="btn-primary" [disabled]="form.invalid">Guardar Seguimiento</button>
-  </form>
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-info-circle"></i> Estado del Caso *</label>
+          <select id="estado" formControlName="estado" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option value="ABIERTO">Abierto</option>
+            <option value="EN_PROCESO">En Proceso</option>
+            <option value="CERRADO">Cerrado</option>
+            <option value="VISITA_PROGRAMADA">Visita Programada</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-calendar-check"></i> Fecha de Próximo Seguimiento *</label>
+          <input id="fechaProgramada" type="date" formControlName="fechaProgramada">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group full-width">
+          <label><i class="fas fa-chart-line"></i> Registro de Avances *</label>
+          <textarea id="avances" formControlName="avances" rows="4" placeholder="Describe los avances del caso..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group full-width">
+          <label><i class="fas fa-comment-dots"></i> Observaciones Adicionales</label>
+          <textarea id="observaciones" formControlName="observaciones" rows="3" placeholder="Anota detalles o recomendaciones adicionales..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: right;">
+        <button type="submit" class="btn-primary-action" [disabled]="form.invalid">
+          <i class="fas fa-save"></i> Guardar Seguimiento
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

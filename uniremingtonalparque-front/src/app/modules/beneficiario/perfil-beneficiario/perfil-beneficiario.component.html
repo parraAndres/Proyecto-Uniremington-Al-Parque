@@ -1,0 +1,83 @@
+<div class="perfil-beneficiario-container">
+  <div class="perfil-header">
+    <div class="header-icon-wrap gradient-purple">
+      <i class="fas fa-user-edit"></i>
+    </div>
+    <div>
+      <h1>Mi Perfil</h1>
+      <p>Actualiza tu información de contacto y datos básicos</p>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert-success" *ngIf="successMessage"><i class="fas fa-check-circle"></i> {{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage"><i class="fas fa-exclamation-circle"></i> {{ errorMessage }}</div>
+
+  <!-- Datos no editables -->
+  <div class="profile-readonly-card" *ngIf="myRecord">
+    <h3><i class="fas fa-id-card"></i> Datos de Identificación</h3>
+    <div class="readonly-grid">
+      <div class="readonly-field">
+        <label>Nombre Completo</label>
+        <span>{{ myRecord.nombres }} {{ myRecord.apellidos }}</span>
+      </div>
+      <div class="readonly-field">
+        <label>Documento</label>
+        <span>{{ myRecord.documento }}</span>
+      </div>
+      <div class="readonly-field">
+        <label>Edad</label>
+        <span>{{ myRecord.edad }} años</span>
+      </div>
+      <div class="readonly-field">
+        <label>Género</label>
+        <span>{{ myRecord.genero }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- No registrado como beneficiario -->
+  <div *ngIf="!myRecord" class="empty-state-ben">
+    <div class="empty-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3>Perfil de beneficiario no encontrado</h3>
+    <p>Tu perfil como beneficiario no ha sido registrado aún. Contacta a un estudiante del programa.</p>
+  </div>
+
+  <!-- Formulario de actualización -->
+  <div class="update-card" *ngIf="myRecord">
+    <h3><i class="fas fa-pencil-alt"></i> Actualizar Datos de Contacto</h3>
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="modern-form">
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-phone"></i> Teléfono *</label>
+          <input type="tel" formControlName="telefono" placeholder="Ej: 3001234567">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-home"></i> Barrio *</label>
+          <input type="text" formControlName="barrio" placeholder="Ej: San José">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-map-marker-alt"></i> Municipio *</label>
+          <input type="text" formControlName="municipio" placeholder="Ej: Marinilla">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-users"></i> Tipo de Población</label>
+          <select formControlName="tipoPoblacion" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option value="Adulto Mayor">Adulto Mayor</option>
+            <option value="Joven">Joven</option>
+            <option value="Mujer Cabeza de Hogar">Mujer Cabeza de Hogar</option>
+            <option value="Discapacitado">Persona con Discapacidad</option>
+            <option value="Víctima del Conflicto">Víctima del Conflicto</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary-action" [disabled]="form.invalid">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </form>
+  </div>
+</div>

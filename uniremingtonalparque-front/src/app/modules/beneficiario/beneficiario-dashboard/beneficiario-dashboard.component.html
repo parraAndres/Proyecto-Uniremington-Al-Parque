@@ -1,0 +1,26 @@
+<div class="beneficiario-dash">
+  <div class="ben-dash-header">
+    <div class="ben-avatar-large">
+      <i class="fas fa-user-circle"></i>
+    </div>
+    <div class="ben-welcome-text">
+      <h1>Bienvenido, {{ user?.nombreCompleto || 'Beneficiario' }}</h1>
+      <p>Programa Uniremington al Parque — Accede a tus servicios y seguimientos</p>
+      <div class="ben-stats-row">
+        <span><i class="fas fa-hand-holding-heart"></i> {{ atenciones.length }} atenciones recibidas</span>
+        <span><i class="fas fa-tasks"></i> {{ seguimientos.length }} seguimientos activos</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ben-modules-grid">
+    <a *ngFor="let m of modulos" [routerLink]="m.ruta" class="ben-module-card" [class]="'ben-card-' + m.color">
+      <div class="ben-card-icon"><i [class]="m.icon"></i></div>
+      <div class="ben-card-content">
+        <h3>{{ m.nombre }}</h3>
+        <p>{{ m.descripcion }}</p>
+      </div>
+      <i class="fas fa-arrow-right ben-arrow"></i>
+    </a>
+  </div>
+</div>

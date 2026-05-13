@@ -1,0 +1,170 @@
+<div class="supervision-container">
+  <div class="sup-header">
+    <div class="sup-title">
+      <i class="fas fa-eye"></i>
+      <div>
+        <h1>Supervisión de Servicios</h1>
+        <p>Monitoreo y validación de las atenciones realizadas por los estudiantes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+  <div class="alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Tab Navigation -->
+  <nav class="sup-tabs">
+    <button [class.active]="activeTab === 'atenciones'" (click)="activeTab = 'atenciones'">
+      <i class="fas fa-list-alt"></i> Revisar Atenciones
+    </button>
+    <button [class.active]="activeTab === 'validar'" (click)="activeTab = 'validar'">
+      <i class="fas fa-check-double"></i> Validar Registros
+    </button>
+    <button [class.active]="activeTab === 'observaciones'" (click)="activeTab = 'observaciones'">
+      <i class="fas fa-edit"></i> Corregir Observaciones
+    </button>
+    <button [class.active]="activeTab === 'seguimientos'" (click)="activeTab = 'seguimientos'">
+      <i class="fas fa-tasks"></i> Aprobar Seguimientos
+    </button>
+  </nav>
+
+  <!-- REVISAR ATENCIONES -->
+  <div *ngIf="activeTab === 'atenciones'" class="tab-content animate-fade">
+    <div class="content-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-concierge-bell"></i> Atenciones Realizadas ({{ atenciones.length }})</h3>
+      </div>
+      <div class="table-wrap">
+        <div *ngIf="atenciones.length === 0" class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>No hay atenciones registradas aún.</p>
+        </div>
+        <table class="data-table" *ngIf="atenciones.length > 0">
+          <thead>
+            <tr>
+              <th>Beneficiario</th>
+              <th>Servicio</th>
+              <th>Descripción</th>
+              <th>Tiempo (min)</th>
+              <th>Observaciones</th>
+              <th class="text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of atenciones">
+              <td class="bold">{{ getBeneficiarioNombre(a.beneficiarioId) }}</td>
+              <td>{{ a.tipoServicio }}</td>
+              <td class="desc-cell">{{ a.descripcion | slice:0:60 }}...</td>
+              <td class="text-center">{{ a.tiempoAtencion }}</td>
+              <td>{{ a.observaciones || '—' }}</td>
+              <td class="text-center">
+                <span class="status-badge" [class.validated]="a.validado" [class.pending]="!a.validado">
+                  {{ a.validado ? 'Validado' : 'Pendiente' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALIDAR REGISTROS -->
+  <div *ngIf="activeTab === 'validar'" class="tab-content animate-fade">
+    <div class="content-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-clipboard-check"></i> Registros Pendientes de Validación</h3>
+      </div>
+      <div class="validation-list">
+        <div *ngIf="atenciones.length === 0" class="empty-state">
+          <i class="fas fa-clipboard-check"></i>
+          <p>No hay registros pendientes.</p>
+        </div>
+        <div *ngFor="let a of atenciones" class="validation-item" [class.is-validated]="a.validado">
+          <div class="val-info">
+            <span class="val-beneficiario"><i class="fas fa-user"></i> {{ getBeneficiarioNombre(a.beneficiarioId) }}</span>
+            <span class="val-service">{{ a.tipoServicio }} — {{ a.tiempoAtencion }} min</span>
+            <span class="val-desc">{{ a.descripcion }}</span>
+          </div>
+          <div class="val-actions">
+            <span class="status-badge validated" *ngIf="a.validado"><i class="fas fa-check"></i> Validado</span>
+            <button *ngIf="!a.validado" class="btn-validate" (click)="validarRegistro(a)">
+              <i class="fas fa-check-circle"></i> Validar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORREGIR OBSERVACIONES -->
+  <div *ngIf="activeTab === 'observaciones'" class="tab-content animate-fade">
+    <div class="content-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-pen-alt"></i> Corrección de Observaciones</h3>
+      </div>
+      <div class="obs-list">
+        <div *ngIf="atenciones.length === 0" class="empty-state">
+          <i class="fas fa-file-alt"></i>
+          <p>No hay registros para corregir.</p>
+        </div>
+        <div *ngFor="let a of atenciones" class="obs-item">
+          <div class="obs-header">
+            <strong><i class="fas fa-user"></i> {{ getBeneficiarioNombre(a.beneficiarioId) }}</strong>
+            <span class="obs-service-tag">{{ a.tipoServicio }}</span>
+          </div>
+          <div *ngIf="editingId !== a.id" class="obs-current">
+            <label>Observación actual:</label>
+            <p>{{ a.observaciones || 'Sin observaciones registradas' }}</p>
+            <button class="btn-edit-obs" (click)="startEditObservacion(a)">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+          </div>
+          <div *ngIf="editingId === a.id" class="obs-edit-form" [formGroup]="editForm">
+            <textarea formControlName="observaciones" rows="3" placeholder="Escribe la observación corregida..."></textarea>
+            <div class="edit-actions">
+              <button class="btn-save-obs" (click)="saveObservacion(a)"><i class="fas fa-save"></i> Guardar</button>
+              <button class="btn-cancel-obs" (click)="cancelEdit()"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APROBAR SEGUIMIENTOS -->
+  <div *ngIf="activeTab === 'seguimientos'" class="tab-content animate-fade">
+    <div class="content-card">
+      <div class="card-header-inner">
+        <h3><i class="fas fa-stamp"></i> Aprobar Seguimientos ({{ seguimientos.length }})</h3>
+      </div>
+      <div class="seg-list">
+        <div *ngIf="seguimientos.length === 0" class="empty-state">
+          <i class="fas fa-tasks"></i>
+          <p>No hay seguimientos pendientes de aprobación.</p>
+        </div>
+        <div *ngFor="let s of seguimientos" class="seg-approval-item" [class.approved]="s.aprobado">
+          <div class="seg-info">
+            <div class="seg-top">
+              <span class="seg-beneficiario"><i class="fas fa-user-friends"></i> {{ getBeneficiarioNombre(s.beneficiarioId) }}</span>
+              <span class="seg-estado" [class]="'estado-' + s.estado?.toLowerCase()">{{ s.estado }}</span>
+            </div>
+            <p class="seg-avances"><i class="fas fa-tasks"></i> {{ s.avances }}</p>
+            <p class="seg-fecha"><i class="fas fa-calendar"></i> {{ s.fechaProgramada | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="seg-approval-actions">
+            <span class="approved-badge" *ngIf="s.aprobado"><i class="fas fa-check-double"></i> Aprobado</span>
+            <button *ngIf="!s.aprobado" class="btn-approve" (click)="aprobarSeguimiento(s)">
+              <i class="fas fa-thumbs-up"></i> Aprobar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

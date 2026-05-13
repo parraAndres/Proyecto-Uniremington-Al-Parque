@@ -13,12 +13,29 @@ import { AcademicoComponent } from './modules/academico/academico.component';
 import { RecursosComponent } from './modules/recursos/recursos.component';
 import { OfflineStatusComponent } from './modules/offline/offline-status.component';
 import { PanelControlComponent } from './modules/panel/panel-control.component';
+// Docente Dashboard + Modules
+import { DocenteDashboardComponent } from './modules/docente/docente-dashboard/docente-dashboard.component';
+import { SupervisionComponent } from './modules/docente/supervision/supervision.component';
+import { GestionCasosComponent } from './modules/docente/gestion-casos/gestion-casos.component';
+import { ModuloAcademicoDocenteComponent } from './modules/docente/modulo-academico-docente/modulo-academico-docente.component';
+import { ReportesAcademicosComponent } from './modules/docente/reportes-academicos/reportes-academicos.component';
+// Estudiante Modules
+import { EstudianteDashboardComponent } from './modules/estudiante/estudiante-dashboard/estudiante-dashboard.component';
+import { AtencionComponent } from './modules/estudiante/atencion/atencion.component';
+import { HistorialComponent } from './modules/estudiante/historial/historial.component';
+// Beneficiario Modules
+import { BeneficiarioDashboardComponent } from './modules/beneficiario/beneficiario-dashboard/beneficiario-dashboard.component';
+import { MisAtencionesComponent } from './modules/beneficiario/mis-atenciones/mis-atenciones.component';
+import { SeguimientoCasoBeneficiarioComponent } from './modules/beneficiario/seguimiento-caso-beneficiario/seguimiento-caso-beneficiario.component';
+import { PerfilBeneficiarioComponent } from './modules/beneficiario/perfil-beneficiario/perfil-beneficiario.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  // Main dashboard (role-routing hub)
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  // Parque shared routes
   { path: 'parque/beneficiarios', component: BeneficiaryFormComponent, canActivate: [authGuard] },
   { path: 'parque/servicios', component: ServiciosFormComponent, canActivate: [authGuard] },
   { path: 'indicadores', component: IndicadoresComponent, canActivate: [authGuard] },
@@ -28,5 +45,20 @@ export const routes: Routes = [
   { path: 'recursos', component: RecursosComponent, canActivate: [authGuard] },
   { path: 'offline-status', component: OfflineStatusComponent, canActivate: [authGuard] },
   { path: 'panel-control', component: PanelControlComponent, canActivate: [authGuard] },
+  // Docente / Coordinador routes
+  { path: 'docente', component: DocenteDashboardComponent, canActivate: [authGuard] },
+  { path: 'docente/supervision', component: SupervisionComponent, canActivate: [authGuard] },
+  { path: 'docente/gestion-casos', component: GestionCasosComponent, canActivate: [authGuard] },
+  { path: 'docente/modulo-academico', component: ModuloAcademicoDocenteComponent, canActivate: [authGuard] },
+  { path: 'docente/reportes-academicos', component: ReportesAcademicosComponent, canActivate: [authGuard] },
+  // Estudiante routes
+  { path: 'estudiante', component: EstudianteDashboardComponent, canActivate: [authGuard] },
+  { path: 'estudiante/atencion', component: AtencionComponent, canActivate: [authGuard] },
+  { path: 'estudiante/historial', component: HistorialComponent, canActivate: [authGuard] },
+  // Beneficiario routes
+  { path: 'beneficiario', component: BeneficiarioDashboardComponent, canActivate: [authGuard] },
+  { path: 'beneficiario/mis-atenciones', component: MisAtencionesComponent, canActivate: [authGuard] },
+  { path: 'beneficiario/seguimiento-caso', component: SeguimientoCasoBeneficiarioComponent, canActivate: [authGuard] },
+  { path: 'beneficiario/perfil', component: PerfilBeneficiarioComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
 ];

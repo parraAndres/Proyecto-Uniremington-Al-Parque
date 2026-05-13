@@ -1,93 +1,120 @@
-<div class="form-container">
-  <h2>Registro de Beneficiario</h2>
-  <div *ngIf="!isOnline" class="offline-warning">
-    Estás sin conexión. Los datos se guardarán localmente.
+<div class="supervision-container">
+  <div class="sup-header">
+    <div class="header-icon-wrap gradient-blue">
+      <i class="fas fa-user-plus"></i>
+    </div>
+    <div>
+      <h1>Registro de Beneficiarios</h1>
+      <p>Añade o edita la información de las personas beneficiarias del programa.</p>
+    </div>
   </div>
 
-  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+  <div *ngIf="!isOnline" class="offline-banner">
+    <i class="fas fa-wifi-slash"></i> Modo Offline: Los datos se guardarán localmente y se sincronizarán al reconectar.
+  </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card" style="max-width: 800px; margin: 0 auto;">
-    
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-      <div class="form-group">
-        <label for="nombres">Nombres</label>
-        <input id="nombres" type="text" formControlName="nombres" />
-      </div>
+  <div *ngIf="errorMessage" class="alert-error">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
 
-      <div class="form-group">
-        <label for="apellidos">Apellidos</label>
-        <input id="apellidos" type="text" formControlName="apellidos" />
-      </div>
-
-      <div class="form-group">
-        <label for="documento">Documento de Identidad</label>
-        <input id="documento" type="text" formControlName="documento" />
-      </div>
-
-      <div class="form-group">
-        <label for="edad">Edad</label>
-        <input id="edad" type="number" formControlName="edad" />
-      </div>
-
-      <div class="form-group">
-        <label for="genero">Género</label>
-        <select id="genero" formControlName="genero">
-          <option value="">Seleccione...</option>
-          <option value="masculino">Masculino</option>
-          <option value="femenino">Femenino</option>
-          <option value="otro">Otro</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" type="text" formControlName="telefono" />
-      </div>
-
-      <div class="form-group">
-        <label for="municipio">Municipio</label>
-        <select id="municipio" formControlName="municipio">
-          <option value="">Seleccione...</option>
-          <option value="medellin">Medellín</option>
-          <option value="bello">Bello</option>
-          <option value="itagui">Itagüí</option>
-          <option value="rural">Zona Rural (Otro)</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="barrio">Barrio / Vereda</label>
-        <input id="barrio" type="text" formControlName="barrio" />
-      </div>
-
-      <div class="form-group">
-        <label for="tipoPoblacion">Tipo de Población</label>
-        <select id="tipoPoblacion" formControlName="tipoPoblacion">
-          <option value="">Seleccione...</option>
-          <option value="emprendedor">Emprendedor</option>
-          <option value="empresario">Empresario</option>
-          <option value="comunidad">Comunidad General</option>
-          <option value="productor">Productor Rural</option>
-          <option value="otro">Otro</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="servicioSolicitado">Facultad Solicitada para Atención</label>
-        <select id="servicioSolicitado" formControlName="servicioSolicitado">
-          <option value="">Seleccione una facultad...</option>
-          <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
-        </select>
-      </div>
+  <div class="search-section data-card" style="margin-bottom: 2rem;">
+    <h3 style="margin-top: 0; color: #333;"><i class="fas fa-search"></i> Buscar Beneficiario</h3>
+    <div style="display: flex; gap: 1rem;">
+      <input type="text" [(ngModel)]="searchDoc" placeholder="Ingresar número de documento..." 
+             style="flex: 1; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px;">
+      <button class="btn-primary-action" (click)="searchByDocument()" [disabled]="!searchDoc">
+        <i class="fas fa-search"></i> Buscar
+      </button>
     </div>
+  </div>
 
-    <div class="form-group" style="margin-top: 1rem;">
-      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" formControlName="autorizacionDatos" style="width: auto;" />
-        Autorizo el uso y tratamiento de mis datos personales según las políticas institucionales.
-      </label>
-    </div>
+  <div class="data-card">
+    <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+      <i class="fas" [class.fa-user-edit]="isEditing" [class.fa-user-plus]="!isEditing"></i> 
+      {{ isEditing ? 'Editar Información Básica' : 'Registrar Nuevo Beneficiario' }}
+    </h3>
 
-    <button type="submit" class="btn-primary" [disabled]="form.invalid">Registrar Beneficiario</button>
-  </form>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-user"></i> Nombres *</label>
+          <input id="nombres" type="text" formControlName="nombres" placeholder="Ej: Juan">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-user"></i> Apellidos *</label>
+          <input id="apellidos" type="text" formControlName="apellidos" placeholder="Ej: Pérez">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-id-card"></i> Documento *</label>
+          <input id="documento" type="text" formControlName="documento" [readonly]="isEditing" placeholder="Ej: 1001234567">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-calendar-alt"></i> Edad *</label>
+          <input id="edad" type="number" formControlName="edad" min="0" placeholder="Ej: 25">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-venus-mars"></i> Género *</label>
+          <select id="genero" formControlName="genero" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-phone"></i> Teléfono *</label>
+          <input id="telefono" type="tel" formControlName="telefono" placeholder="Ej: 3001234567">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-map-marker-alt"></i> Municipio *</label>
+          <input id="municipio" type="text" formControlName="municipio" placeholder="Ej: Medellín">
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-home"></i> Barrio / Vereda *</label>
+          <input id="barrio" type="text" formControlName="barrio" placeholder="Ej: San Antonio">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label><i class="fas fa-users"></i> Tipo de Población *</label>
+          <select id="tipoPoblacion" formControlName="tipoPoblacion" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option value="Adulto Mayor">Adulto Mayor</option>
+            <option value="Joven">Joven</option>
+            <option value="Mujer Cabeza de Hogar">Mujer Cabeza de Hogar</option>
+            <option value="Discapacitado">Persona con Discapacidad</option>
+            <option value="Víctima del Conflicto">Víctima del Conflicto</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-briefcase-medical"></i> Servicio Solicitado *</label>
+          <select id="servicioSolicitado" formControlName="servicioSolicitado" class="custom-select">
+            <option value="">Seleccione...</option>
+            <option *ngFor="let f of facultades" [value]="f">{{ f }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group full-width" style="display: flex; align-items: center; gap: 1rem;">
+          <input id="autorizacionDatos" type="checkbox" formControlName="autorizacionDatos" style="width: auto;">
+          <label for="autorizacionDatos" style="margin-bottom: 0;">Autorizo el tratamiento de mis datos personales según la ley 1581 de 2012 *</label>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: right;">
+        <button type="submit" class="btn-primary-action" [disabled]="form.invalid">
+          <i class="fas fa-save"></i> {{ isEditing ? 'Guardar Cambios' : 'Registrar Beneficiario' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

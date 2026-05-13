@@ -23,7 +23,8 @@ export class SeguimientoComponent implements OnInit {
       beneficiarioId: ['', Validators.required],
       estado: ['', Validators.required],
       fechaProgramada: ['', Validators.required],
-      avances: ['', Validators.required]
+      avances: ['', Validators.required],
+      observaciones: ['']
     });
   }
 
@@ -42,7 +43,7 @@ export class SeguimientoComponent implements OnInit {
       this.errorMessage = ''; this.successMessage = '';
       await this.syncService.saveLocally('seguimientos', this.form.value);
       this.successMessage = 'Seguimiento guardado correctamente.';
-      this.form.reset({ id: crypto.randomUUID(), beneficiarioId: '', estado: '', fechaProgramada: '', avances: '' });
+      this.form.reset({ id: crypto.randomUUID(), beneficiarioId: '', estado: '', fechaProgramada: '', avances: '', observaciones: '' });
     } catch (e: any) {
       this.errorMessage = e.message || 'Error al guardar';
     }

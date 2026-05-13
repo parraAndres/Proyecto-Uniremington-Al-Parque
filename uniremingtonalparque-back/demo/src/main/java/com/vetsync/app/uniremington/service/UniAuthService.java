@@ -34,20 +34,48 @@ public class UniAuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalStateException(
-                    "Ya existe un usuario con el correo: " + request.getEmail());
+        String email = request.getEmail();
+        String documento = request.getDocumento();
+        String iden = request.getIdentificador();
+
+        // Si viene identificador (desde el form de registro público fusionado)
+        if (iden != null && !iden.isBlank()) {
+            if (iden.contains("@")) {
+                email = iden;
+                documento = "MAIL-" + iden;
+            } else {
+                documento = iden;
+                // email queda como null o lo que venga en request.getEmail()
+            }
         }
+
+        // Validaciones básicas
+        if (documento == null || documento.isBlank()) {
+            throw new IllegalArgumentException("El documento de identidad es obligatorio");
+        }
+
+        if (email != null && !email.isBlank() && usuarioRepository.existsByEmail(email)) {
+            throw new IllegalStateException("Ya existe un usuario con el correo: " + email);
+        }
+        
+        if (usuarioRepository.existsByDocumento(documento)) {
+            throw new IllegalStateException("Ya existe un usuario con el documento: " + documento);
+        }
+
+        String rol = (request.getRol() != null && !request.getRol().isBlank()) 
+                     ? request.getRol().toUpperCase() 
+                     : "CLIENTE";
 
         UsuarioUniremington usuario = UsuarioUniremington.builder()
                 .id(UUID.randomUUID().toString())
-                .documento("CLIENTE-" + UUID.randomUUID().toString().substring(0, 8))
-                .email(request.getEmail())
-                .nombreCompleto("Cliente Invitado")
+                .documento(documento)
+                .email(email)
+                .nombreCompleto(request.getNombreCompleto())
                 .facultad("Visitante")
                 .programa("N/A")
                 .password(passwordEncoder.encode(request.getPassword()))
-                .rol("CLIENTE")
+                .rol(rol)
+                .genero(request.getGenero())
                 .build();
 
         usuarioRepository.save(usuario);

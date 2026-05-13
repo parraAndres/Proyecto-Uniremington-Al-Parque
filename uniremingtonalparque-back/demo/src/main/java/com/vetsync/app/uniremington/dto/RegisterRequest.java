@@ -7,9 +7,17 @@ import lombok.Data;
 @Data
 public class RegisterRequest {
 
-    @NotBlank(message = "El correo electrónico es obligatorio")
     private String email;
+    private String documento;
+    private String identificador;
 
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
+
+    @NotBlank(message = "El nombre completo es obligatorio")
+    private String nombreCompleto;
+
+    private String genero;
+
+    private String rol;
 }

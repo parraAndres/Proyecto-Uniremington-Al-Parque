@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { db } from '../../core/database/app-database';
 import { AuthService } from '../../core/services/auth.service';
 import { StatsService, ImpactStats } from '../../core/services/stats.service';
+import { UserService } from '../../core/services/user.service';
 import { interval, startWith, switchMap } from 'rxjs';
 
 @Component({
@@ -15,8 +16,8 @@ import { interval, startWith, switchMap } from 'rxjs';
   styleUrls: ['./panel-control.component.scss']
 })
 export class PanelControlComponent implements OnInit {
-  students: any[] = [];
-  studentForm: FormGroup;
+  accounts: any[] = [];
+  accountForm: FormGroup;
   isAdmin = false;
   successMessage = '';
   errorMessage = '';
@@ -54,43 +55,39 @@ export class PanelControlComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private statsService: StatsService,
+    private userService: UserService,
     private router: Router
   ) {
-    this.studentForm = this.fb.group({
+    this.accountForm = this.fb.group({
       nombreCompleto: ['', Validators.required],
+      documento: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       facultad: ['', Validators.required],
       programa: ['', Validators.required],
+      rol: ['estudiante', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Cambiar los programas disponibles cuando cambie la facultad
-    this.studentForm.get('facultad')?.valueChanges.subscribe(() => {
-      this.studentForm.patchValue({ programa: '' });
+    this.accountForm.get('facultad')?.valueChanges.subscribe(() => {
+      this.accountForm.patchValue({ programa: '' });
     });
   }
 
   ngOnInit() {
-    // Verificar si ya hay un usuario activo al momento de cargar el componente
     const currentUser = this.authService.currentUserValue;
     if (currentUser && currentUser.documento === '123456') {
       this.isAdmin = true;
-      this.loadStudents();
+      this.loadAccounts();
       this.startStatsPolling();
     }
 
-    // Suscribirse para cambios en el estado de autenticación
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         if (user.documento === '123456') {
           this.isAdmin = true;
-          this.loadStudents();
-          // Asegurarse de que el polling solo inicie una vez si no estaba ya activo
-          // startStatsPolling ya maneja el estado interno si es necesario, 
-          // o podemos simplemente llamarlo aquí.
+          this.loadAccounts();
           this.startStatsPolling();
         } else {
-          // Si no es admin, redirigir al dashboard
           this.router.navigate(['/dashboard']);
         }
       }
@@ -98,7 +95,6 @@ export class PanelControlComponent implements OnInit {
   }
 
   startStatsPolling() {
-    // Actualización cada 1 hora (3600000 ms) para optimización
     interval(3600000).pipe(
       startWith(0),
       switchMap(() => this.statsService.getImpactStats())
@@ -109,62 +105,71 @@ export class PanelControlComponent implements OnInit {
   }
 
   get programasDisponibles(): string[] {
-    const facultad = this.studentForm.get('facultad')?.value;
+    const facultad = this.accountForm.get('facultad')?.value;
     return facultad ? this.programasPorFacultad[facultad] : ['Ej: Ingeniería de Sistemas', 'Ej: Derecho', 'Ej: Medicina Veterinaria'];
   }
 
-  async onRegisterStudent() {
-    if (this.studentForm.invalid) return;
+  async onRegisterAccount() {
+    if (this.accountForm.invalid) return;
 
     try {
       this.errorMessage = '';
       this.successMessage = '';
-      const formValue = this.studentForm.value;
+      const formValue = this.accountForm.value;
       
       const newUser: any = {
         email: formValue.email,
+        documento: formValue.documento,
         nombreCompleto: formValue.nombreCompleto,
         facultad: formValue.facultad,
         programa: formValue.programa,
-        passwordHash: formValue.password, // Se hasheará en el servicio
-        role: 'estudiante'
+        password: formValue.password,
+        rol: formValue.rol
       };
 
       await this.authService.registerUser(newUser);
-      this.successMessage = 'Estudiante registrado con éxito.';
-      this.studentForm.reset();
-      this.loadStudents();
+
+      this.successMessage = 'La cuenta ha sido creada';
+      this.accountForm.reset({ rol: 'estudiante' });
+      this.loadAccounts();
       
-      setTimeout(() => {
-        this.successMessage = '';
-      }, 3000);
+      setTimeout(() => this.successMessage = '', 3000);
       
     } catch (error: any) {
-      this.errorMessage = error.message || 'Error al registrar estudiante';
+      this.errorMessage = error.message || 'Error al registrar la cuenta';
     }
   }
 
-  async loadStudents() {
-    try {
-      const allUsers = await db.users.toArray();
-      this.students = allUsers.filter(u => u.role === 'estudiante');
-    } catch (error) {
-      console.error('Error al cargar estudiantes', error);
+  loadAccounts() {
+    this.userService.getUsers().subscribe({
+      next: (users: any[]) => {
+        // El backend guarda los roles en mayúsculas
+        this.accounts = users.filter((u: any) => 
+          u.rol === 'ESTUDIANTE' || 
+          u.rol === 'PROFESOR' || 
+          u.rol === 'estudiante' || 
+          u.rol === 'profesor'
+        );
+      },
+      error: (err: any) => console.error('Error al cargar cuentas del servidor', err)
+    });
+  }
+
+  deleteAccount(identifier: string) {
+    if (confirm(`¿Estás seguro de que deseas eliminar la cuenta ${identifier}?`)) {
+      this.userService.deleteUser(identifier).subscribe({
+        next: () => {
+          this.successMessage = `Cuenta ${identifier} eliminada correctamente.`;
+          this.loadAccounts();
+          setTimeout(() => this.successMessage = '', 3000);
+        },
+        error: (err: any) => {
+          this.errorMessage = 'Error al eliminar la cuenta del servidor';
+        }
+      });
     }
   }
 
-  async deleteStudent(email: string) {
-    if (confirm(`¿Estás seguro de que deseas eliminar al estudiante con correo ${email}?`)) {
-      try {
-        await db.users.delete(email);
-        this.successMessage = `Estudiante ${email} eliminado correctamente.`;
-        this.loadStudents();
-        setTimeout(() => this.successMessage = '', 3000);
-      } catch (error: any) {
-        this.errorMessage = 'Error al eliminar el estudiante';
-      }
-    }
-  }
 
   logout() {
     this.authService.logout();

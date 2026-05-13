@@ -54,6 +54,9 @@ public class UsuarioUniremington {
     @Column(nullable = false, length = 50)
     private String rol; // ADMIN, ESTUDIANTE, CLIENTE
 
+    @Column(length = 50)
+    private String genero;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

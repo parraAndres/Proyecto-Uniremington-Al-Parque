@@ -17,14 +17,12 @@ export class RegisterComponent {
   successMessage = '';
   isLoading = false;
 
-  facultades = [
-    'Ingeniería',
-    'Salud',
-    'Artes y Diseño',
-    'Ciencias Jurídicas',
-    'Empresariales',
-    'Veterinaria',
-    'Contaduría'
+  genderOptions = [
+    'Femenino',
+    'Masculino',
+    'No binario',
+    'Prefiero no decirlo',
+    'Otro'
   ];
 
   constructor(
@@ -33,7 +31,9 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      nombreCompleto: ['', [Validators.required]],
+      identificacion: ['', [Validators.required]],
+      genero: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -52,7 +52,9 @@ export class RegisterComponent {
       const formValue = this.registerForm.value;
       
       const newUser = {
-        email: formValue.email,
+        nombreCompleto: formValue.nombreCompleto,
+        identificador: formValue.identificacion,
+        genero: formValue.genero,
         password: formValue.password
       };
 

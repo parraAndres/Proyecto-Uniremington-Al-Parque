@@ -22,7 +22,7 @@ export interface UserRecord {
   facultad?: string;
   programa?: string;
   passwordHash: string;
-  role: 'admin' | 'estudiante' | 'cliente';
+  role: 'admin' | 'estudiante' | 'cliente' | 'profesor';
 }
 
 export interface ServicioRecord {

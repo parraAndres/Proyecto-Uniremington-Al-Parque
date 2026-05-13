@@ -12,7 +12,7 @@
           <i class="fas fa-chart-pie"></i> Dashboard
         </button>
         <button [class.active]="activeView === 'students'" (click)="activeView = 'students'">
-          <i class="fas fa-users-cog"></i> Estudiantes
+          <i class="fas fa-users-cog"></i> Gestión Cuentas
         </button>
       </nav>
       <div class="sidebar-status">
@@ -28,8 +28,8 @@
       <!-- HEADER INTERNO -->
       <header class="content-header">
         <div class="header-text">
-          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : 'Gestión de Cuentas Estudiantiles' }}</h1>
-          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Crea y administra las credenciales para los estudiantes participantes.' }}</p>
+          <h1>{{ activeView === 'dashboard' ? 'Estadísticas de Impacto' : 'Gestión de Cuentas Institucionales' }}</h1>
+          <p>{{ activeView === 'dashboard' ? 'Monitoreo en tiempo real de los resultados del programa social.' : 'Crea y administra las credenciales para estudiantes y profesores.' }}</p>
         </div>
       </header>
 
@@ -91,17 +91,17 @@
         </div>
       </div>
 
-      <!-- VISTA ESTUDIANTES -->
+      <!-- VISTA GESTIÓN CUENTAS -->
       <div *ngIf="activeView === 'students'" class="students-view animate-fade">
         <div class="modern-card form-card">
           <div class="card-header">
-            <h3><i class="fas fa-plus"></i> Nuevo Registro de Estudiante</h3>
+            <h3><i class="fas fa-plus"></i> Nuevo Registro de Cuenta</h3>
           </div>
           
           <div *ngIf="errorMessage" class="custom-alert error">{{ errorMessage }}</div>
           <div *ngIf="successMessage" class="custom-alert success">{{ successMessage }}</div>
 
-          <form [formGroup]="studentForm" (ngSubmit)="onRegisterStudent()" class="admin-form">
+          <form [formGroup]="accountForm" (ngSubmit)="onRegisterAccount()" class="admin-form">
             <div class="form-row">
               <div class="field-group">
                 <label>Nombre Completo</label>
@@ -111,7 +111,7 @@
                 </div>
               </div>
               <div class="field-group">
-                <label>Correo Electrónico</label>
+                <label>Correo Electrónico / Identificador</label>
                 <div class="input-wrapper">
                   <i class="fas fa-envelope"></i>
                   <input type="email" formControlName="email" placeholder="usuario@uniremington.edu.co">
@@ -120,6 +120,13 @@
             </div>
 
             <div class="form-row">
+              <div class="field-group">
+                <label>Documento de Identidad</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-id-card"></i>
+                  <input type="text" formControlName="documento" placeholder="Ej: 10203040">
+                </div>
+              </div>
               <div class="field-group">
                 <label>Facultad</label>
                 <div class="input-wrapper">
@@ -130,6 +137,9 @@
                   </select>
                 </div>
               </div>
+            </div>
+
+            <div class="form-row">
               <div class="field-group">
                 <label>Programa</label>
                 <div class="input-wrapper">
@@ -137,6 +147,16 @@
                   <select formControlName="programa" class="custom-select">
                     <option value="">Seleccione un programa</option>
                     <option *ngFor="let p of programasDisponibles" [value]="p">{{ p }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Tipo de Cuenta (Rol)</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-user-tag"></i>
+                  <select formControlName="rol" class="custom-select">
+                    <option value="estudiante">Estudiante</option>
+                    <option value="profesor">Profesor</option>
                   </select>
                 </div>
               </div>
@@ -151,8 +171,8 @@
                 </div>
               </div>
               <div class="field-group button-group">
-                <button type="submit" class="btn-admin-submit" [disabled]="studentForm.invalid">
-                  <i class="fas fa-check"></i> Registrar Estudiante
+                <button type="submit" class="btn-admin-submit" [disabled]="accountForm.invalid">
+                  <i class="fas fa-check"></i> Registrar Cuenta
                 </button>
               </div>
             </div>
@@ -168,24 +188,30 @@
               <thead>
                 <tr>
                   <th>Nombre</th>
-                  <th>Correo / Documento</th>
+                  <th>Identificación</th>
+                  <th>Rol</th>
                   <th>Facultad</th>
                   <th class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let s of students">
-                  <td class="bold">{{ s.nombreCompleto }}</td>
-                  <td>{{ s.email }}</td>
-                  <td><span class="badge">{{ s.facultad }}</span></td>
+                <tr *ngFor="let a of accounts">
+                  <td class="bold">{{ a.nombreCompleto }}</td>
+                  <td>{{ a.email }}</td>
+                  <td>
+                    <span class="role-badge" [class.teacher]="a.role === 'profesor'" [class.student]="a.role === 'estudiante'">
+                      {{ a.role | titlecase }}
+                    </span>
+                  </td>
+                  <td><span class="badge">{{ a.facultad }}</span></td>
                   <td class="text-center">
-                    <button class="btn-delete-row" (click)="deleteStudent(s.email)" title="Eliminar estudiante">
+                    <button class="btn-delete-row" (click)="deleteAccount(a.email)" title="Eliminar cuenta">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </td>
                 </tr>
-                <tr *ngIf="students.length === 0">
-                  <td colspan="4" class="empty-row">No se han registrado estudiantes aún.</td>
+                <tr *ngIf="accounts.length === 0">
+                  <td colspan="5" class="empty-row">No se han registrado cuentas aún.</td>
                 </tr>
               </tbody>
             </table>

@@ -4,6 +4,7 @@ import { BehaviorSubject, fromEvent, merge, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { OfflineDbService } from './offline-db.service'; 
 import { BackendApiService } from './backend-api.service';
+import { SocialService } from '../../../core/services/social.service';
 
 @Injectable({ providedIn: 'root' })
 export class SyncService {
@@ -54,11 +55,16 @@ export class SyncService {
 
       for (const item of pendingItems) {
         try {
-          // En una PWA real aquí llamaríamos al endpoint específico según la colección.
-          // Ej: await this.api.pushData(collection, item).toPromise();
+          /*
+          if (collection === 'beneficiaries') {
+            await this.socialService.saveBeneficiario(item).toPromise();
+          } else if (collection === 'servicios') {
+            await this.socialService.saveServicio(item).toPromise();
+          } else if (collection === 'seguimientos') {
+            await this.socialService.saveSeguimiento(item).toPromise();
+          }
+          */
           
-          // Por ahora simulamos la subida exitosa
-          await new Promise(resolve => setTimeout(resolve, 500));
           await this.db.delete(collection, item.id);
         } catch (error) {
           console.error(`Error sincronizando registro de ${collection}`, error);

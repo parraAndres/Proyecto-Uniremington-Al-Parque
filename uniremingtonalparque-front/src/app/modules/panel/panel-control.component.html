@@ -331,6 +331,17 @@
 
       <!-- VISTA JORNADA ACTUAL (ESTUDIANTE) -->
       <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_jornada'">
+        
+        <div class="sync-status-bar animate-fade" *ngIf="pendingSyncCount > 0 || !isOnline">
+          <div class="status-indicator" [class.offline]="!isOnline">
+            <i class="fas" [class.fa-wifi]="isOnline" [class.fa-plane-slash]="!isOnline"></i>
+            {{ isOnline ? 'Conectado' : 'Modo Offline' }}
+          </div>
+          <div class="pending-count" *ngIf="pendingSyncCount > 0">
+            <i class="fas fa-sync fa-spin"></i> {{ pendingSyncCount }} registros pendientes por sincronizar
+          </div>
+        </div>
+
         <div class="jornada-active-card" *ngIf="activeJornada">
           <div class="jornada-badge">EN CURSO</div>
           <div class="jornada-main-info">
@@ -349,7 +360,10 @@
             <button class="btn-view-history" (click)="activeView = 'estudiante_atenciones'">
               <i class="fas fa-history"></i> Ver Mi Historial
             </button>
-            <p class="helper-text">Gestiona beneficiarios y atenciones realizadas durante tu jornada.</p>
+            <button class="btn-seguimiento" (click)="iniciarSeguimiento()">
+              <i class="fas fa-clipboard-check"></i> Seguimiento de Casos
+            </button>
+            <p class="helper-text">Gestiona beneficiarios, atenciones y seguimientos de casos activos.</p>
           </div>
         </div>
 
@@ -378,7 +392,26 @@
             <h3><i class="fas fa-history"></i> Historial de Atenciones Brindadas</h3>
             <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
           </div>
-          <div class="table-container">
+          
+          <!-- Resumen de Atenciones -->
+          <div class="p-5 pb-0">
+            <div class="stats-grid-mini">
+              <div class="mini-stat">
+                <span class="label">Total Atenciones</span>
+                <span class="value">{{ misAtencionesCount }}</span>
+              </div>
+              <div class="mini-stat success">
+                <span class="label">Finalizadas</span>
+                <span class="value">{{ atencionesFinalizadas }}</span>
+              </div>
+              <div class="mini-stat warning">
+                <span class="label">Casos Abiertos</span>
+                <span class="value">{{ casosAbiertos }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container p-5">
             <table class="admin-table">
               <thead>
                 <tr>
@@ -387,21 +420,27 @@
                   <th>Servicio</th>
                   <th>Duración</th>
                   <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let item of historialAtenciones">
                   <td>{{ item.fechaServicio | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>
-                    <strong>{{ item.beneficiario?.nombre }}</strong><br>
-                    <small>{{ item.beneficiario?.documento }}</small>
+                    <strong>{{ item.beneficiario.nombre }}</strong><br>
+                    <small>{{ item.beneficiario.documento }}</small>
                   </td>
                   <td>{{ item.tipoServicio }}</td>
                   <td>{{ item.duracionMinutos }} min</td>
                   <td><span class="status-badge" [ngClass]="item.estado.toLowerCase()">{{ item.estado }}</span></td>
+                  <td>
+                    <button class="btn-action-icon" (click)="iniciarSeguimiento(item)" title="Realizar Seguimiento">
+                      <i class="fas fa-tasks"></i>
+                    </button>
+                  </td>
                 </tr>
                 <tr *ngIf="historialAtenciones.length === 0">
-                  <td colspan="5" class="text-center p-5">No has registrado atenciones todavía.</td>
+                  <td colspan="6" class="text-center p-5">No has registrado atenciones todavía.</td>
                 </tr>
               </tbody>
             </table>
@@ -526,8 +565,58 @@
               </div>
             </form>
           </div>
+      </div>
+    </div>
+
+    <!-- VISTA SEGUIMIENTO DE CASOS (ESTUDIANTE) -->
+    <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_seguimiento'">
+      <div class="modern-card">
+        <div class="card-header">
+          <h3><i class="fas fa-clipboard-list"></i> Seguimiento y Evolución de Caso</h3>
+          <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
+        </div>
+        <div class="p-5">
+          <form [formGroup]="seguimientoForm" (ngSubmit)="onSaveSeguimiento()">
+            
+            <div class="form-grid-2">
+              <div class="input-group">
+                <label>Documento del Beneficiario</label>
+                <input type="text" formControlName="beneficiarioDocumento" placeholder="Ingrese documento">
+              </div>
+
+              <div class="input-group">
+                <label>ID del Caso / Referencia</label>
+                <input type="text" formControlName="casoId" placeholder="Ej: CASO-123">
+              </div>
+
+              <div class="input-group">
+                <label>Estado Actual del Caso</label>
+                <select formControlName="estadoCaso">
+                  <option value="ABIERTO">Abierto / En Proceso</option>
+                  <option value="CERRADO">Cerrado / Finalizado</option>
+                </select>
+              </div>
+
+              <div class="input-group full-width">
+                <label>Avances y Evolución (Novedades)</label>
+                <textarea formControlName="evolucion" rows="4" placeholder="Describe los avances realizados en este seguimiento..."></textarea>
+              </div>
+
+              <div class="input-group full-width">
+                <label>Observaciones Técnicas</label>
+                <textarea formControlName="observaciones" rows="2" placeholder="Notas adicionales para el docente..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions mt-5">
+              <button type="submit" class="btn-submit-primary" [disabled]="seguimientoForm.invalid">
+                <i class="fas fa-save"></i> Registrar Avance de Seguimiento
+              </button>
+            </div>
+          </form>
         </div>
       </div>
+    </div>
 
       <!-- VISTA IMPACTO POR FACULTAD -->
       <div *ngIf="activeView === 'impact'" class="impact-view animate-fade">

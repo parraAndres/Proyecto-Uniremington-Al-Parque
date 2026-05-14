@@ -34,4 +34,12 @@ export class SocialService {
   getServiciosByEstudiante(estudianteId: string): Observable<ServicioSocial[]> {
     return this.http.get<ServicioSocial[]>(`${this.apiUrl}/servicios/estudiante/${estudianteId}`);
   }
+
+  saveSeguimiento(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/seguimientos`, data);
+  }
+
+  saveBeneficiario(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/beneficiarios`, data);
+  }
 }

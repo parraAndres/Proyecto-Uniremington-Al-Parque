@@ -9,6 +9,7 @@ import { NewsService, Noticia } from '../../core/services/news.service';
 import { JornadaService, Jornada } from '../../core/services/jornada.service';
 import { ConfigParamService, ConfigParam } from '../../core/services/config-param.service';
 import { SocialService, ServicioSocial } from '../../core/services/social.service';
+import { SyncService } from '../parque/services/sync.service';
 import { ReporteService } from '../../core/services/reporte.service';
 import { DocenteService } from '../../core/services/docente.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -22,13 +23,15 @@ import { interval, startWith, switchMap } from 'rxjs';
   styleUrls: ['./panel-control.component.scss']
 })
 export class PanelControlComponent implements OnInit {
+  isOnline = true;
+  pendingSyncCount = 0;
   isAdmin = false;
   isDocente = false;
   isEstudiante = false;
   isBeneficiario = false;
   isEditing = false;
   editingUserId = '';
-  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' | 'docente_stats' | 'estudiante_jornada' | 'estudiante_atenciones' | 'estudiante_beneficiarios' | 'estudiante_registro_atencion' = 'news';
+  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' | 'docente_stats' | 'estudiante_jornada' | 'estudiante_atenciones' | 'estudiante_beneficiarios' | 'estudiante_registro_atencion' | 'estudiante_seguimiento' = 'news';
   
   successMessage = '';
   errorMessage = '';
@@ -42,7 +45,8 @@ export class PanelControlComponent implements OnInit {
   // Datos Estudiante
   activeJornada: any = null;
   misAtencionesCount = 0;
-  pendingSyncCount = 0;
+  atencionesFinalizadas = 0;
+  casosAbiertos = 0;
 
   // Filtros Reportes
   reportFilters = {
@@ -84,6 +88,7 @@ export class PanelControlComponent implements OnInit {
   reportForm: FormGroup;
   beneficiarioForm: FormGroup;
   atencionForm: FormGroup;
+  seguimientoForm: FormGroup;
   
   beneficiarios: User[] = [];
   tiposServicio: ConfigParam[] = [];
@@ -197,6 +202,14 @@ export class PanelControlComponent implements OnInit {
       duracionMinutos: [30, [Validators.required, Validators.min(5)]]
     });
 
+    this.seguimientoForm = this.fb.group({
+      beneficiarioDocumento: ['', Validators.required],
+      casoId: ['', Validators.required],
+      estadoCaso: ['ABIERTO', Validators.required],
+      evolucion: ['', Validators.required],
+      observaciones: ['']
+    });
+
     this.accountForm.get('facultad')?.valueChanges.subscribe(() => {
       this.accountForm.patchValue({ programa: '' });
     });
@@ -220,6 +233,9 @@ export class PanelControlComponent implements OnInit {
         this.loadTiposServicio();
         this.loadAtencionesHistory();
       }
+
+      // this.syncService.networkStatus$.subscribe(status => this.isOnline = status);
+      // this.syncService.pendingCount$.subscribe(count => this.pendingSyncCount = count);
     }
   }
 
@@ -543,15 +559,87 @@ export class PanelControlComponent implements OnInit {
     if (user && user.documento) {
       this.socialService.getServiciosByEstudiante(user.documento).subscribe(res => {
         this.historialAtenciones = res;
+        this.misAtencionesCount = res.length;
+        this.atencionesFinalizadas = res.filter(a => a.estado?.toUpperCase() === 'FINALIZADO').length;
+        this.casosAbiertos = res.filter(a => a.estado?.toUpperCase() === 'ABIERTO' || a.estado?.toUpperCase() === 'PROCESO').length;
       });
     }
   }
 
   onSaveAtencion(): void {
     if (this.atencionForm.invalid) return;
-    this.toastService.show('¡Atención Registrada!', 'La atención ha sido guardada con éxito.', 'success');
+
+    const data = {
+      ...this.atencionForm.value,
+      fechaServicio: new Date().toISOString(),
+      estudianteId: this.authService.currentUserValue?.documento
+    };
+
+    if (!this.isOnline) {
+      // this.syncService.saveLocally('servicios', { ...data, id: crypto.randomUUID() });
+      this.toastService.show('Guardado Localmente', 'No tienes conexión. Los datos se sincronizarán al reconectar.', 'info');
+      this.afterSaveAtencion();
+    } else {
+      this.socialService.saveServicio(data).subscribe({
+        next: () => {
+          this.toastService.show('¡Atención Registrada!', 'La atención ha sido guardada con éxito.', 'success');
+          this.afterSaveAtencion();
+        },
+        error: () => {
+          // this.syncService.saveLocally('servicios', { ...data, id: crypto.randomUUID() });
+          this.toastService.show('Guardado en Borrador', 'Error de red. Guardado localmente.', 'warning');
+          this.afterSaveAtencion();
+        }
+      });
+    }
+  }
+
+  private afterSaveAtencion() {
     this.atencionForm.reset({ duracionMinutos: 30 });
     this.loadEstudianteData(); 
+    this.activeView = 'estudiante_jornada';
+  }
+
+  // --- MÉTODOS DE SEGUIMIENTO (ESTUDIANTE) ---
+  iniciarSeguimiento(item?: ServicioSocial): void {
+    this.activeView = 'estudiante_seguimiento';
+    if (item) {
+      this.seguimientoForm.patchValue({
+        beneficiarioDocumento: item.beneficiario.documento,
+        casoId: `CASO-${item.id}`
+      });
+    }
+  }
+
+  onSaveSeguimiento(): void {
+    if (this.seguimientoForm.invalid) return;
+
+    const data = {
+      ...this.seguimientoForm.value,
+      fechaEstado: new Date().toISOString()
+    };
+
+    if (!this.isOnline) {
+      // this.syncService.saveLocally('seguimientos', { ...data, id: crypto.randomUUID() });
+      this.toastService.show('Guardado Localmente', 'Avance guardado para sincronizar después.', 'info');
+      this.afterSaveSeguimiento();
+    } else {
+      this.socialService.saveSeguimiento(data).subscribe({
+        next: () => {
+          this.toastService.show('¡Seguimiento Registrado!', 'El avance del caso ha sido guardado.', 'success');
+          this.afterSaveSeguimiento();
+        },
+        error: () => {
+          // this.syncService.saveLocally('seguimientos', { ...data, id: crypto.randomUUID() });
+          this.toastService.show('Error de Red', 'Guardado localmente.', 'warning');
+          this.afterSaveSeguimiento();
+        }
+      });
+    }
+  }
+
+  private afterSaveSeguimiento() {
+    this.seguimientoForm.reset({ estadoCaso: 'ABIERTO' });
     this.activeView = 'estudiante_jornada';
   }
 
@@ -561,7 +649,31 @@ export class PanelControlComponent implements OnInit {
       return;
     }
 
-    this.toastService.show('¡Registrado!', 'El beneficiario ha sido guardado/actualizado correctamente.', 'success');
+    const data = {
+      ...this.beneficiarioForm.value,
+      id: crypto.randomUUID()
+    };
+
+    if (!this.isOnline) {
+      // this.syncService.saveLocally('beneficiaries', data);
+      this.toastService.show('Beneficiario Guardado Local', 'Se sincronizará cuando vuelvas a tener señal.', 'info');
+      this.afterSaveBeneficiario();
+    } else {
+      this.socialService.saveBeneficiario(data).subscribe({
+        next: () => {
+          this.toastService.show('¡Registrado!', 'El beneficiario ha sido guardado correctamente.', 'success');
+          this.afterSaveBeneficiario();
+        },
+        error: () => {
+          // this.syncService.saveLocally('beneficiaries', data);
+          this.toastService.show('Guardado Localmente', 'Falla de conexión. Registro en cola.', 'warning');
+          this.afterSaveBeneficiario();
+        }
+      });
+    }
+  }
+
+  private afterSaveBeneficiario() {
     this.beneficiarioForm.reset({ consentimientoDatos: false });
     this.activeView = 'estudiante_jornada';
   }

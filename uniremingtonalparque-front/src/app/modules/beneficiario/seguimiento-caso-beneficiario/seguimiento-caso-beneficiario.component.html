@@ -44,15 +44,16 @@
           <span class="seg-fecha"><i class="fas fa-calendar"></i> {{ s.fechaProgramada | date:'dd/MM/yyyy' }}</span>
         </div>
         <div class="seg-avances">
-          <h4><i class="fas fa-chart-line"></i> Avances</h4>
-          <p>{{ s.avances }}</p>
+          <h4><i class="fas fa-chart-line"></i> Avances Registrados</h4>
+          <p>{{ s.avances || 'Sin avances registrados aún.' }}</p>
+        </div>
+        <div class="seg-recomendaciones" *ngIf="s.motivoCambio || s.observaciones">
+          <h4><i class="fas fa-lightbulb"></i> Recomendaciones</h4>
+          <p>{{ s.motivoCambio || s.observaciones }}</p>
         </div>
         <div *ngIf="s.aprobado" class="seg-aprobado">
-          <i class="fas fa-stamp"></i> Aprobado por el coordinador
+          <i class="fas fa-check-double"></i> Validado por Coordinación
           <span *ngIf="s.fechaAprobacion"> — {{ s.fechaAprobacion | date:'dd/MM/yyyy' }}</span>
-        </div>
-        <div *ngIf="s.motivoCambio" class="seg-motivo">
-          <i class="fas fa-comment-dots"></i> {{ s.motivoCambio }}
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ export class PerfilBeneficiarioComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       telefono: ['', Validators.required],
+      direccion: ['', Validators.required],
       barrio: ['', Validators.required],
       municipio: ['', Validators.required],
       tipoPoblacion: [''],
@@ -46,6 +47,7 @@ export class PerfilBeneficiarioComponent implements OnInit {
       if (this.myRecord) {
         this.form.patchValue({
           telefono: this.myRecord.telefono,
+          direccion: this.myRecord.direccion,
           barrio: this.myRecord.barrio,
           municipio: this.myRecord.municipio,
           tipoPoblacion: this.myRecord.tipoPoblacion

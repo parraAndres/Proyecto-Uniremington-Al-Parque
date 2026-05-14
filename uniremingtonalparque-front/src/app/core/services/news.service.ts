@@ -16,12 +16,16 @@ export interface Noticia {
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = `${environment.apiUrl}/noticias`;
+  private apiUrl = `${environment.apiUrl}/public/noticias`;
 
   constructor(private http: HttpClient) {}
 
   getNoticias(): Observable<Noticia[]> {
     return this.http.get<Noticia[]>(this.apiUrl);
+  }
+
+  getNoticiaById(id: string): Observable<Noticia> {
+    return this.http.get<Noticia>(`${this.apiUrl}/${id}`);
   }
 
   createNoticia(noticia: Noticia): Observable<Noticia> {

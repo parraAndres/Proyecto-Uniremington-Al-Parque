@@ -316,23 +316,32 @@
   border-top: 4px solid #ea0a2a;
 
   .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4rem;
     padding-bottom: 3rem;
 
-    .footer-column {
-      &.footer-logo-column {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        .footer-logo {
-          max-width: 100%;
-          height: auto;
-          max-height: 120px;
-          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
+    .footer-logo-column {
+      flex: 0 0 200px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .footer-logo {
+        max-width: 100%;
+        height: auto;
+        max-height: 100px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
       }
+    }
+
+    .footer-info-group {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
 
       h3 {
         color: white;
@@ -411,30 +420,42 @@
         }
       }
 
-      @media (max-width: 768px) {
-        text-align: center;
+    @media (max-width: 768px) {
+      text-align: center;
+      
+      .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .footer-info-group {
+        grid-template-columns: 1fr;
+        width: 100%;
+        gap: 2rem;
+      }
+
+      &.footer-logo-column {
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+
+      h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .social-links {
+        justify-content: center;
+      }
+
+      .contact-info li, .hours-info li {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
         
-        &.footer-logo-column {
-          justify-content: center;
-        }
-
-        h3::after {
-          left: 50%;
-          transform: translateX(-50%);
-        }
-
-        .social-links {
-          justify-content: center;
-        }
-
-        .contact-info li, .hours-info li {
-          flex-direction: column;
-          align-items: center;
-          gap: 0.5rem;
-          
-          strong {
-            min-width: auto;
-          }
+        strong {
+          min-width: auto;
         }
       }
     }

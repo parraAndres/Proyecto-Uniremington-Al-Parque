@@ -95,6 +95,7 @@ export class LandingComponent implements OnInit, OnDestroy {
         this.noticias = res;
         if (this.noticias.length === 0) {
           this.noticias = [{
+            id: 'mock',
             titulo: '¡Uniremington al Parque llega a tu municipio!',
             contenido: 'Estamos emocionados de anunciar que nuestra próxima jornada de servicios gratuitos será este fin de semana. ¡Te esperamos!',
             imageUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=2070&auto=format&fit=crop',

@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.http.HttpMethod;
 import java.util.List;
 
 @Configuration
@@ -66,7 +67,8 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                     ).permitAll()
-                    .requestMatchers("/uni/**").authenticated() // Todo lo de uni requiere login
+                    .requestMatchers("/public/**").permitAll() // Nueva ruta para recursos públicos
+                    .requestMatchers("/uni/**").authenticated() 
                     .requestMatchers("/sync/**").authenticated()
                     .requestMatchers("/finanzas/**", "/usuarios/**", "/dashboard/admin").hasRole("ADMIN")
                     .requestMatchers("/dashboard/**").authenticated()

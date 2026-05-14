@@ -49,10 +49,11 @@ export class LoginComponent {
       const { documento, password } = this.loginForm.value;
       const user = await firstValueFrom(this.authService.login(documento, password));
       
-      if (user.rol?.toUpperCase() === 'ADMIN' || (documento === '123456' && password === '123456')) {
-        this.router.navigate(['/panel-control']);
+      const role = user.rol?.toUpperCase();
+      if (role === 'BENEFICIARIO' || role === 'CLIENTE') {
+        this.router.navigate(['/']);
       } else {
-        this.router.navigate(['/panel-control']); // Todos van al mismo panel ahora
+        this.router.navigate(['/panel-control']);
       }
     } catch (error: any) {
       this.errorMessage = this.extractError(error);

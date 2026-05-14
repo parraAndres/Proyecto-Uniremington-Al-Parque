@@ -25,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/uni/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @Tag(name = "Auth - Uniremington", description = "Registro y login para la PWA Uniremington al Parque")
 public class UniAuthController {
 

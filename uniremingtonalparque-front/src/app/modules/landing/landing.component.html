@@ -98,7 +98,7 @@
             <p>{{ n.contenido }}</p>
             <div class="news-footer">
               <span class="author"><i class="fas fa-user-edit"></i> {{ n.autor || 'Redacción' }}</span>
-              <button class="btn-read-more">Leer más <i class="fas fa-arrow-right"></i></button>
+              <button class="btn-read-more" [routerLink]="['/noticia', n.id]">Leer más <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
         </article>

@@ -52,12 +52,16 @@ export class RegisterComponent {
       this.successMessage = '';
 
       const formValue = this.registerForm.value;
+      const isEmail = formValue.identificacion.includes('@');
 
       const newUser = {
         nombreCompleto: formValue.nombreCompleto,
+        email: isEmail ? formValue.identificacion : null,
+        documento: isEmail ? null : formValue.identificacion,
         identificador: formValue.identificacion,
         genero: formValue.genero,
         password: formValue.password,
+        rol: 'BENEFICIARIO' // Aseguramos que sea beneficiario por defecto
       };
 
       await this.authService.registerUser(newUser);

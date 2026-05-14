@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/noticias")
+@RequestMapping("/public/noticias")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class NoticiaController {
 
     private final NoticiaRepository noticiaRepository;
@@ -18,6 +19,20 @@ public class NoticiaController {
     @GetMapping
     public ResponseEntity<List<Noticia>> getAllNoticias() {
         return ResponseEntity.ok(noticiaRepository.findAllByOrderByFechaPublicacionDesc());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Noticia> getNoticiaById(@PathVariable String id) {
+        System.out.println("Buscando noticia con ID: " + id);
+        return noticiaRepository.findById(id)
+                .map(n -> {
+                    System.out.println("Noticia encontrada: " + n.getTitulo());
+                    return ResponseEntity.ok(n);
+                })
+                .orElseGet(() -> {
+                    System.out.println("Noticia NO encontrada con ID: " + id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     @PostMapping

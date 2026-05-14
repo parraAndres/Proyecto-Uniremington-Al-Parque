@@ -32,6 +32,7 @@ import { PerfilBeneficiarioComponent } from './modules/beneficiario/perfil-benef
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
+  { path: 'noticia/:id', loadComponent: () => import('./modules/landing/noticia-detalle/noticia-detalle.component').then(m => m.NoticiaDetalleComponent) },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'reset-password', component: ResetPasswordComponent },

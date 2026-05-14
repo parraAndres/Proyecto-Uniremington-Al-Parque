@@ -17,10 +17,16 @@ import org.mapstruct.Builder;
         builder = @Builder(disableBuilder = true))
 public interface ClienteMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "mascotas", ignore = true)
+    @Mapping(target = "facturas", ignore = true)
+    @Mapping(target = "fechaRegistro", ignore = true)
     Cliente toEntity(ClienteRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "mascotas", ignore = true)
+    @Mapping(target = "facturas", ignore = true)
+    @Mapping(target = "fechaRegistro", ignore = true)
     void updateEntity(ClienteRequest request, @MappingTarget Cliente cliente);
 }

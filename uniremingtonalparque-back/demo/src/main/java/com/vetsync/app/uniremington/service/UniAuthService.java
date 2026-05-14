@@ -3,7 +3,9 @@ package com.vetsync.app.uniremington.service;
 import com.vetsync.app.uniremington.dto.AuthResponse;
 import com.vetsync.app.uniremington.dto.LoginRequest;
 import com.vetsync.app.uniremington.dto.RegisterRequest;
+import com.vetsync.app.uniremington.entity.PasswordResetToken;
 import com.vetsync.app.uniremington.entity.UsuarioUniremington;
+import com.vetsync.app.uniremington.repository.PasswordResetTokenRepository;
 import com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository;
 import com.vetsync.app.uniremington.security.UniJwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.UUID;
 public class UniAuthService {
 
     private final UsuarioUniremingtonRepository usuarioRepository;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final UniJwtProvider jwtProvider;
 
@@ -101,6 +105,50 @@ public class UniAuthService {
         }
 
         return buildResponse(usuario);
+    }
+
+    @Transactional
+    public void forgotPassword(String identificador) {
+        UsuarioUniremington usuario = usuarioRepository.findByDocumentoOrEmail(identificador, identificador)
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró una cuenta asociada a: " + identificador));
+
+        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
+            throw new IllegalStateException("El usuario no tiene un correo electrónico configurado para la recuperación.");
+        }
+
+        // Eliminar tokens anteriores
+        tokenRepository.deleteByUsuario(usuario);
+
+        // Crear nuevo token (válido por 1 hora)
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .token(token)
+                .usuario(usuario)
+                .expiryDate(LocalDateTime.now().plusHours(1))
+                .build();
+
+        tokenRepository.save(resetToken);
+
+        // Enviar correo
+        emailService.sendResetPasswordEmail(usuario.getEmail(), usuario.getNombreCompleto(), token);
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("El enlace de recuperación es inválido o ya ha sido utilizado."));
+
+        if (resetToken.isExpired()) {
+            tokenRepository.delete(resetToken);
+            throw new IllegalStateException("El enlace de recuperación ha expirado.");
+        }
+
+        UsuarioUniremington usuario = resetToken.getUsuario();
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+
+        // Limpiar el token
+        tokenRepository.delete(resetToken);
     }
 
     private AuthResponse buildResponse(UsuarioUniremington usuario) {

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './modules/landing/landing.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
+import { ResetPasswordComponent } from './modules/auth/reset-password/reset-password.component';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 import { BeneficiaryFormComponent } from './modules/parque/components/beneficiary-form/beneficiary-form.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   // Main dashboard (role-routing hub)
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   // Parque shared routes

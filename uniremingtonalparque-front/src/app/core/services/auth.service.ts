@@ -12,6 +12,7 @@ export interface AuthResponse {
   facultad: string;
   programa: string;
   tipo: string;
+  rol: string;
   expiresIn: number;
 }
 
@@ -82,5 +83,13 @@ export class AuthService {
       localStorage.removeItem('activeUserDocumento');
     }
     this.currentUserSubject.next(null);
+  }
+
+  forgotPassword(identificador: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/uni/auth/forgot-password?identificador=${identificador}`, {});
+  }
+
+  resetPassword(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/uni/auth/reset-password`, data);
   }
 }

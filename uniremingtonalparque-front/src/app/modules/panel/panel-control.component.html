@@ -636,46 +636,69 @@
           <h3><i class="fas fa-clipboard-list"></i> Seguimiento y Evolución de Caso</h3>
           <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
         </div>
-        <div class="p-5">
-          <form [formGroup]="seguimientoForm" (ngSubmit)="onSaveSeguimiento()">
-            
-            <div class="form-grid-2">
-              <div class="input-group">
-                <label>Documento del Beneficiario</label>
-                <input type="text" formControlName="beneficiarioDocumento" placeholder="Ingrese documento">
+          <div class="p-5 p-md-5">
+            <form [formGroup]="seguimientoForm" (ngSubmit)="onSaveSeguimiento()" class="premium-form">
+              
+              <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-folder-open"></i> Referencia del Caso</h4>
+                <div class="form-grid-2">
+                  <div class="field-group">
+                    <label>Documento del Beneficiario</label>
+                    <div class="input-wrapper">
+                      <i class="fas fa-id-card"></i>
+                      <input type="text" formControlName="beneficiarioDocumento" placeholder="Ingrese documento">
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label>ID del Caso / Referencia</label>
+                    <div class="input-wrapper">
+                      <i class="fas fa-hashtag"></i>
+                      <input type="text" formControlName="casoId" placeholder="Ej: CASO-123">
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label>Estado Actual del Caso</label>
+                    <div class="input-wrapper">
+                      <i class="fas fa-traffic-light"></i>
+                      <select formControlName="estadoCaso" class="custom-select-premium">
+                        <option value="ABIERTO">🟠 Abierto / En Proceso</option>
+                        <option value="CERRADO">🟢 Cerrado / Finalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="input-group">
-                <label>ID del Caso / Referencia</label>
-                <input type="text" formControlName="casoId" placeholder="Ej: CASO-123">
+              <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-chart-line"></i> Progreso y Evolución</h4>
+                <div class="form-grid-2">
+                  <div class="field-group full-width">
+                    <label>Avances y Evolución (Novedades)</label>
+                    <div class="input-wrapper textarea-wrapper-premium">
+                      <i class="fas fa-comment-dots"></i>
+                      <textarea formControlName="evolucion" rows="4" placeholder="Describe detalladamente los avances realizados en este seguimiento clínico..."></textarea>
+                    </div>
+                  </div>
+
+                  <div class="field-group full-width">
+                    <label>Observaciones Técnicas / Académicas</label>
+                    <div class="input-wrapper textarea-wrapper-premium">
+                      <i class="fas fa-user-graduate"></i>
+                      <textarea formControlName="observaciones" rows="2" placeholder="Notas adicionales para la revisión del docente..."></textarea>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="input-group">
-                <label>Estado Actual del Caso</label>
-                <select formControlName="estadoCaso">
-                  <option value="ABIERTO">Abierto / En Proceso</option>
-                  <option value="CERRADO">Cerrado / Finalizado</option>
-                </select>
+              <div class="form-footer mt-5">
+                <button type="submit" class="btn-save-beneficiary" [disabled]="seguimientoForm.invalid">
+                  <i class="fas fa-save"></i> <span>Registrar Avance de Seguimiento</span>
+                </button>
               </div>
-
-              <div class="input-group full-width">
-                <label>Avances y Evolución (Novedades)</label>
-                <textarea formControlName="evolucion" rows="4" placeholder="Describe los avances realizados en este seguimiento..."></textarea>
-              </div>
-
-              <div class="input-group full-width">
-                <label>Observaciones Técnicas</label>
-                <textarea formControlName="observaciones" rows="2" placeholder="Notas adicionales para el docente..."></textarea>
-              </div>
-            </div>
-
-            <div class="form-actions mt-5">
-              <button type="submit" class="btn-submit-primary" [disabled]="seguimientoForm.invalid">
-                <i class="fas fa-save"></i> Registrar Avance de Seguimiento
-              </button>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
       </div>
     </div>
 

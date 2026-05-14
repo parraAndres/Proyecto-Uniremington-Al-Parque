@@ -339,25 +339,32 @@
   }
 }
 
+/* BARRAS DE PROGRESO COMPARTIDAS */
+.progress-bar {
+  height: 12px;
+  background: #f1f5f9;
+  border-radius: 50px;
+  overflow: hidden;
+  width: 100%;
+
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 50px;
+    transition: width 1s ease-in-out;
+
+    &.referral { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  }
+
+  &.lg {
+    height: 20px;
+  }
+}
+
 /* EFICIENCIA BARS */
 .efficiency-details {
   .eff-item {
     label { display: block; font-weight: 600; font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem; }
-    .progress-bar {
-      height: 12px;
-      background: #f1f5f9;
-      border-radius: 50px;
-      overflow: hidden;
-
-      .progress {
-        height: 100%;
-        background: linear-gradient(90deg, #10b981, #34d399);
-        border-radius: 50px;
-        transition: width 1s ease-in-out;
-
-        &.referral { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
-      }
-    }
   }
 }
 
@@ -916,6 +923,16 @@
   .scrollable-y {
     overflow-y: auto;
     flex: 1;
+    overflow-x: hidden; /* Evitar scroll horizontal si no es necesario */
+    
+    .admin-table {
+      min-width: 100%; /* Sobrescribir min-width de 700px */
+      table-layout: fixed;
+      
+      th, td {
+        padding: 0.8rem;
+      }
+    }
   }
 }
 
@@ -929,38 +946,69 @@
     display: flex;
     justify-content: space-around;
     text-align: center;
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 16px;
 
     .c-stat {
-      .c-val { display: block; font-size: 2.5rem; font-weight: 800; color: #00447b; }
-      .c-lab { font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 1px; }
+      .c-val { display: block; font-size: 3rem; font-weight: 800; color: #00447b; line-height: 1; margin-bottom: 0.5rem; }
+      .c-lab { font-size: 0.85rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 1px; }
     }
   }
 
   .resolucion-gauge {
-    label { font-size: 0.9rem; color: #475569; font-weight: 600; display: block; margin-bottom: 0.5rem; }
-    .progress-bar.lg { height: 20px; }
-    .gauge-val { display: block; text-align: right; font-weight: 800; color: #10b981; font-size: 1.2rem; margin-top: 0.5rem; }
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    
+    label { font-size: 0.95rem; color: #1e293b; font-weight: 700; display: block; margin-bottom: 1rem; }
+    .gauge-val { display: block; text-align: right; font-weight: 800; color: #10b981; font-size: 1.4rem; margin-top: 0.5rem; }
   }
 }
 
 .impact-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
 
   .impact-box {
     text-align: center;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     border-radius: 16px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 1px solid #edf2f7;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    &:hover { background: #ffffff; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    &:hover { 
+      transform: translateY(-8px); 
+      box-shadow: 0 15px 30px rgba(0,0,0,0.08); 
+      border-color: #cbd5e1;
+      
+      i { transform: scale(1.1); color: #00447b; }
+    }
 
-    i { font-size: 2.5rem; color: #ea0a2a; margin-bottom: 1rem; opacity: 0.8; }
-    h4 { color: #00447b; font-weight: 700; margin-bottom: 0.8rem; }
-    p { font-size: 0.85rem; color: #64748b; line-height: 1.5; }
+    i { 
+      font-size: 3rem; 
+      color: #ea0a2a; 
+      margin-bottom: 1.2rem; 
+      transition: all 0.3s ease;
+      background: #fff1f2;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    h4 { color: #1e293b; font-weight: 800; margin-bottom: 0.8rem; font-size: 1.1rem; }
+    p { font-size: 0.9rem; color: #64748b; line-height: 1.6; margin: 0; }
   }
 }
 
@@ -1042,10 +1090,7 @@
     font-weight: 700;
   }
 
-  .stat-card {
-    &.card-purple { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
-    &.card-orange { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
-  }
+
 
   .jornadas-grid {
     display: grid;

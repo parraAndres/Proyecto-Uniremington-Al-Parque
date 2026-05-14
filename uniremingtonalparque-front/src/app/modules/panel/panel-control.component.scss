@@ -1626,11 +1626,16 @@
 }
 
 .premium-form {
+  max-width: 850px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem 0 3rem; // More space at the bottom
+
   .search-section {
     background: #f8fafc;
-    padding: 2rem;
+    padding: 2.5rem; // More internal space
     border-radius: 16px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3.5rem; // More space between sections
     border: 1px solid #e2e8f0;
 
     .field-subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 1.2rem; }
@@ -1661,12 +1666,12 @@
   }
 
   .form-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 3.5rem;
     .section-title {
       font-size: 1.1rem;
       color: #00447b;
       font-weight: 800;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       padding-bottom: 0.8rem;
       border-bottom: 2px solid #f1f5f9;
       display: flex;
@@ -1679,7 +1684,7 @@
   .form-grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 2rem;
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;

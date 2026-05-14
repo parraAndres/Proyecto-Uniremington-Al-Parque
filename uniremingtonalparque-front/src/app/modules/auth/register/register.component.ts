@@ -16,6 +16,7 @@ export class RegisterComponent {
   errorMessage = '';
   successMessage = '';
   isLoading = false;
+  showPassword = false;
 
   genderOptions = ['Femenino', 'Masculino', 'No binario', 'Prefiero no decirlo', 'Otro'];
 

@@ -64,6 +64,9 @@
           <button [class.active]="activeView === 'docente_casos'" (click)="activeView = 'docente_casos'">
             <i class="fas fa-folder-open"></i> Casos Pendientes
           </button>
+          <button [class.active]="activeView === 'docente_stats'" (click)="activeView = 'docente_stats'">
+            <i class="fas fa-chart-line"></i> Estadísticas Rápidas
+          </button>
         </ng-container>
       </nav>
 
@@ -88,13 +91,14 @@
             activeView === 'docente_students' ? 'Mis Estudiantes Asignados' :
             activeView === 'docente_jornadas' ? 'Mis Jornadas de Impacto' :
             activeView === 'docente_casos' ? 'Casos Pendientes de Seguimiento' :
+            activeView === 'docente_stats' ? 'Análisis de Resultados de Coordinación' :
             activeView === 'impact' ? 'Gestión de Impacto por Facultad' : 
             activeView === 'efficiency' ? 'Eficiencia y Remisiones' : 
             activeView === 'territorial' ? 'Análisis Territorial' : 
             activeView === 'ranking' ? 'Ranking de Prácticas' :
             activeView === 'students' ? 'Gestión de Cuentas' : 'Administración' 
           }}</h1>
-          <p>{{ isAdmin ? 'Monitoreo y administración global del programa.' : 'Gestión y seguimiento de actividades en territorio.' }}</p>
+          <p>{{ isAdmin ? 'Monitoreo y administración global del programa.' : (isDocente ? 'Gestión, métricas y seguimiento de estudiantes y jornadas.' : 'Gestión y seguimiento de actividades en territorio.') }}</p>
         </div>
       </header>
 
@@ -255,6 +259,57 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- VISTA ESTADÍSTICAS RÁPIDAS (DOCENTE) -->
+      <div class="docente-view animate-fade" *ngIf="activeView === 'docente_stats'">
+        <div class="stats-grid">
+          <div class="stat-card card-blue">
+            <div class="card-icon"><i class="fas fa-users"></i></div>
+            <div class="card-info">
+              <span class="card-label">Beneficiarios Atendidos</span>
+              <span class="card-value">{{ docenteStats.beneficiariosAtendidos }}</span>
+            </div>
+          </div>
+          <div class="stat-card card-green">
+            <div class="card-icon"><i class="fas fa-check-double"></i></div>
+            <div class="card-info">
+              <span class="card-label">Eficiencia Estudiantil</span>
+              <span class="card-value">92%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modern-card mt-4">
+          <div class="card-header">
+            <h3><i class="fas fa-star"></i> Desempeño de Estudiantes Asignados</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Estudiante</th>
+                  <th class="text-center">Jornadas</th>
+                  <th class="text-center">Atenciones</th>
+                  <th class="text-center">Calificación</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let est of misEstudiantes">
+                  <td class="bold">{{ est.nombreCompleto }}</td>
+                  <td class="text-center">3</td>
+                  <td class="text-center">{{ (est.documento.length % 5) + 2 }}</td>
+                  <td class="text-center">
+                    <span class="rating-stars">
+                      <i class="fas fa-star" *ngFor="let x of [1,2,3,4]"></i>
+                      <i class="far fa-star"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

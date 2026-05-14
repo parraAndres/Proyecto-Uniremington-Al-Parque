@@ -18,6 +18,8 @@ export class ResetPasswordComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   isLoading = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,

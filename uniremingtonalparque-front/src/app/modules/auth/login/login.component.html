@@ -37,7 +37,8 @@
         </div>
         <div class="input-wrapper">
           <i class="fas fa-lock input-icon"></i>
-          <input id="password" type="password" formControlName="password" placeholder="Ingresa tu contraseña" />
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Ingresa tu contraseña" />
+          <i class="fas toggle-password" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword" (click)="showPassword = !showPassword"></i>
         </div>
         <small class="error-msg" *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">La contraseña es obligatoria.</small>
       </div>

@@ -18,6 +18,7 @@ export class LoginComponent {
   successMessage = '';
   isLoading = false;
   isForgotPasswordMode = false;
+  showPassword = false;
   forgotPasswordForm: FormGroup;
 
   constructor(

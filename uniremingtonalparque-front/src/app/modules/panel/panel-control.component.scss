@@ -592,6 +592,26 @@
       box-shadow: 0 4px 12px rgba(234, 10, 42, 0.2);
     }
   }
+
+  .btn-admin-cancel {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #00447b;
+      border-color: #00447b;
+      transform: translateY(-2px);
+    }
+  }
 }
 
 /* TABLA */

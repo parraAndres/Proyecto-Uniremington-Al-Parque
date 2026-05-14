@@ -7,15 +7,49 @@
   .top-bar-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
 
-  .top-bar-right {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    .top-bar-left {
+      .donate-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #ea0a2a;
+        padding: 0.3rem 1rem;
+        border-radius: 4px;
+        transition: background 0.3s;
+
+        &:hover {
+          background: #c00822;
+        }
+
+        i {
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .top-bar-right {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      .phone-contact {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        i {
+          margin-right: 0.5rem;
+          color: #ea0a2a;
+        }
+      }
+    }
   }
 
   @media (max-width: 768px) {

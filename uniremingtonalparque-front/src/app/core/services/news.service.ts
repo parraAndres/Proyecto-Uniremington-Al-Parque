@@ -16,7 +16,7 @@ export interface Noticia {
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = `${environment.apiUrl}/public/noticias`;
+  private apiUrl = `${environment.apiUrl}/noticias`;
 
   constructor(private http: HttpClient) {}
 

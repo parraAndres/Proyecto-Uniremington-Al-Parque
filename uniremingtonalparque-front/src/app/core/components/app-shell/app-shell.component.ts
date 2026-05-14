@@ -18,6 +18,7 @@ export class AppShellComponent implements OnInit {
   isAdmin = false;
   isDocente = false;
   isEstudiante = false;
+  isBeneficiario = false;
   isMenuOpen = false;
 
   @ViewChild('hamburgerMenu') hamburgerMenu?: ElementRef;
@@ -54,6 +55,7 @@ export class AppShellComponent implements OnInit {
       this.isAdmin = rol === 'ADMIN' || user?.documento === '123456';
       this.isDocente = rol === 'PROFESOR' || rol === 'DOCENTE';
       this.isEstudiante = rol === 'ESTUDIANTE' || rol === 'ESTUDIANTE_FACULTAD';
+      this.isBeneficiario = rol === 'BENEFICIARIO';
     });
   }
 

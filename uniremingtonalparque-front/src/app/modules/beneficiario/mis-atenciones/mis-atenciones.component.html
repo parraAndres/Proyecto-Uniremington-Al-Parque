@@ -30,17 +30,18 @@
       <div class="arc-number">{{ i + 1 }}</div>
       <div class="arc-content">
         <div class="arc-header">
-          <span class="arc-service-type"><i class="fas fa-concierge-bell"></i> {{ a.tipoServicio }}</span>
-          <span class="arc-date"><i class="fas fa-calendar-alt"></i> {{ a.fechaAtencion || 'Fecha no registrada' }}</span>
+          <span class="arc-service-type"><i class="fas fa-hand-holding-medical"></i> Servicio: {{ a.tipoServicio }}</span>
+          <span class="arc-date"><i class="fas fa-calendar-check"></i> Fecha: {{ a.fechaAtencion || 'No especificada' }}</span>
         </div>
         <p class="arc-description">{{ a.descripcion }}</p>
         <div class="arc-footer">
-          <span class="arc-facultad"><i class="fas fa-university"></i> {{ getFacultadLabel(a.facultadResponsable) }}</span>
-          <span class="arc-resultado resultado-{{ a.resultado }}">{{ a.resultado }}</span>
-          <span class="arc-tiempo"><i class="fas fa-clock"></i> {{ a.tiempoAtencion }} min</span>
+          <span class="arc-facultad"><i class="fas fa-university"></i> Facultad Responsable: {{ getFacultadLabel(a.facultadResponsable) }}</span>
+          <span class="arc-status" [class]="'status-' + (a.resultado || 'pendiente')">
+            <i class="fas fa-info-circle"></i> Estado: {{ a.resultado || 'En Proceso' }}
+          </span>
         </div>
         <div *ngIf="a.observaciones" class="arc-observaciones">
-          <i class="fas fa-comment-alt"></i> <strong>Recomendación:</strong> {{ a.observaciones }}
+          <i class="fas fa-comment-medical"></i> <strong>Recomendaciones del Especialista:</strong> {{ a.observaciones }}
         </div>
       </div>
     </div>

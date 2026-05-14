@@ -60,6 +60,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.GET, "/noticias/**").permitAll()
                     .requestMatchers(
                         "/auth/**",
                         "/uni/auth/**",
@@ -67,7 +68,9 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                     ).permitAll()
-                    .requestMatchers("/public/**").permitAll() // Nueva ruta para recursos públicos
+
+                    .requestMatchers(HttpMethod.POST, "/noticias/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/noticias/**").hasRole("ADMIN")
                     .requestMatchers("/uni/**").authenticated() 
                     .requestMatchers("/sync/**").authenticated()
                     .requestMatchers("/finanzas/**", "/usuarios/**", "/dashboard/admin").hasRole("ADMIN")

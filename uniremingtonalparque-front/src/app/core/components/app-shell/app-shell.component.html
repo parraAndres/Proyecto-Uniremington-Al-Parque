@@ -1,6 +1,11 @@
 <div class="app-layout">
   <div class="top-bar" *ngIf="showLayout">
-    <div class="top-bar-container" style="justify-content: flex-end;">
+    <div class="top-bar-container">
+      <div class="top-bar-left">
+        <a routerLink="/donaciones" class="donate-link">
+          <i class="fas fa-hand-holding-heart"></i> Donaciones
+        </a>
+      </div>
       <div class="top-bar-right">
         <span class="phone-contact"><i class="fas fa-phone-alt"></i> Línea Gratuita Nacional: 018000 410 203</span>
       </div>
@@ -38,6 +43,19 @@
               </a>
               <a routerLink="/panel-control" class="nav-link" *ngIf="!isAtPanelControl" (click)="toggleMenu()">
                 <i class="fas fa-cog"></i> Panel de control
+              </a>
+            </ng-container>
+
+            <!-- Menú para Beneficiario -->
+            <ng-container *ngIf="isBeneficiario">
+              <a routerLink="/beneficiario" class="nav-link" (click)="toggleMenu()">
+                <i class="fas fa-user-circle"></i> Mi Perfil
+              </a>
+              <a routerLink="/beneficiario/mis-atenciones" class="nav-link" (click)="toggleMenu()">
+                <i class="fas fa-history"></i> Mis Atenciones Recibidas
+              </a>
+              <a routerLink="/beneficiario/seguimiento-caso" class="nav-link" (click)="toggleMenu()">
+                <i class="fas fa-tasks"></i> Seguimiento de Casos
               </a>
             </ng-container>
 

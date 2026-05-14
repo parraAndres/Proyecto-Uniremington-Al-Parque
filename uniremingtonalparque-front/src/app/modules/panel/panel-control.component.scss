@@ -440,6 +440,71 @@
     }
   }
 
+  .btn-register-beneficiary {
+    background: #00447b;
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    justify-content: center;
+
+    &:hover { background: #002a4d; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  }
+
+  .btn-register-attention {
+    background: #e2e8f0;
+    color: #00447b;
+    border: 1px solid #00447b;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+
+    &:hover { background: #f1f5f9; transform: translateY(-2px); }
+  }
+
+  .btn-view-history {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+
+    &:hover { background: #f8fafc; color: #00447b; border-color: #00447b; }
+  }
+
+  .duration-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #fdfdfd;
+  }
+
   .btn-admin-submit {
     background: #ea0a2a;
     color: #ffffff;
@@ -1177,6 +1242,158 @@
     .btn-return { background: #00447b; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; cursor: pointer; }
   }
 }
+/* ESTUDIANTE VIEWS */
+.jornada-active-card {
+  background: linear-gradient(135deg, #00447b, #002a4d);
+  color: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 68, 123, 0.2);
+
+  .jornada-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #10b981;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  }
+
+  .jornada-main-info {
+    h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    p { font-size: 1.1rem; color: #cbd5e1; margin-bottom: 0.5rem; }
+    .jornada-date { font-weight: 600; color: #a5f3fc; text-transform: capitalize; }
+  }
+
+  .jornada-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+
+    .btn-register-beneficiary {
+      background: #ea0a2a;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(234, 10, 42, 0.3);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(234, 10, 42, 0.4);
+        background: #c90824;
+      }
+    }
+
+    .helper-text { font-size: 0.85rem; color: #94a3b8; max-width: 300px; }
+  }
+}
+
+.stats-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.mini-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #edf2f7;
+
+  .mini-icon {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    color: #00447b;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  .mini-info {
+    display: flex;
+    flex-direction: column;
+    .mini-label { font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; }
+    .mini-value { font-size: 1.3rem; font-weight: 800; color: #1e293b; }
+  }
+}
+
+.sync-badge {
+  background: #ea0a2a;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.btn-sync-sidebar {
+  width: 100%;
+  background: #f8fafc !important;
+  color: #64748b !important;
+  border: 1px dashed #cbd5e1 !important;
+  margin-top: 1rem;
+  
+  &:hover {
+    background: #f1f5f9 !important;
+    border-style: solid !important;
+    color: #00447b !important;
+  }
+}
+
+.search-box-inline {
+  background: #f8fafc;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+
+  .btn-search-doc {
+    background: #00447b;
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover { background: #002a4d; }
+  }
+}
+
+.btn-back-link {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  
+  &:hover { background: #f1f5f9; color: #00447b; }
+}
+
 .rating-stars {
   color: #f59e0b;
   font-size: 0.9rem;

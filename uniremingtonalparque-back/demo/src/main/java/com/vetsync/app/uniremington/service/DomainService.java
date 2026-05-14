@@ -50,6 +50,8 @@ public class DomainService {
                 .resultadoAtencion(request.getResultadoAtencion())
                 .fechaServicio(request.getFechaServicio())
                 .observaciones(request.getObservaciones())
+                .estudianteId(request.getEstudianteId())
+                .duracionMinutos(request.getDuracionMinutos())
                 .build();
         return servicioSocialRepository.save(servicio);
     }
@@ -96,5 +98,9 @@ public class DomainService {
                 .facultadAsociada(request.getFacultadAsociada())
                 .build();
         return recursoAporteRepository.save(recurso);
+    }
+    @Transactional(readOnly = true)
+    public java.util.List<ServicioSocial> getServiciosByEstudiante(String estudianteId) {
+        return servicioSocialRepository.findByEstudianteIdOrderByFechaServicioDesc(estudianteId);
     }
 }

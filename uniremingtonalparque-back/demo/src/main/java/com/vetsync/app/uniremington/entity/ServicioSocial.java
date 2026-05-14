@@ -38,6 +38,9 @@ public class ServicioSocial {
     @Column(length = 80)
     private String resultadoAtencion;
 
+    @Column(length = 36)
+    private String estudianteId; // ID del estudiante que realizó la atención
+
     @NotNull
     @Column(nullable = false)
     private LocalDateTime fechaServicio;
@@ -47,6 +50,8 @@ public class ServicioSocial {
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
+
+    private Integer duracionMinutos;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

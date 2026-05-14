@@ -16,6 +16,8 @@ export class AppShellComponent implements OnInit {
   pendingCount = 0;
   isAuthenticated = false;
   isAdmin = false;
+  isDocente = false;
+  isEstudiante = false;
   isMenuOpen = false;
 
   @ViewChild('hamburgerMenu') hamburgerMenu?: ElementRef;
@@ -48,7 +50,10 @@ export class AppShellComponent implements OnInit {
     this.syncService.pendingCount$.subscribe(count => this.pendingCount = count);
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
-      this.isAdmin = user?.documento === '123456';
+      const rol = user?.rol?.toUpperCase();
+      this.isAdmin = rol === 'ADMIN' || user?.documento === '123456';
+      this.isDocente = rol === 'PROFESOR' || rol === 'DOCENTE';
+      this.isEstudiante = rol === 'ESTUDIANTE' || rol === 'ESTUDIANTE_FACULTAD';
     });
   }
 

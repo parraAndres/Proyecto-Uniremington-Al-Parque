@@ -28,4 +28,6 @@ public interface ServicioSocialRepository extends JpaRepository<ServicioSocial, 
         order by count(s) desc
         """)
     List<Object[]> problematicasFrecuentes(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
+
+    List<ServicioSocial> findByEstudianteIdOrderByFechaServicioDesc(String estudianteId);
 }

@@ -61,4 +61,8 @@ export class StatsService {
   getCasosStats(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/casos`);
   }
+
+  getEstudianteStats(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/estudiante/${id}`);
+  }
 }

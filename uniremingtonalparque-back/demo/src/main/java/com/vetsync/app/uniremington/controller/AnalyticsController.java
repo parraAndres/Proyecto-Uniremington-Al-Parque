@@ -62,4 +62,9 @@ public class AnalyticsController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
         return ResponseEntity.ok(analyticsService.resumenGeneral(inicio, fin));
     }
+
+    @GetMapping("/estudiante/{id}")
+    public ResponseEntity<Map<String, Object>> getEstudianteStats(@PathVariable String id) {
+        return ResponseEntity.ok(analyticsService.getStatsByEstudiante(id));
+    }
 }

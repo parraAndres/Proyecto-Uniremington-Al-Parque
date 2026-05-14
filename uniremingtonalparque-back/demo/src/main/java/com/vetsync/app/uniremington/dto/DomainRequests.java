@@ -40,6 +40,8 @@ public class DomainRequests {
         @NotNull
         private LocalDateTime fechaServicio;
         private String observaciones;
+        private String estudianteId;
+        private Integer duracionMinutos;
     }
 
     @Data

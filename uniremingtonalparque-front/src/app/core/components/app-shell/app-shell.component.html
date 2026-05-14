@@ -31,8 +31,8 @@
             <i class="fas fa-bars"></i>
           </button>
           <div class="auth-dropdown nav-dropdown" [class.show]="isMenuOpen">
-            <!-- Opción para Admin: Alternar entre Panel de control y Volver al inicio -->
-            <ng-container *ngIf="isAdmin">
+            <!-- Opción para Admin, Docente y Estudiante: Alternar entre Panel de control y Volver al inicio -->
+            <ng-container *ngIf="isAdmin || isDocente || isEstudiante">
               <a routerLink="/" class="nav-link" *ngIf="isAtPanelControl" (click)="toggleMenu()">
                 <i class="fas fa-home"></i> Volver A Inicio
               </a>

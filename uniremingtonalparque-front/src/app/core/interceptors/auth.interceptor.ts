@@ -1,11 +1,18 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const token = localStorage.getItem('token');
+  const platformId = inject(PLATFORM_ID);
+  const isBrowser = isPlatformBrowser(platformId);
+
+  let token = null;
+  if (isBrowser) {
+    token = localStorage.getItem('token');
+  }
 
   let clonedRequest = req;
 
@@ -21,7 +28,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
       // Manejo global de errores
-      if (error.status === 401) {
+      if (error.status === 401 && isBrowser) {
         // No autorizado -> Limpiar y redirigir a login
         localStorage.removeItem('token');
         localStorage.removeItem('activeUserEmail');
@@ -29,7 +36,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
       
       const errorMessage = error.error?.message || 'Ocurrió un error inesperado';
-      console.error(`Error ${error.status}: ${errorMessage}`);
+      if (isBrowser) {
+        console.error(`Error ${error.status}: ${errorMessage}`);
+      }
       
       return throwError(() => new Error(errorMessage));
     })

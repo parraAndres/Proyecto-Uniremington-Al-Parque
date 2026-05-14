@@ -13,6 +13,8 @@ export interface User {
   programa: string;
   rol: string;
   genero?: string;
+  municipio?: string;
+  barrio?: string;
   activo: boolean;
 }
 

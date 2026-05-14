@@ -68,6 +68,22 @@
             <i class="fas fa-chart-line"></i> Estadísticas Rápidas
           </button>
         </ng-container>
+        <!-- SECCIÓN ESTUDIANTE -->
+        <ng-container *ngIf="isEstudiante">
+          <div class="nav-divider">Operación en Campo</div>
+          <button [class.active]="activeView === 'estudiante_jornada'" (click)="activeView = 'estudiante_jornada'">
+            <i class="fas fa-map-marker-alt"></i> Jornada Actual
+          </button>
+          <button [class.active]="activeView === 'estudiante_atenciones'" (click)="activeView = 'estudiante_atenciones'">
+            <i class="fas fa-history"></i> Mis Atenciones
+          </button>
+          
+          <div class="nav-divider">Utilidades</div>
+          <button class="btn-sync-sidebar" routerLink="/offline-status">
+            <i class="fas fa-sync-alt"></i> Sincronización Offline
+            <span class="sync-badge" *ngIf="pendingSyncCount > 0">{{ pendingSyncCount }}</span>
+          </button>
+        </ng-container>
       </nav>
 
       <div class="sidebar-status">
@@ -309,6 +325,206 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA JORNADA ACTUAL (ESTUDIANTE) -->
+      <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_jornada'">
+        <div class="jornada-active-card" *ngIf="activeJornada">
+          <div class="jornada-badge">EN CURSO</div>
+          <div class="jornada-main-info">
+            <h2>{{ activeJornada.nombre }}</h2>
+            <p><i class="fas fa-map-marker-alt"></i> {{ activeJornada.municipio }} - {{ activeJornada.barrio }}</p>
+            <span class="jornada-date">{{ activeJornada.fecha | date:'fullDate' }}</span>
+          </div>
+          
+          <div class="jornada-actions">
+            <button class="btn-register-beneficiary" (click)="activeView = 'estudiante_beneficiarios'">
+              <i class="fas fa-user-plus"></i> Registrar Beneficiario
+            </button>
+            <button class="btn-register-attention" (click)="iniciarRegistroAtencion()">
+              <i class="fas fa-hands-helping"></i> Registrar Atención
+            </button>
+            <button class="btn-view-history" (click)="activeView = 'estudiante_atenciones'">
+              <i class="fas fa-history"></i> Ver Mi Historial
+            </button>
+            <p class="helper-text">Gestiona beneficiarios y atenciones realizadas durante tu jornada.</p>
+          </div>
+        </div>
+
+        <div class="stats-mini-grid mt-4">
+          <div class="mini-card">
+            <div class="mini-icon"><i class="fas fa-hand-holding-heart"></i></div>
+            <div class="mini-info">
+              <span class="mini-label">Atenciones Hoy</span>
+              <span class="mini-value">5</span>
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-icon"><i class="fas fa-award"></i></div>
+            <div class="mini-info">
+              <span class="mini-label">Total Histórico</span>
+              <span class="mini-value">{{ misAtencionesCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA MIS ATENCIONES (ESTUDIANTE) -->
+      <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_atenciones'">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-history"></i> Historial de Atenciones Brindadas</h3>
+            <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Beneficiario</th>
+                  <th>Servicio</th>
+                  <th>Duración</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of historialAtenciones">
+                  <td>{{ item.fechaServicio | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <strong>{{ item.beneficiario?.nombre }}</strong><br>
+                    <small>{{ item.beneficiario?.documento }}</small>
+                  </td>
+                  <td>{{ item.tipoServicio }}</td>
+                  <td>{{ item.duracionMinutos }} min</td>
+                  <td><span class="status-badge" [ngClass]="item.estado.toLowerCase()">{{ item.estado }}</span></td>
+                </tr>
+                <tr *ngIf="historialAtenciones.length === 0">
+                  <td colspan="5" class="text-center p-5">No has registrado atenciones todavía.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA REGISTRO BENEFICIARIO (ESTUDIANTE) -->
+      <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_beneficiarios'">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-id-card"></i> Registro de Beneficiarios</h3>
+            <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
+          </div>
+          <div class="p-5">
+            <form [formGroup]="beneficiarioForm" (ngSubmit)="onSaveBeneficiario()">
+              
+              <div class="search-box-inline mb-4">
+                <div class="input-group">
+                  <label>Documento de Identidad</label>
+                  <div class="d-flex gap-2">
+                    <input type="text" formControlName="documento" placeholder="Ingrese documento para buscar o registrar">
+                    <button type="button" class="btn-search-doc" (click)="buscarBeneficiario()">
+                      <i class="fas fa-search"></i> Buscar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="input-group">
+                  <label>Nombres</label>
+                  <input type="text" formControlName="nombres" placeholder="Nombres del beneficiario">
+                </div>
+                <div class="input-group">
+                  <label>Apellidos</label>
+                  <input type="text" formControlName="apellidos" placeholder="Apellidos del beneficiario">
+                </div>
+                <div class="input-group">
+                  <label>Teléfono</label>
+                  <input type="tel" formControlName="telefono" placeholder="Ej: 300 123 4567">
+                </div>
+                <div class="input-group">
+                  <label>Dirección / Barrio</label>
+                  <input type="text" formControlName="direccion" placeholder="Dirección de residencia">
+                </div>
+                <div class="input-group">
+                  <label>Municipio</label>
+                  <input type="text" formControlName="municipio" placeholder="Ej: Medellín">
+                </div>
+              </div>
+
+              <div class="consent-box mt-4">
+                <label class="checkbox-container">
+                  <input type="checkbox" formControlName="consentimientoDatos">
+                  <span class="checkmark"></span>
+                  Autorizo el tratamiento de mis datos personales según la política de Uniremington.
+                </label>
+              </div>
+
+              <div class="form-actions mt-5">
+                <button type="submit" class="btn-submit-primary" [disabled]="beneficiarioForm.invalid">
+                  <i class="fas fa-save"></i> Guardar Beneficiario
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA REGISTRO ATENCIÓN (ESTUDIANTE) -->
+      <div class="estudiante-view animate-fade" *ngIf="activeView === 'estudiante_registro_atencion'">
+        <div class="modern-card">
+          <div class="card-header">
+            <h3><i class="fas fa-notes-medical"></i> Registrar Nueva Atención</h3>
+            <button class="btn-back-link" (click)="activeView = 'estudiante_jornada'">Volver</button>
+          </div>
+          <div class="p-5">
+            <form [formGroup]="atencionForm" (ngSubmit)="onSaveAtencion()">
+              
+              <div class="form-grid-2">
+                <div class="input-group">
+                  <label>Seleccionar Beneficiario</label>
+                  <select formControlName="beneficiarioId">
+                    <option value="">Seleccione un beneficiario...</option>
+                    <option *ngFor="let b of beneficiarios" [value]="b.id">{{ b.nombreCompleto || b.nombre }} ({{ b.documento }})</option>
+                  </select>
+                  <small class="helper-link" (click)="activeView = 'estudiante_beneficiarios'">¿No está en la lista? Regístralo aquí</small>
+                </div>
+
+                <div class="input-group">
+                  <label>Tipo de Servicio</label>
+                  <select formControlName="tipoServicio">
+                    <option value="">Seleccione el servicio...</option>
+                    <option *ngFor="let s of tiposServicio" [value]="s.valor">{{ s.descripcion || s.valor }}</option>
+                  </select>
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Descripción de la Atención (Resultado)</label>
+                  <input type="text" formControlName="resultadoAtencion" placeholder="Ej: Se realizó chequeo preventivo y entrega de medicamentos.">
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Observaciones Adicionales</label>
+                  <textarea formControlName="observaciones" rows="3" placeholder="Notas sobre el caso..."></textarea>
+                </div>
+
+                <div class="input-group">
+                  <label>Tiempo de Atención (Minutos)</label>
+                  <div class="duration-input">
+                    <input type="number" formControlName="duracionMinutos">
+                    <span>min</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions mt-5">
+                <button type="submit" class="btn-submit-primary" [disabled]="atencionForm.invalid">
+                  <i class="fas fa-check-circle"></i> Finalizar Registro de Atención
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -922,14 +1138,5 @@
         </div>
       </div>
     </section>
-  </div>
-</div>
-
-<div class="unauthorized-container" *ngIf="!isAdmin">
-  <div class="unauth-box">
-    <i class="fas fa-user-lock"></i>
-    <h2>Acceso no autorizado</h2>
-    <p>Debes ingresar como administrador para ver estas estadísticas.</p>
-    <button routerLink="/login" class="btn-return">Ir al Login</button>
   </div>
 </div>

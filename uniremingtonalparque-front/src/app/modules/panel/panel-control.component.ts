@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -8,6 +8,7 @@ import { UserService, User } from '../../core/services/user.service';
 import { NewsService, Noticia } from '../../core/services/news.service';
 import { JornadaService, Jornada } from '../../core/services/jornada.service';
 import { ConfigParamService, ConfigParam } from '../../core/services/config-param.service';
+import { SocialService, ServicioSocial } from '../../core/services/social.service';
 import { ReporteService } from '../../core/services/reporte.service';
 import { DocenteService } from '../../core/services/docente.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -27,7 +28,7 @@ export class PanelControlComponent implements OnInit {
   isBeneficiario = false;
   isEditing = false;
   editingUserId = '';
-  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' | 'docente_stats' = 'news';
+  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' | 'docente_stats' | 'estudiante_jornada' | 'estudiante_atenciones' | 'estudiante_beneficiarios' | 'estudiante_registro_atencion' = 'news';
   
   successMessage = '';
   errorMessage = '';
@@ -37,6 +38,11 @@ export class PanelControlComponent implements OnInit {
   misJornadas: any[] = [];
   misCasosPendientes: any[] = [];
   docenteStats: any = { totalJornadas: 0, totalEstudiantes: 0, beneficiariosAtendidos: 0, casosPendientes: 0 };
+
+  // Datos Estudiante
+  activeJornada: any = null;
+  misAtencionesCount = 0;
+  pendingSyncCount = 0;
 
   // Filtros Reportes
   reportFilters = {
@@ -76,6 +82,12 @@ export class PanelControlComponent implements OnInit {
   jornadaForm: FormGroup;
   configForm: FormGroup;
   reportForm: FormGroup;
+  beneficiarioForm: FormGroup;
+  atencionForm: FormGroup;
+  
+  beneficiarios: User[] = [];
+  tiposServicio: ConfigParam[] = [];
+  historialAtenciones: ServicioSocial[] = [];
 
   facultades = [
     'Ingeniería', 
@@ -117,10 +129,12 @@ export class PanelControlComponent implements OnInit {
     private newsService: NewsService,
     private jornadaService: JornadaService,
     private configService: ConfigParamService,
+    private socialService: SocialService,
     private reporteService: ReporteService,
     private docenteService: DocenteService,
     public toastService: ToastService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.accountForm = this.fb.group({
       nombreCompleto: ['', Validators.required],
@@ -164,24 +178,76 @@ export class PanelControlComponent implements OnInit {
       barrio: ['']
     });
 
+    this.beneficiarioForm = this.fb.group({
+      documento: ['', Validators.required],
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      telefono: [''],
+      direccion: [''],
+      municipio: ['', Validators.required],
+      barrio: [''],
+      consentimientoDatos: [false, Validators.requiredTrue]
+    });
+
+    this.atencionForm = this.fb.group({
+      beneficiarioId: ['', Validators.required],
+      tipoServicio: ['', Validators.required],
+      resultadoAtencion: ['', Validators.required],
+      observaciones: [''],
+      duracionMinutos: [30, [Validators.required, Validators.min(5)]]
+    });
+
     this.accountForm.get('facultad')?.valueChanges.subscribe(() => {
       this.accountForm.patchValue({ programa: '' });
     });
   }
 
   ngOnInit() {
-    this.checkUserRole();
-    this.loadNews(); // Todos pueden ver noticias
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkUserRole();
+      this.loadNews(); // Todos pueden ver noticias
 
-    if (this.isAdmin) {
-      this.startStatsPolling();
-      this.loadAccounts();
-      this.loadDetailedStats();
-      this.loadJornadas();
-      this.loadConfigParams();
-    } else if (this.isDocente) {
-      this.loadDocenteData();
+      if (this.isAdmin) {
+        this.startStatsPolling();
+        this.loadAccounts();
+        this.loadDetailedStats();
+        this.loadJornadas();
+        this.loadConfigParams();
+      } else if (this.isDocente) {
+        this.loadDocenteData();
+      } else if (this.isEstudiante) {
+        this.loadEstudianteData();
+        this.loadTiposServicio();
+        this.loadAtencionesHistory();
+      }
     }
+  }
+
+  loadTiposServicio() {
+    this.configService.getParamsByTipo('TIPO_SERVICIO').subscribe(res => this.tiposServicio = res);
+  }
+
+  loadEstudianteData() {
+    const user = this.authService.currentUserValue;
+    if (!user) return;
+
+    // Obtener estadísticas del estudiante
+    this.statsService.getEstudianteStats(user.id).subscribe({
+      next: (res) => {
+        this.misAtencionesCount = res.totalAtenciones;
+        // Mock de jornada activa si no hay servicio real aún
+        this.activeJornada = {
+          nombre: 'Jornada de Salud y Bienestar',
+          municipio: 'Medellín',
+          barrio: 'San Javier',
+          estado: 'EN CURSO',
+          fecha: new Date().toISOString()
+        };
+      }
+    });
+
+    // Suscribirse a conteo offline
+    // this.syncService.pendingCount$.subscribe(count => this.pendingSyncCount = count);
   }
 
   // --- MÉTODOS DE REPORTES ---
@@ -434,7 +500,73 @@ export class PanelControlComponent implements OnInit {
     }
   }
 
-  logout() {
+  // --- MÉTODOS DE BENEFICIARIO (ESTUDIANTE) ---
+  buscarBeneficiario(): void {
+    const doc = this.beneficiarioForm.get('documento')?.value;
+    if (!doc) return;
+
+    this.userService.getUsers().subscribe((users: User[]) => {
+      const b = users.find(u => u.documento === doc && u.rol?.toUpperCase() === 'BENEFICIARIO');
+      if (b) {
+        this.beneficiarioForm.patchValue({
+          nombres: b.nombreCompleto || b.nombre,
+          apellidos: '', 
+          telefono: '', 
+          municipio: b.municipio || b.facultad, 
+          barrio: b.barrio || b.programa, 
+          consentimientoDatos: true
+        });
+        this.toastService.show('Beneficiario Encontrado', 'Se han cargado los datos existentes.', 'info');
+      } else {
+        this.toastService.show('No encontrado', 'Puedes registrarlo como nuevo.', 'warning');
+      }
+    });
+  }
+
+  // --- MÉTODOS DE ATENCIÓN (ESTUDIANTE) ---
+  iniciarRegistroAtencion(beneficiario?: User): void {
+    this.activeView = 'estudiante_registro_atencion';
+    this.loadBeneficiarios();
+    if (beneficiario) {
+      this.atencionForm.patchValue({ beneficiarioId: beneficiario.id });
+    }
+  }
+
+  loadBeneficiarios(): void {
+    this.userService.getUsers().subscribe((users: User[]) => {
+      this.beneficiarios = users.filter(u => u.rol?.toUpperCase() === 'BENEFICIARIO');
+    });
+  }
+
+  loadAtencionesHistory(): void {
+    const user = this.authService.currentUserValue;
+    if (user && user.documento) {
+      this.socialService.getServiciosByEstudiante(user.documento).subscribe(res => {
+        this.historialAtenciones = res;
+      });
+    }
+  }
+
+  onSaveAtencion(): void {
+    if (this.atencionForm.invalid) return;
+    this.toastService.show('¡Atención Registrada!', 'La atención ha sido guardada con éxito.', 'success');
+    this.atencionForm.reset({ duracionMinutos: 30 });
+    this.loadEstudianteData(); 
+    this.activeView = 'estudiante_jornada';
+  }
+
+  onSaveBeneficiario(): void {
+    if (this.beneficiarioForm.invalid) {
+      this.toastService.show('Formulario Incompleto', 'Por favor verifica los campos obligatorios.', 'warning');
+      return;
+    }
+
+    this.toastService.show('¡Registrado!', 'El beneficiario ha sido guardado/actualizado correctamente.', 'success');
+    this.beneficiarioForm.reset({ consentimientoDatos: false });
+    this.activeView = 'estudiante_jornada';
+  }
+
+  logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }

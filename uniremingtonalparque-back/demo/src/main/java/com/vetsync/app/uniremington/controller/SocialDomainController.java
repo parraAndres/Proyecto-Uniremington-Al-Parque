@@ -39,4 +39,9 @@ public class SocialDomainController {
     public ResponseEntity<RecursoAporte> createRecurso(@Valid @RequestBody DomainRequests.RecursoRequest request) {
         return ResponseEntity.ok(domainService.createRecurso(request));
     }
+
+    @GetMapping("/servicios/estudiante/{estudianteId}")
+    public ResponseEntity<java.util.List<ServicioSocial>> getServiciosByEstudiante(@PathVariable String estudianteId) {
+        return ResponseEntity.ok(domainService.getServiciosByEstudiante(estudianteId));
+    }
 }

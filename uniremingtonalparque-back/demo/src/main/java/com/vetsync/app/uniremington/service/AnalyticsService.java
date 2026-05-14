@@ -148,6 +148,17 @@ public class AnalyticsService {
         return res;
     }
 
+    public Map<String, Object> getStatsByEstudiante(String estudianteId) {
+        long atenciones = servicioSocialRepository.findAll().stream()
+                .filter(s -> estudianteId.equals(s.getEstudianteId()))
+                .count();
+        
+        Map<String, Object> res = new HashMap<>();
+        res.put("totalAtenciones", atenciones);
+        res.put("jornadaActiva", "Jornada de Salud - Medellín"); // Mock o buscar jornada asignada
+        return res;
+    }
+
     private List<AnalyticsDtos.CoberturaTerritorialStats> coberturaTerritorial() {
         Map<String, AnalyticsDtos.CoberturaTerritorialStats> salida = new HashMap<>();
         beneficiarioRepository.findAll().forEach(b -> salida.compute(b.getMunicipio(), (k, v) ->

@@ -17,6 +17,7 @@ export class RegisterComponent {
   successMessage = '';
   isLoading = false;
   showPassword = false;
+  showConfirmPassword = false;
 
   genderOptions = ['Femenino', 'Masculino', 'No binario', 'Prefiero no decirlo', 'Otro'];
 
@@ -30,7 +31,13 @@ export class RegisterComponent {
       identificacion: ['', [Validators.required]],
       genero: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+      confirmPassword: ['', [Validators.required]],
+    }, { validators: this.passwordMatchValidator });
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : { 'mismatch': true };
   }
 
   async onSubmit() {

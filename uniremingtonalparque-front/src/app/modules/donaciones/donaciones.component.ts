@@ -165,8 +165,9 @@ import { FormsModule } from '@angular/forms';
       background: #fdfdfd;
     }
     .donations-hero {
-      background: linear-gradient(135deg, #00447b 0%, #002d52 100%);
-      padding: 6rem 0;
+      background: linear-gradient(135deg, rgba(0, 68, 123, 0.75) 0%, rgba(0, 45, 82, 0.85) 100%), 
+                  url('/assets/img/uniremingtonalparque.png') center/cover no-repeat fixed;
+      padding: 8rem 0;
       color: white;
       position: relative;
       overflow: hidden;
@@ -193,7 +194,7 @@ import { FormsModule } from '@angular/forms';
 
     .hero-text {
       flex: 1;
-      h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; }
+      h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.4); }
       p { font-size: 1.25rem; opacity: 0.9; margin-bottom: 2rem; line-height: 1.6; }
       
       .impact-badges {

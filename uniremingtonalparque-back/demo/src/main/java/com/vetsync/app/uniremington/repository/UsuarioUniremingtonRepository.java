@@ -21,4 +21,6 @@ public interface UsuarioUniremingtonRepository extends JpaRepository<UsuarioUnir
     long countByUpdatedAtAfter(LocalDateTime date);
 
     long countByRol(String rol);
+
+    java.util.List<UsuarioUniremington> findByFacultadAndRolNot(String facultad, String rol);
 }

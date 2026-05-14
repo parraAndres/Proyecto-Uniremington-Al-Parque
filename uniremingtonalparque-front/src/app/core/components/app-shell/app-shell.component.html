@@ -31,6 +31,35 @@
             {{ pendingCount }} pendient{{ pendingCount > 1 ? 'es' : 'e' }} de subir
           </span>
         </div>
+
+        <div class="notification-container" *ngIf="isAuthenticated && !isBeneficiario">
+          <button class="notification-bell" (click)="toggleNotifications()" [class.has-unread]="unreadCount > 0">
+            <i class="fas fa-bell"></i>
+            <span class="badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+          </button>
+
+          <div class="notifications-dropdown" [class.show]="isNotificationsOpen">
+            <div class="notif-header">
+              <h3>Notificaciones</h3>
+            </div>
+            <div class="notif-list">
+              <div *ngIf="notifications.length === 0" class="notif-empty">
+                No tienes notificaciones
+              </div>
+              <div *ngFor="let notif of notifications" 
+                   class="notif-item" 
+                   [class.unread]="!notif.leida"
+                   (click)="markAsRead(notif)">
+                <div class="notif-dot" *ngIf="!notif.leida"></div>
+                <div class="notif-content">
+                  <p class="notif-title">{{ notif.titulo }}</p>
+                  <p class="notif-message">{{ notif.mensaje }}</p>
+                  <span class="notif-time">{{ notif.createdAt | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="hamburger-menu-container" *ngIf="showHamburger">
           <button class="hamburger-btn" (click)="toggleMenu()">
             <i class="fas fa-bars"></i>

@@ -3,8 +3,12 @@ package com.vetsync.app.uniremington.service;
 import com.vetsync.app.uniremington.dto.AuthResponse;
 import com.vetsync.app.uniremington.dto.LoginRequest;
 import com.vetsync.app.uniremington.dto.RegisterRequest;
+import com.vetsync.app.uniremington.entity.Academico;
+import com.vetsync.app.uniremington.entity.Beneficiario;
 import com.vetsync.app.uniremington.entity.PasswordResetToken;
 import com.vetsync.app.uniremington.entity.UsuarioUniremington;
+import com.vetsync.app.uniremington.repository.AcademicoRepository;
+import com.vetsync.app.uniremington.repository.BeneficiarioRepository;
 import com.vetsync.app.uniremington.repository.PasswordResetTokenRepository;
 import com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository;
 import com.vetsync.app.uniremington.security.UniJwtProvider;
@@ -24,6 +28,8 @@ import java.util.UUID;
 public class UniAuthService {
 
     private final UsuarioUniremingtonRepository usuarioRepository;
+    private final BeneficiarioRepository beneficiarioRepository;
+    private final AcademicoRepository academicoRepository;
     private final PasswordResetTokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
@@ -70,6 +76,28 @@ public class UniAuthService {
                 .build();
 
         usuarioRepository.save(usuario);
+        
+        // Sincronización con tablas respectivas
+        if ("BENEFICIARIO".equals(rolFinal)) {
+            Beneficiario beneficiario = Beneficiario.builder()
+                    .id(usuario.getId()) // Compartir el mismo ID
+                    .documento(usuario.getDocumento())
+                    .nombre(usuario.getNombreCompleto())
+                    .genero(usuario.getGenero())
+                    .municipio("Sede Central") // Valor por defecto inicial
+                    .fechaRegistro(LocalDateTime.now().toString())
+                    .build();
+            beneficiarioRepository.save(beneficiario);
+        } else if ("ESTUDIANTE".equals(rolFinal)) {
+            Academico academico = Academico.builder()
+                    .id(usuario.getId()) // Compartir el mismo ID
+                    .estudianteId(usuario.getDocumento())
+                    .nombreEstudiante(usuario.getNombreCompleto())
+                    .facultad(usuario.getFacultad())
+                    .programa(usuario.getPrograma())
+                    .build();
+            academicoRepository.save(academico);
+        }
 
         return buildResponse(usuario);
     }

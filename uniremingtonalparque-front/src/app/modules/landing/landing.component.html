@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <div class="cta-container text-center">
+      <div class="cta-container text-center animate-fade" *ngIf="!isLoggedIn">
         <p class="cta-text">Si quieres ver más</p>
         <div class="cta-buttons">
           <a routerLink="/register" class="btn-primary cta-btn">Regístrate</a>

@@ -17,6 +17,8 @@ public class DomainService {
     private final SeguimientoCasoRepository seguimientoCasoRepository;
     private final ParticipacionAcademicaRepository participacionAcademicaRepository;
     private final RecursoAporteRepository recursoAporteRepository;
+    private final NotificacionUniremingtonRepository notificacionRepository;
+    private final UsuarioUniremingtonRepository usuarioRepository;
 
     @Transactional
     public Beneficiario upsertBeneficiario(DomainRequests.BeneficiarioRequest request) {
@@ -53,7 +55,25 @@ public class DomainService {
                 .estudianteId(request.getEstudianteId())
                 .duracionMinutos(request.getDuracionMinutos())
                 .build();
-        return servicioSocialRepository.save(servicio);
+        ServicioSocial saved = servicioSocialRepository.save(servicio);
+
+        // Notificar al personal de la facultad
+        notifyFacultyStaff(request.getFacultad(), beneficiario.getNombre(), request.getTipoServicio());
+
+        return saved;
+    }
+
+    private void notifyFacultyStaff(String facultad, String nombreBeneficiario, String tipoServicio) {
+        java.util.List<UsuarioUniremington> staff = usuarioRepository.findByFacultadAndRolNot(facultad, "BENEFICIARIO");
+        
+        for (UsuarioUniremington target : staff) {
+            NotificacionUniremington notif = NotificacionUniremington.builder()
+                    .usuario(target)
+                    .titulo("Nueva Solicitud de Atención")
+                    .mensaje("El beneficiario " + nombreBeneficiario + " requiere atención de " + tipoServicio + ".")
+                    .build();
+            notificacionRepository.save(notif);
+        }
     }
 
     @Transactional

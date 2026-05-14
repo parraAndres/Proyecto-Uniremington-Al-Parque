@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { StatsService, ImpactStats } from '../../core/services/stats.service';
 import { NewsService, Noticia } from '../../core/services/news.service';
 import { JornadaService, Jornada } from '../../core/services/jornada.service';
+import { AuthService } from '../../core/services/auth.service';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 
@@ -55,6 +56,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     private statsService: StatsService,
     private newsService: NewsService,
     private jornadaService: JornadaService,
+    private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
   }
@@ -143,6 +145,10 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   toggleFacultad(f: any) {
     f.expanded = !f.expanded;
+  }
+
+  get isLoggedIn(): boolean {
+    return this.authService.isAuthenticated;
   }
 
 }

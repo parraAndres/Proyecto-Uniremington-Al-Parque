@@ -27,7 +27,7 @@ export class PanelControlComponent implements OnInit {
   isBeneficiario = false;
   isEditing = false;
   editingUserId = '';
-  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' = 'news';
+  activeView: 'dashboard' | 'students' | 'news' | 'impact' | 'efficiency' | 'territorial' | 'ranking' | 'jornadas' | 'config' | 'strategic' | 'reports' | 'docente_students' | 'docente_jornadas' | 'docente_casos' | 'docente_stats' = 'news';
   
   successMessage = '';
   errorMessage = '';

@@ -193,7 +193,7 @@
 
       input, select {
         width: 100%;
-        padding: 0.9rem 1rem 0.9rem 3rem;
+        padding: 0.9rem 3rem 0.9rem 3rem;
         border: 2px solid var(--gray);
         border-radius: 12px;
         font-size: 1rem;
@@ -211,6 +211,22 @@
           & + .input-icon {
             color: var(--primary);
           }
+        }
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: color 0.3s ease;
+        padding: 0.5rem;
+        z-index: 10;
+
+        &:hover {
+          color: var(--primary);
         }
       }
       

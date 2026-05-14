@@ -5,13 +5,14 @@ import com.vetsync.app.uniremington.entity.UsuarioUniremington;
 import com.vetsync.app.uniremington.repository.JornadaRepository;
 import com.vetsync.app.uniremington.repository.UsuarioUniremingtonRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/uni/jornadas")
+@RequestMapping("/jornadas")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class JornadaController {

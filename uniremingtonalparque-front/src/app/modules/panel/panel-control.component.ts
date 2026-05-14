@@ -251,14 +251,14 @@ export class PanelControlComponent implements OnInit {
     this.statsService.getEstudianteStats(user.id).subscribe({
       next: (res) => {
         this.misAtencionesCount = res.totalAtenciones;
-        // Mock de jornada activa si no hay servicio real aún
-        this.activeJornada = {
-          nombre: 'Jornada de Salud y Bienestar',
-          municipio: 'Medellín',
-          barrio: 'San Javier',
-          estado: 'EN CURSO',
-          fecha: new Date().toISOString()
-        };
+        
+        // Cargar jornadas reales creadas por el admin
+        this.jornadaService.getJornadas().subscribe(jornadas => {
+          this.jornadas = jornadas;
+          this.activeJornada = jornadas.find(j => j.estado === 'EN_CURSO') || 
+                               jornadas.find(j => j.estado === 'PROGRAMADA') || 
+                               (jornadas.length > 0 ? jornadas[jornadas.length - 1] : null);
+        });
       }
     });
 
@@ -352,14 +352,23 @@ export class PanelControlComponent implements OnInit {
     }
   }
 
-  // --- MÉTODOS DE JORNADA ---
   onCreateJornada() {
-    if (this.jornadaForm.invalid) return;
+    if (this.jornadaForm.invalid) {
+      this.toastService.show('Formulario Incompleto', 'Por favor, llena todos los campos obligatorios.', 'warning');
+      return;
+    }
+
     this.jornadaService.createJornada(this.jornadaForm.value).subscribe({
       next: () => {
         this.toastService.show('¡Jornada Creada!', 'La nueva jornada ha sido registrada con éxito.', 'success');
         this.jornadaForm.reset({ estado: 'PROGRAMADA' });
         this.loadJornadas();
+      },
+      error: (err) => {
+        console.error('Error al crear jornada:', err);
+        const status = err.status;
+        const msg = err.message || 'Error de conexión';
+        this.toastService.show('Error al Guardar', `Status: ${status} - ${msg}`, 'error');
       }
     });
   }

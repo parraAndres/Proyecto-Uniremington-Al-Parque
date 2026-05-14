@@ -42,7 +42,7 @@ public class Jornada {
     @Builder.Default
     private String estado = "PROGRAMADA"; // PROGRAMADA, EN_CURSO, FINALIZADA, CANCELADA
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "uni_jornada_personal",
         joinColumns = @JoinColumn(name = "jornada_id"),

@@ -71,7 +71,7 @@ public class SecurityConfig {
 
                     .requestMatchers(HttpMethod.POST, "/noticias/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/noticias/**").hasRole("ADMIN")
-                    .requestMatchers("/uni/**").authenticated() 
+                    .requestMatchers("/uni/**", "/jornadas/**").authenticated() 
                     .requestMatchers("/sync/**").authenticated()
                     .requestMatchers("/finanzas/**", "/usuarios/**", "/dashboard/admin").hasRole("ADMIN")
                     .requestMatchers("/dashboard/**").authenticated()

@@ -20,7 +20,7 @@ export interface Jornada {
   providedIn: 'root'
 })
 export class JornadaService {
-  private apiUrl = `${environment.apiUrl}/uni/jornadas`;
+  private apiUrl = `${environment.apiUrl}/jornadas`;
 
   constructor(private http: HttpClient) { }
 

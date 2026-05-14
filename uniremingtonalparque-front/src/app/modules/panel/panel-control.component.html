@@ -343,10 +343,10 @@
         </div>
 
         <div class="jornada-active-card" *ngIf="activeJornada">
-          <div class="jornada-badge">EN CURSO</div>
+          <div class="jornada-badge" [ngClass]="activeJornada.estado?.toLowerCase()">{{ activeJornada.estado }}</div>
           <div class="jornada-main-info">
             <h2>{{ activeJornada.nombre }}</h2>
-            <p><i class="fas fa-map-marker-alt"></i> {{ activeJornada.municipio }} - {{ activeJornada.barrio }}</p>
+            <p><i class="fas fa-map-marker-alt"></i> {{ activeJornada.municipio }} - {{ activeJornada.barrio || activeJornada.vereda }}</p>
             <span class="jornada-date">{{ activeJornada.fecha | date:'fullDate' }}</span>
           </div>
           
@@ -367,22 +367,32 @@
           </div>
         </div>
 
-        <div class="stats-mini-grid mt-4">
-          <div class="mini-card">
-            <div class="mini-icon"><i class="fas fa-hand-holding-heart"></i></div>
-            <div class="mini-info">
-              <span class="mini-label">Atenciones Hoy</span>
-              <span class="mini-value">5</span>
-            </div>
+        <!-- ESTADO VACÍO SI NO HAY JORNADAS -->
+        <div class="empty-jornada-state animate-fade" *ngIf="!activeJornada && jornadas.length === 0">
+          <div class="empty-content">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No hay jornadas programadas</h3>
+            <p>Espera a que un administrador cree una jornada para comenzar a registrar atenciones.</p>
           </div>
-          <div class="mini-card">
-            <div class="mini-icon"><i class="fas fa-award"></i></div>
-            <div class="mini-info">
-              <span class="mini-label">Total Histórico</span>
-              <span class="mini-value">{{ misAtencionesCount }}</span>
+        </div>
+
+        <!-- LISTA DE TODAS LAS JORNADAS DISPONIBLES -->
+        <div class="mt-5 animate-fade" *ngIf="jornadas.length > 1">
+          <h4 class="section-subtitle-premium"><i class="fas fa-th-list"></i> Otras Jornadas Disponibles</h4>
+          <div class="jornadas-selection-grid">
+            <div class="selection-card" *ngFor="let j of jornadas" [class.active]="j.id === activeJornada?.id" (click)="activeJornada = j">
+              <div class="card-status" [ngClass]="j.estado.toLowerCase()"></div>
+              <div class="card-info">
+                <strong>{{ j.nombre }}</strong>
+                <span><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</span>
+                <small>{{ j.fecha | date:'shortDate' }}</small>
+              </div>
+              <div class="card-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
           </div>
         </div>
+
+
       </div>
 
       <!-- VISTA MIS ATENCIONES (ESTUDIANTE) -->
@@ -395,18 +405,27 @@
           
           <!-- Resumen de Atenciones -->
           <div class="p-5 pb-0">
-            <div class="stats-grid-mini">
-              <div class="mini-stat">
-                <span class="label">Total Atenciones</span>
-                <span class="value">{{ misAtencionesCount }}</span>
+            <div class="stats-grid-premium">
+              <div class="stat-card-mini">
+                <div class="icon-wrapper blue"><i class="fas fa-notes-medical"></i></div>
+                <div class="info">
+                  <span class="label">Total Atenciones</span>
+                  <span class="value">{{ misAtencionesCount }}</span>
+                </div>
               </div>
-              <div class="mini-stat success">
-                <span class="label">Finalizadas</span>
-                <span class="value">{{ atencionesFinalizadas }}</span>
+              <div class="stat-card-mini">
+                <div class="icon-wrapper green"><i class="fas fa-check-double"></i></div>
+                <div class="info">
+                  <span class="label">Finalizadas</span>
+                  <span class="value">{{ atencionesFinalizadas }}</span>
+                </div>
               </div>
-              <div class="mini-stat warning">
-                <span class="label">Casos Abiertos</span>
-                <span class="value">{{ casosAbiertos }}</span>
+              <div class="stat-card-mini">
+                <div class="icon-wrapper orange"><i class="fas fa-folder-open"></i></div>
+                <div class="info">
+                  <span class="label">Casos Abiertos</span>
+                  <span class="value">{{ casosAbiertos }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -431,7 +450,7 @@
                   </td>
                   <td class="beneficiary-cell">
                     <div class="beneficiary-info">
-                      <div class="avatar-mini">{{ (item.beneficiario.nombre?.substring(0,1) || 'B') }}</div>
+                      <div class="avatar-mini">{{ (item.beneficiario.nombre.substring(0,1) || 'B') }}</div>
                       <div class="text">
                         <strong>{{ item.beneficiario.nombre }}</strong>
                         <small>{{ item.beneficiario.documento }}</small>

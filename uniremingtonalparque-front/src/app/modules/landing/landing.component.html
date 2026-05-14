@@ -40,6 +40,7 @@
           <h3>{{ f.nombre }}</h3>
           <div class="desc-wrapper" [class.show]="f.expanded">
             <p>{{ f.desc }}</p>
+            <a [href]="f.url" target="_blank" rel="noopener noreferrer" class="btn-ir" (click)="$event.stopPropagation()">Ir a la facultad <i class="fas fa-external-link-alt"></i></a>
           </div>
           <div class="click-hint" *ngIf="!f.expanded">Haz clic para ver más</div>
         </div>

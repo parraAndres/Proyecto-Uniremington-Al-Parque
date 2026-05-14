@@ -41,13 +41,13 @@ export class LandingComponent implements OnInit, OnDestroy {
   ];
 
   facultades = [
-    { nombre: 'Ingeniería', icon: 'fas fa-cogs', color: '#e3000f', desc: 'Soluciones tecnológicas e innovación. Proyectos orientados a resolver problemas técnicos y de infraestructura en las comunidades.', expanded: false },
-    { nombre: 'Salud', icon: 'fas fa-heartbeat', color: '#00b359', desc: 'Cuidado y bienestar integral. Jornadas de prevención, promoción de la salud y atención básica a poblaciones vulnerables.', expanded: false },
-    { nombre: 'Artes y Diseño', icon: 'fas fa-palette', color: '#ffcc00', desc: 'Expresión creativa y visual. Intervenciones artísticas, talleres creativos y mejoramiento estético de espacios públicos.', expanded: false },
-    { nombre: 'Ciencias Jurídicas', icon: 'fas fa-balance-scale', color: '#0052cc', desc: 'Justicia y acompañamiento legal. Asesoría jurídica gratuita y resolución de conflictos para la comunidad.', expanded: false },
-    { nombre: 'Empresariales', icon: 'fas fa-briefcase', color: '#e6005c', desc: 'Desarrollo de negocios. Apoyo a emprendedores locales, asesoría en planes de negocio y formalización.', expanded: false },
-    { nombre: 'Veterinaria', icon: 'fas fa-paw', color: '#8e44ad', desc: 'Salud animal y ecosistemas. Jornadas de vacunación, desparasitación y concientización sobre el cuidado de mascotas.', expanded: false },
-    { nombre: 'Contaduría', icon: 'fas fa-chart-pie', color: '#0099cc', desc: 'Transparencia financiera. Orientación contable, educación financiera y asesoría tributaria para pequeños negocios y familias.', expanded: false }
+    { nombre: 'Facultad de Ingenierías', icon: 'fas fa-cogs', color: '#e3000f', desc: 'Soluciones tecnológicas e innovación. Proyectos orientados a resolver problemas técnicos y de infraestructura en las comunidades.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-ingenierias/', expanded: false },
+    { nombre: 'Facultad de Ciencias de la Salud', icon: 'fas fa-heartbeat', color: '#00b359', desc: 'Cuidado y bienestar integral. Jornadas de prevención, promoción de la salud y atención básica a poblaciones vulnerables.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-ciencias-de-la-salud/', expanded: false },
+    { nombre: 'Facultad de Diseño', icon: 'fas fa-palette', color: '#ffcc00', desc: 'Expresión creativa y visual. Intervenciones artísticas, talleres creativos y mejoramiento estético de espacios públicos.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-diseno/', expanded: false },
+    { nombre: 'Facultad de Ciencias Jurídicas y Políticas', icon: 'fas fa-balance-scale', color: '#0052cc', desc: 'Justicia y acompañamiento legal. Asesoría jurídica gratuita y resolución de conflictos para la comunidad.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-ciencias-juridicas-y-politicas/', expanded: false },
+    { nombre: 'Facultad de Ciencias Empresariales', icon: 'fas fa-briefcase', color: '#e6005c', desc: 'Desarrollo de negocios. Apoyo a emprendedores locales, asesoría en planes de negocio y formalización.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-ciencias-empresariales/', expanded: false },
+    { nombre: 'Facultad de Medicina Veterinaria', icon: 'fas fa-paw', color: '#8e44ad', desc: 'Salud animal y ecosistemas. Jornadas de vacunación, desparasitación y concientización sobre el cuidado de mascotas.', url: 'https://www.uniremington.edu.co/facultades/facultad-medicina-veterinaria/', expanded: false },
+    { nombre: 'Facultad de Ciencias Contables', icon: 'fas fa-chart-pie', color: '#0099cc', desc: 'Transparencia financiera. Orientación contable, educación financiera y asesoría tributaria para pequeños negocios y familias.', url: 'https://www.uniremington.edu.co/facultades/facultad-de-ciencias-contables/', expanded: false }
   ];
 
   constructor(

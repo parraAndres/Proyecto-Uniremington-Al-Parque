@@ -233,15 +233,21 @@
 
       <!-- VISTA MIS JORNADAS (DOCENTE) -->
       <div class="docente-view animate-fade" *ngIf="activeView === 'docente_jornadas'">
-        <div class="jornadas-grid">
-          <div class="jornada-card" *ngFor="let j of misJornadas">
-            <div class="j-header">
-              <span class="j-date">{{ j.fecha | date:'dd/MM/yyyy' }}</span>
-              <span class="status-badge" [attr.data-status]="j.estado">{{ j.estado }}</span>
+        <div class="jornadas-premium-grid">
+          <div class="jornada-premium-card" *ngFor="let j of misJornadas">
+            <div class="j-card-header">
+              <div class="j-header-main">
+                <h4>{{ j.nombre }}</h4>
+                <span class="jornada-badge" [attr.data-status]="j.estado">{{ j.estado }}</span>
+              </div>
+              <div class="j-header-sub">
+                <span><i class="fas fa-calendar-day"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</span>
+                <span><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</span>
+              </div>
             </div>
-            <h3>{{ j.nombre }}</h3>
-            <p class="j-loc"><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</p>
-            <p class="j-desc">{{ j.descripcion }}</p>
+            <div class="j-card-body">
+              <p class="j-description">{{ j.descripcion }}</p>
+            </div>
           </div>
           <div class="empty-state" *ngIf="misJornadas.length === 0">
             No tiene jornadas asignadas.
@@ -853,7 +859,7 @@
             <h3><i class="fas fa-calendar-plus"></i> Crear Nueva Jornada</h3>
           </div>
           <form [formGroup]="jornadaForm" (ngSubmit)="onCreateJornada()" class="admin-form">
-            <div class="form-row">
+            <div class="form-grid-3">
               <div class="field-group">
                 <label>Nombre de la Jornada</label>
                 <div class="input-wrapper">
@@ -868,9 +874,21 @@
                   <input type="date" formControlName="fecha">
                 </div>
               </div>
+              <div class="field-group">
+                <label>Estado</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-info-circle"></i>
+                  <select formControlName="estado" class="custom-select">
+                    <option value="PROGRAMADA">Programada</option>
+                    <option value="EN_CURSO">En Curso</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                    <option value="CANCELADA">Cancelada</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div class="form-row">
+            <div class="form-grid-2 mt-3">
               <div class="field-group">
                 <label>Municipio</label>
                 <div class="input-wrapper">
@@ -887,80 +905,84 @@
               </div>
             </div>
 
-            <div class="field-group">
-              <label>Descripción / Objetivos</label>
-              <div class="input-wrapper textarea-wrapper">
-                <i class="fas fa-align-left"></i>
-                <textarea formControlName="descripcion" rows="3" placeholder="Objetivos de la jornada..."></textarea>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label>URL de Imagen Portada (Opcional)</label>
-              <div class="input-wrapper">
-                <i class="fas fa-image"></i>
-                <input type="text" formControlName="imagenUrl" placeholder="https://ejemplo.com/foto-jornada.jpg">
-              </div>
-            </div>
-
-            <div class="form-row">
+            <div class="form-grid-1 mt-3">
               <div class="field-group">
-                <label>Estado</label>
-                <div class="input-wrapper">
-                  <i class="fas fa-info-circle"></i>
-                  <select formControlName="estado" class="custom-select">
-                    <option value="PROGRAMADA">Programada</option>
-                    <option value="EN_CURSO">En Curso</option>
-                    <option value="FINALIZADA">Finalizada</option>
-                    <option value="CANCELADA">Cancelada</option>
-                  </select>
+                <label>Descripción / Objetivos</label>
+                <div class="input-wrapper textarea-wrapper">
+                  <i class="fas fa-align-left"></i>
+                  <textarea formControlName="descripcion" rows="2" placeholder="Objetivos de la jornada..."></textarea>
                 </div>
               </div>
-              <div class="field-group button-group">
-                <button type="submit" class="btn-admin-submit" [disabled]="jornadaForm.invalid">
-                  <i class="fas fa-save"></i> Crear Jornada
-                </button>
+            </div>
+
+            <div class="form-grid-btn mt-4">
+              <div class="field-group">
+                <label>URL Imagen Portada (Opcional)</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-image"></i>
+                  <input type="text" formControlName="imagenUrl" placeholder="https://ejemplo.com/foto.jpg">
+                </div>
               </div>
+              <button type="submit" class="btn-premium-submit" [disabled]="jornadaForm.invalid">
+                <i class="fas fa-save"></i> <span>Crear Jornada</span>
+              </button>
             </div>
           </form>
         </div>
 
         <!-- Lista de Jornadas -->
-        <div class="jornadas-grid mt-4">
-          <div *ngFor="let j of jornadas" class="jornada-card animate-fade">
-            <div class="jornada-header">
-              <h4>{{ j.nombre }}</h4>
-              <span class="jornada-status" [class]="j.estado.toLowerCase()">{{ j.estado }}</span>
+        <div class="jornadas-premium-grid mt-4">
+          <div *ngFor="let j of jornadas" class="jornada-premium-card animate-fade">
+            <div class="j-card-header">
+              <div class="j-header-main">
+                <h4>{{ j.nombre }}</h4>
+                <span class="jornada-badge" [attr.data-status]="j.estado">{{ j.estado }}</span>
+              </div>
+              <div class="j-header-sub">
+                <span><i class="fas fa-calendar-day"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</span>
+                <span><i class="fas fa-map-marker-alt"></i> {{ j.municipio }}</span>
+              </div>
             </div>
-            <div class="jornada-body">
-              <p><i class="fas fa-calendar-day"></i> {{ j.fecha | date:'dd/MM/yyyy' }}</p>
-              <p><i class="fas fa-map-pin"></i> {{ j.municipio }} <span *ngIf="j.vereda">- {{ j.vereda }}</span></p>
+
+            <div class="j-card-body">
+              <p class="j-description" *ngIf="j.descripcion">{{ j.descripcion | slice:0:100 }}{{ j.descripcion.length > 100 ? '...' : '' }}</p>
               
-              <div class="assignment-section">
-                <h5><i class="fas fa-users-cog"></i> Personal Asignado ({{ j.personalAsignado?.length || 0 }})</h5>
-                <div class="assigned-chips">
-                  <span *ngFor="let p of j.personalAsignado" class="user-chip">
-                    {{ p.nombreCompleto || p.nombre }}
-                    <i class="fas fa-times" (click)="quitarDe_Jornada(j.id!, p.id)"></i>
-                  </span>
+              <div class="assignment-box">
+                <div class="box-header">
+                  <h5><i class="fas fa-users-cog"></i> Personal ({{ j.personalAsignado?.length || 0 }})</h5>
+                </div>
+                
+                <div class="assigned-users-list">
+                  <div *ngFor="let p of j.personalAsignado" class="mini-user-chip">
+                    <span class="u-name">{{ p.nombreCompleto || p.nombre }}</span>
+                    <i class="fas fa-times-circle u-remove" (click)="quitarDe_Jornada(j.id!, p.id)" title="Quitar"></i>
+                  </div>
+                  <div class="empty-assign" *ngIf="!j.personalAsignado || j.personalAsignado.length === 0">
+                    Sin personal asignado
+                  </div>
                 </div>
 
-                <div class="assign-controls mt-3">
-                  <select #userSelect class="custom-select-small">
-                    <option value="">Asignar docente/estudiante...</option>
-                    <optgroup label="Docentes">
-                      <option *ngFor="let d of docentesActivos" [value]="d.id">{{ d.nombreCompleto || d.nombre }}</option>
-                    </optgroup>
-                    <optgroup label="Estudiantes">
-                      <option *ngFor="let e of estudiantesActivos" [value]="e.id">{{ e.nombreCompleto || e.nombre }}</option>
-                    </optgroup>
-                  </select>
-                  <button (click)="asignarA_Jornada(j.id!, userSelect.value); userSelect.value = ''" class="btn-assign-small">Asignar</button>
+                <div class="assign-action mt-3">
+                  <div class="assign-input-group">
+                    <select #userSelect class="premium-select-small">
+                      <option value="">Asignar integrante...</option>
+                      <optgroup label="Docentes">
+                        <option *ngFor="let d of docentesActivos" [value]="d.id">{{ d.nombreCompleto || d.nombre }}</option>
+                      </optgroup>
+                      <optgroup label="Estudiantes">
+                        <option *ngFor="let e of estudiantesActivos" [value]="e.id">{{ e.nombreCompleto || e.nombre }}</option>
+                      </optgroup>
+                    </select>
+                    <button (click)="asignarA_Jornada(j.id!, userSelect.value); userSelect.value = ''" class="btn-plus-assign">
+                      <i class="fas fa-user-plus"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="jornada-footer">
-              <button class="btn-delete-jornada" (click)="deleteJornada(j.id!)">
+
+            <div class="j-card-footer">
+              <button class="btn-trash-premium" (click)="deleteJornada(j.id!)" title="Eliminar Jornada">
                 <i class="fas fa-trash-alt"></i> Eliminar
               </button>
             </div>

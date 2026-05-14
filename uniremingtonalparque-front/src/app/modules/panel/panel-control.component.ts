@@ -366,9 +366,7 @@ export class PanelControlComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al crear jornada:', err);
-        const status = err.status;
-        const msg = err.message || 'Error de conexión';
-        this.toastService.show('Error al Guardar', `Status: ${status} - ${msg}`, 'error');
+        this.toastService.show('Error al Guardar', 'No se pudo crear la jornada. Verifica la conexión o contacta a soporte.', 'error');
       }
     });
   }

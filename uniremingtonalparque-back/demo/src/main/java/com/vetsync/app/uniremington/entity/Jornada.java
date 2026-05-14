@@ -33,10 +33,10 @@ public class Jornada {
     private String vereda;
     private String barrio;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "LONGTEXT")
     private String descripcion;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "LONGTEXT")
     private String imagenUrl;
 
     @Builder.Default

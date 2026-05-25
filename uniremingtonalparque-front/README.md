@@ -1,59 +1,28 @@
-# UniremingtonalparqueFront
+#  Proyecto Uniremington Al Parque — uniremingtonalparque-front
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+¡Bienvenido al repositorio del frontend del **Proyecto Uniremington Al Parque**! Esta es una aplicación web robusta y moderna desarrollada con el framework **Angular** y diseñada de forma modular utilizando **SCSS**, creada con el propósito de descentralizar los servicios, la academia y la innovación, llevando la experiencia institucional directamente al espacio público y la comunidad.
 
-## Development server
+Este componente se encarga por completo de la interfaz de usuario (UI), ofreciendo una experiencia fluida, intuitiva y reactiva para los estudiantes, docentes y la ciudadanía en general.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+##  Tecnologías Utilizadas
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+El desarrollo del frontend se apoya en el ecosistema moderno de desarrollo web:
 
-## Code scaffolding
+* **[Angular](https://angular.io/)** — Framework SPA para la estructuración y renderizado eficiente de componentes.
+* **[SCSS (Sass)](https://sass-lang.com/)** — Preprocesador para una arquitectura de estilos avanzada, limpia y escalable.
+* **TypeScript** — Superconjunto de JavaScript que aporta tipado estático y mejores prácticas de programación orientada a objetos.
+* **Angular CLI** — Herramienta de automatización de tareas y gestión del ciclo de vida de la aplicación.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+##  Requisitos Previos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Asegúrate de contar con las siguientes herramientas configuradas en tu sistema antes de iniciar la instalación:
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. **Node.js** (Versión LTS estable)
+2. **npm** (Gestor de paquetes integrado con Node.js)
+3. **Angular CLI** instalado globalmente:
+   ```bash
+   npm install -g @angular/cli

@@ -2,7 +2,6 @@
 
 Este repositorio contiene el componente de interfaz de usuario (frontend) para el proyecto institucional Uniremington Al Parque. La aplicación ha sido desarrollada utilizando el framework Angular junto con el preprocesador de estilos SCSS, garantizando una arquitectura web moderna, modular y escalable.
 
----
 
 ## Objetivo del Proyecto
 
@@ -10,7 +9,6 @@ El proyecto Uniremington Al Parque tiene como objetivo principal descentralizar 
 
 A través de esta plataforma digital, se busca facilitar la interacción ciudadana con la academia, optimizar el acceso a las actividades programadas y ofrecer un canal tecnológico eficiente para la gestión de proyectos de extensión universitaria en la región.
 
----
 
 ## Herramientas Utilizadas
 
@@ -21,7 +19,6 @@ El desarrollo del entorno cliente se ha estructurado con las siguientes tecnolog
 * **TypeScript:** Lenguaje de programación principal que aporta tipado estático y robustez al código.
 * **Angular CLI:** Interfaz de línea de comandos empleada para la automatización de tareas, generación de módulos y compilación del proyecto.
 
----
 
 ## Módulos del Sistema
 
@@ -31,7 +28,6 @@ La interfaz de usuario está organizada de manera modular en el directorio fuent
 * **Módulo de Páginas (Pages):** Contiene las vistas principales y pantallas del aplicativo que configuran el flujo de navegación del usuario.
 * **Módulo de Servicios (Services):** Capa encargada de centralizar la lógica de negocio, la gestión de estados y la comunicación HTTP con la API del backend (`uniremingtonalparque-back`).
 
----
 
 ## Requisitos de Hardware y Dispositivos para la Implementación
 
@@ -43,7 +39,6 @@ Para la correcta ejecución, compilación y despliegue del sistema en un entorno
 * **Gráficos:** Tarjeta gráfica integrada o dedicada con soporte para resoluciones estándar (mínimo 512 MB de memoria de video dedicada para evitar retardos en la renderización de interfaces gráficas complejas en el navegador).
 * **Software Requerido:** Node.js (versión LTS estable) y Visual Studio Code como entorno de desarrollo integrado (IDE).
 
----
 
 ## Instrucciones de Descarga e Instalación
 
